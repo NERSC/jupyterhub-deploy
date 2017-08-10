@@ -38,6 +38,7 @@ RUN \
 
 # Install JupyterHub
 
+ENV PATH=/opt/anaconda3/bin:$PATH
 WORKDIR /tmp
 RUN \
     git clone https://github.com/NERSC/jupyterhub.git   &&  \
