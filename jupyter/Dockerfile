@@ -1,4 +1,4 @@
-FROM nersc-jupyterhub-base:latest
+FROM nersc/jupyterhub-base:latest
 MAINTAINER Rollin Thomas <rcthomas@lbl.com>
 
 # Additional Ubuntu packages
