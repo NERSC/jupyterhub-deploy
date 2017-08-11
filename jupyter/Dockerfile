@@ -33,7 +33,7 @@ RUN \
     /opt/anaconda3/bin/conda update --yes conda                 && \
     /opt/anaconda3/bin/conda install --yes anaconda             && \
     /opt/anaconda3/bin/conda install --file /tmp/packages3.txt  && \
-    /opt/anaconda3/bin/ipython kernelspec install-self          && \
+    /opt/anaconda3/bin/ipython kernel install                   && \
     /opt/anaconda3/bin/conda clean --yes --all
 
 # Python 2 Anaconda and additional packages
@@ -46,7 +46,7 @@ RUN \
     /opt/anaconda2/bin/conda update --yes conda                 && \
     /opt/anaconda2/bin/conda install --yes anaconda             && \
     /opt/anaconda2/bin/conda install --file /tmp/packages2.txt  && \
-    /opt/anaconda2/bin/ipython kernelspec install-self          && \
+    /opt/anaconda2/bin/ipython kernel install                   && \
     /opt/anaconda2/bin/conda clean --yes --all
 
 ADD jupyterhub /srv/
