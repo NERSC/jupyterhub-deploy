@@ -254,7 +254,7 @@ c.JupyterHub.ssl_key = '/etc/httpd/ssl/wild.nersc.gov.key'
 # c.Spawner.args = []
 
 # The command used for starting notebooks.
-c.Spawner.cmd = ['/anaconda3/bin/jupyterhub-singleuser']
+c.Spawner.cmd = ['/opt/anaconda3/bin/jupyterhub-singleuser']
 
 # Enable debug-logging of the single-user server
 # c.Spawner.debug = False
