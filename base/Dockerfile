@@ -15,8 +15,16 @@ RUN \
         git                     \
         libffi-dev              \
         lsb-release             \
+        tzdata                  \
         vim                     \
         wget
+
+# Timezone to Berkeley
+
+ENV TZ=America/Los_Angeles
+RUN \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime  &&  \
+    echo $TZ > /etc/timezone
 
 # Python 3 Miniconda and dependencies for JupyterHub we can get via conda
 
