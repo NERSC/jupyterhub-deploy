@@ -4,6 +4,7 @@ MAINTAINER Rollin Thomas <rcthomas@lbl.gov>
 # Base Ubuntu packages
 
 ENV DEBIAN_FRONTEND noninteractive
+ENV LANG C.UTF-8
 
 RUN \
     apt-get update          &&  \
