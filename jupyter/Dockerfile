@@ -10,22 +10,6 @@ RUN \
         libpam-ldap         \
         nscd
 
-# LDAP
-
-ADD ldap /tmp/ldap
-RUN \
-    mkdir -p  /etc/httpd/ssl && \
-    cp /tmp/ldap/ldap.conf /etc/ldap/ldap.conf && \
-    cp /tmp/ldap/nslcd.conf /etc/nslcd.conf && \
-    cp /tmp/ldap/nsswitch.conf /etc/nsswitch.conf && \
-    cp /tmp/ldap/pam_ldap.conf /etc/pam_ldap.conf && \
-    cp /tmp/ldap/password-auth /etc/pam.d/password-auth && \
-    mkdir /global && \
-    ln -sf /global/u1 /global/homes && \
-    ln -sf /global/project /project && \
-    ln -s /global/common/datatran /usr/common && \
-    echo "datatran" > /etc/clustername
-
 # Python 3 Anaconda and additional packages
 
 ADD packages3.txt /tmp/packages3.txt
@@ -48,6 +32,21 @@ RUN \
     /opt/anaconda2/bin/conda install --file /tmp/packages2.txt  && \
     /opt/anaconda2/bin/ipython kernel install                   && \
     /opt/anaconda2/bin/conda clean --yes --all
+
+# LDAP
+
+ADD ldap /tmp/ldap
+RUN \
+    mkdir -p  /etc/httpd/ssl && \
+    cp /tmp/ldap/ldap.conf /etc/ldap.conf && \
+    cp /tmp/ldap/nslcd.conf /etc/nslcd.conf && \
+    cp /tmp/ldap/nsswitch.conf /etc/nsswitch.conf && \
+    cp /tmp/ldap/password-auth /etc/pam.d/password-auth && \
+    mkdir /global && \
+    ln -sf /global/u1 /global/homes && \
+    ln -sf /global/project /project && \
+    ln -s /global/common/datatran /usr/common && \
+    echo "datatran" > /etc/clustername
 
 ADD jupyterhub /srv/
 RUN mv /srv/jupyterhub.pamd /etc/pam.d/jupyterhub
