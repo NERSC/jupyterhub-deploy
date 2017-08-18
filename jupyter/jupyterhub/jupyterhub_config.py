@@ -281,7 +281,7 @@ c.Spawner.default_url = '/tree/global/homes/{username[0]}/{username}'
 # with one parameter, which will be the instance of the spawner in use. It
 # should quickly (without doing much blocking operations) return a string that
 # will be used as the value for the environment variable.
-# c.Spawner.environment = {}
+c.Spawner.environment = {"OMP_NUM_THREADS" : "2"}
 
 # Timeout (in seconds) before giving up on a spawned HTTP server
 # 

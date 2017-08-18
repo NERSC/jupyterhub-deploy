@@ -10,6 +10,8 @@ c.Spawner.cmd = [bindir + 'jupyterhub-singleuser']
 
 c.Spawner.ip = '0.0.0.0'
 
+c.Spawner.environment = {"OMP_NUM_THREADS" : "2"}
+
 c.JupyterHub.authenticator_class = 'gsiauthenticator.auth.GSIAuthenticator'
 if 'ADMINS' in os.environ:
     c.Authenticator.admin_users = os.environ['REMOTE_HOST'].split(',')
