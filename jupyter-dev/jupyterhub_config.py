@@ -14,6 +14,8 @@ c.Spawner.environment = {"OMP_NUM_THREADS" : "2"}
 
 c.Spawner.default_url = '/tree/global/homes/{username[0]}/{username}'
 
+c.Spawner.poll_interval = 300
+
 c.JupyterHub.authenticator_class = 'gsiauthenticator.auth.GSIAuthenticator'
 if 'ADMINS' in os.environ:
     c.Authenticator.admin_users = os.environ['REMOTE_HOST'].split(',')
