@@ -3,7 +3,7 @@ import os
 c.JupyterHub.hub_ip = '0.0.0.0'
 c.JupyterHub.hub_port = 8082
 
-bindir = '/global/common/cori/software/python/3.5-anaconda/bin/'
+bindir = '/global/common/cori/software/python/3.6-anaconda-4.4/bin/'
 if 'BASE_PATH' in os.environ:
     bindir = os.environ['BASE_PATH']+'/bin/'
 c.Spawner.cmd = [bindir + 'jupyterhub-singleuser']
@@ -13,10 +13,13 @@ c.Spawner.ip = '0.0.0.0'
 c.Spawner.environment = {"OMP_NUM_THREADS" : "2"}
 
 c.Spawner.default_url = '/tree/global/homes/{username[0]}/{username}'
+c.Spawner.notebook_dir = '/'
 
 c.Spawner.poll_interval = 300
 
 c.JupyterHub.authenticator_class = 'gsiauthenticator.auth.GSIAuthenticator'
+c.GSIAuthenticator.proxy_lifetime = 999999
+
 if 'ADMINS' in os.environ:
     c.Authenticator.admin_users = os.environ['REMOTE_HOST'].split(',')
 
