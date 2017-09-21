@@ -8,7 +8,8 @@ RUN \
         ldap-utils          \
         libnss-ldapd        \
         libpam-ldap         \
-        nscd
+        nscd                \
+        texlive-xetex
 
 # Python 3 Anaconda and additional packages
 
