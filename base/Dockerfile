@@ -50,9 +50,10 @@ RUN \
 ENV PATH=/opt/anaconda3/bin:$PATH
 WORKDIR /tmp
 RUN \
-    npm install -g configurable-http-proxy              &&  \
-    git clone https://github.com/NERSC/jupyterhub.git   &&  \
-    cd jupyterhub                                       &&  \
-    /opt/anaconda3/bin/python setup.py js               &&  \
-    /opt/anaconda3/bin/pip install .                    &&  \
+    npm install -g configurable-http-proxy                  &&  \
+    git clone https://github.com/jupyterhub/jupyterhub.git  &&  \
+    cd jupyterhub                                           &&  \
+    git checkout tags/0.8.0rc1                              &&  \
+    /opt/anaconda3/bin/python setup.py js                   &&  \
+    /opt/anaconda3/bin/pip install .                        &&  \
     rm -rf ~/.cache ~/.npm
