@@ -296,15 +296,11 @@ c.JupyterHub.spawner_class = 'sshspawner.sshspawner.SSHSpawner'
 #  
 #  When setting this, you should also set ssl_key
 #c.JupyterHub.ssl_cert = ''
-if 'SSL_KEY' in os.environ and 'SSL_CERT' in os.environ:
-    c.JupyterHub.ssl_cert = os.environ['SSL_CERT']
 
 ## Path to SSL key file for the public facing interface of the proxy
 #  
 #  When setting this, you should also set ssl_cert
 #c.JupyterHub.ssl_key = ''
-if 'SSL_KEY' in os.environ and 'SSL_CERT' in os.environ:
-    c.JupyterHub.ssl_key = os.environ['SSL_KEY']
 
 ## Host to send statsd metrics to
 #c.JupyterHub.statsd_host = ''
