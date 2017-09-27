@@ -24,4 +24,4 @@ EXPOSE 8000
 LABEL org.jupyter.service="jupyterhub"
 
 ADD jupyterhub_config.py /srv/jupyterhub_config.py
-CMD ["jupyterhub"]
+CMD ["jupyterhub", "--debug"]
