@@ -53,7 +53,7 @@ RUN \
     npm install -g configurable-http-proxy                  &&  \
     git clone https://github.com/jupyterhub/jupyterhub.git  &&  \
     cd jupyterhub                                           &&  \
-    git checkout tags/0.8.0rc2                              &&  \
+    git checkout tags/0.8.0                                 &&  \
     /opt/anaconda3/bin/python setup.py js                   &&  \
     /opt/anaconda3/bin/pip install .                        &&  \
     rm -rf ~/.cache ~/.npm
