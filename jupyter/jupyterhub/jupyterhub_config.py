@@ -220,7 +220,6 @@ c.JupyterHub.ip = '0.0.0.0'
 
 ## The public facing port of the proxy
 #c.JupyterHub.port = 8000
-c.JupyterHub.port = 443
 
 ## DEPRECATED since version 0.8 : Use ConfigurableHTTPProxy.api_url
 #c.JupyterHub.proxy_api_ip = ''
@@ -283,13 +282,11 @@ c.JupyterHub.proxy_api_ip = '127.0.0.1'
 #  
 #  When setting this, you should also set ssl_key
 #c.JupyterHub.ssl_cert = ''
-c.JupyterHub.ssl_cert = '/etc/httpd/ssl/wild.nersc.gov.crt'
 
 ## Path to SSL key file for the public facing interface of the proxy
 #  
 #  When setting this, you should also set ssl_cert
 #c.JupyterHub.ssl_key = ''
-c.JupyterHub.ssl_key = '/etc/httpd/ssl/wild.nersc.gov.key'
 
 ## Host to send statsd metrics to
 #c.JupyterHub.statsd_host = ''
