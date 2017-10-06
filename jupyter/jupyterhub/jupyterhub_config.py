@@ -271,7 +271,13 @@ c.JupyterHub.proxy_api_ip = '127.0.0.1'
 #              'environment':
 #          }
 #      ]
-#c.JupyterHub.services = []
+c.JupyterHub.services = [
+    {
+        'name': 'cull-idle',
+        'admin': True,
+        'command': 'cull_idle_servers.py --timeout=300'.split(),
+    }
+]
 
 ## The class to use for spawning single-user servers.
 #  
