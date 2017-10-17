@@ -1,18 +1,8 @@
 jupyterdev:
-  image: nersc/jupyterhub-dev:latest
+  image: registry.spin.nersc.gov/das/jupyterhub-dev:latest 
   environment:
       - PATH=/opt/anaconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-      - SSL_KEY=/ssl/server.key
-      - SSL_CERT=/ssl/server.crt
-      - HUB_API_URL='http://jupyter-dev.nersc.gov:9082/hub/api'
-# For prod:
-#      - HUB_API_URL='http://jupyter-dev.nersc.gov:8082/hub/api'
-  volumes:
-     - /etc/httpd/conf.d/certificates/wild.nersc.gov.key:/ssl/server.key:ro
-     - /etc/httpd/conf.d/certificates/wild.nersc.gov.crt:/ssl/server.crt:ro
+      - HUB_API_URL='http://jupyter-dev.nersc.gov:8081/hub/api'
   ports:
-    - 128.55.210.148:9443:8000/tcp
-    - 128.55.210.148:9082:8082/tcp
-# For prod:
-#    - 128.55.210.148:443:8000/tcp
-#    - 128.55.210.148:8082:8082/tcp
+      - 8000:8000/tcp
+      - 8081:8081/tcp
