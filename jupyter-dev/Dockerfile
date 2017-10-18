@@ -1,4 +1,4 @@
-FROM nersc/jupyterhub-base:latest
+FROM registry.spin.nersc.gov/das/jupyterhub-base:latest
 MAINTAINER Rollin Thomas <rcthomas@lbl.com>
 
 # Add gsissh
