@@ -2,6 +2,8 @@
 
 import os
 
+import requests
+
 bindir = '/global/common/cori/software/python/3.6-anaconda-4.4/bin/'
 if 'BASE_PATH' in os.environ:
     bindir = os.path.join(os.environ['BASE_PATH'], 'bin')
@@ -200,7 +202,7 @@ c.JupyterHub.hub_ip = '0.0.0.0'
 
 ## The port for the Hub process
 #c.JupyterHub.hub_port = 8081
-c.JupyterHub.hub_port = 8082
+c.JupyterHub.hub_port = 3306
 
 ## The public facing ip of the whole application (the proxy)
 #c.JupyterHub.ip = ''
@@ -788,7 +790,7 @@ if 'REMOTE_HOST' in os.environ:
     c.SSHSpawner.remote_host = host
     c.SSHSpawner.remote_port = port
 
-c.SSHSpawner.hub_api_url = 'http://jupyter-dev.nersc.gov:8082/hub/api'
+c.SSHSpawner.hub_api_url = 'http://{}:3306/hub/api'.format(requests.get('https://ifconfig.co/json').json()['ip'])
 if 'HUB_API_URL' in os.environ:
     c.SSHSpawner.hub_api_url = os.environ['HUB_API_URL']
 
