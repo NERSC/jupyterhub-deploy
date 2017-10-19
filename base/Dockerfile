@@ -39,6 +39,7 @@ RUN \
         mako            \
         markupsafe      \
         nodejs          \
+        psycopg2        \
         pyopenssl       \
         python-dateutil \
         sqlalchemy      \
