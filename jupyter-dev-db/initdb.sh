@@ -3,7 +3,7 @@
 echo "";
 echo "Running initdb.sh.";
 if [ -z "$JPY_PSQL_PASSWORD" ]; then
-    echo "Need to set JPY_PSQL_PASSWORD in Dockerfile or via command line.";
+    echo "Need to set JPY_PSQL_PASSWORD in Dockerfile or via environment.";
     exit 1;
 fi
 echo "";
