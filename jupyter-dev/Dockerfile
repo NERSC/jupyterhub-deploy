@@ -20,9 +20,6 @@ RUN \
     pip install git+https://github.com/NERSC/sshspawner.git
 
 WORKDIR /srv/
-EXPOSE 8000
-
-LABEL org.jupyter.service="jupyterhub"
 
 ADD jupyterhub_config.py /srv/jupyterhub_config.py
 CMD ["jupyterhub", "--debug"]
