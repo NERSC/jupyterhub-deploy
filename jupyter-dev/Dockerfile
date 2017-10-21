@@ -19,7 +19,10 @@ RUN \
     pip install git+https://github.com/NERSC/gsiauthenticator.git && \
     pip install git+https://github.com/NERSC/sshspawner.git
 
-WORKDIR /srv/
 
-ADD jupyterhub_config.py /srv/jupyterhub_config.py
+ADD jupyterhub_config.py docker-entrypoint.sh /srv/
+
+WORKDIR /srv
+RUN chmod +x docker-entrypoint.sh
 CMD ["jupyterhub", "--debug"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
