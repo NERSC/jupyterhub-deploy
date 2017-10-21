@@ -156,11 +156,8 @@ c.JupyterHub.cookie_max_age_days = 0.5
 
 ## url for the database. e.g. `sqlite:///jupyterhub.sqlite`
 #c.JupyterHub.db_url = 'sqlite:///jupyterhub.sqlite'
-pg_pass = os.getenv('POSTGRES_ENV_JPY_PSQL_PASSWORD')
-pg_host = os.getenv('POSTGRES_PORT_5432_TCP_ADDR')
-c.JupyterHub.db_url = 'postgresql://jupyterhub:{}@{}:5432/jupyterhub'.format(
-        pg_pass,
-        pg_host,
+c.JupyterHub.db_url = 'postgresql://jupyterhub:{}@db:5432/jupyterhub'.format(
+        os.getenv('POSTGRES_PASSWORD')
 )
 
 ## log all database transactions. This has A LOT of output
