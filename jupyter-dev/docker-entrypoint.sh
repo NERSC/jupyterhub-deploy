@@ -15,10 +15,8 @@ file_env() {
     fi
     local val="$def"
     if [ "${!var:-}" ]; then
-        echo 1
         val="${!var}"
     elif [ "${!fileVar:-}" ]; then
-        echo 2
         val="$(< "${!fileVar}")"
     fi
     export "$var"="$val"
