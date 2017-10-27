@@ -1,7 +1,7 @@
 FROM registry.spin.nersc.gov/das/jupyterhub-base:latest
 MAINTAINER Rollin Thomas <rcthomas@lbl.com>
 
-# Add gsissh
+# Install gsissh
 
 RUN \
   echo "deb http://downloads.globus.org/toolkit/gt6/stable/deb/ jessie contrib" >> /etc/apt/sources.list && \
@@ -9,19 +9,20 @@ RUN \
   apt-get update && \
   apt-get --yes install gsi-openssh-clients
 
-# Add edisongrid cert
+# Add certs
 
-ADD ./certs /tmp/certs/
+ADD certs /etc/grid-security/certificates
+
+# JupyterHub GSI Authenticator and SSH Spawner from NERSC
+  
 RUN \
-    mkdir /etc/grid-security/certificates/ && \
-    cp /tmp/certs/* /etc/grid-security/certificates/ && \
     pip install git+https://github.com/NERSC/gsiauthenticator.git && \
     pip install git+https://github.com/NERSC/sshspawner.git
 
-WORKDIR /srv/
-EXPOSE 8000
 
-LABEL org.jupyter.service="jupyterhub"
+ADD jupyterhub_config.py docker-entrypoint.sh /srv/
 
-ADD jupyterhub_config.py /srv/jupyterhub_config.py
+WORKDIR /srv
+RUN chmod +x docker-entrypoint.sh
 CMD ["jupyterhub", "--debug"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
