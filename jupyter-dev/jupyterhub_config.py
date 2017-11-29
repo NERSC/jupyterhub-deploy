@@ -552,7 +552,7 @@ c.Spawner.notebook_dir = '/'
 #  JupyterHub modifies its own state accordingly and removes appropriate routes
 #  from the configurable proxy.
 #c.Spawner.poll_interval = 30
-c.Spawner.poll_interval = 300
+c.Spawner.poll_interval = 1800
 
 ## The port for single-user servers to listen on.
 #  
@@ -779,6 +779,7 @@ c.Authenticator.admin_users = set(os.environ.get("ADMINS", "").split(","))
 
 c.GSIAuthenticator.proxy_lifetime = 999999
 c.GSIAuthenticator.server = 'nerscca1.nersc.gov'
+c.GSIAuthenticator.cert_path_prefix = '/certs/x509_'
 
 #------------------------------------------------------------------------------
 # SSHSpawner(Spawner) configuration
