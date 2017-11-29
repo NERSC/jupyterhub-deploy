@@ -779,6 +779,7 @@ c.Authenticator.admin_users = set(os.environ.get("ADMINS", "").split(","))
 
 c.GSIAuthenticator.proxy_lifetime = 999999
 c.GSIAuthenticator.server = 'nerscca1.nersc.gov'
+c.GSIAuthenticator.cert_path_prefix = '/certs/x509_'
 
 #------------------------------------------------------------------------------
 # SSHSpawner(Spawner) configuration
