@@ -19,6 +19,11 @@ RUN \
     pip install git+https://github.com/NERSC/gsiauthenticator.git && \
     pip install git+https://github.com/NERSC/sshspawner.git
 
+# Volume for user cert/key files
+
+VOLUME /certs
+
+# Config and entrypoint script
 
 ADD jupyterhub_config.py docker-entrypoint.sh /srv/
 
