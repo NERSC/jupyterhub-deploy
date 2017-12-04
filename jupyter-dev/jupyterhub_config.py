@@ -800,3 +800,5 @@ if 'HUB_API_URL' in os.environ:
 c.SSHSpawner.use_gsi = True
 c.SSHSpawner.path = bindir + ':/global/common/cori/das/jupyterhub/:/usr/common/usg/bin:/usr/bin:/bin'
 c.SSHSpawner.remote_port_command = '/global/common/cori/das/jupyterhub/get_port.py'
+c.SSHSpawner.gsi_cert_path = '/certs/x509_%U'
+c.SSHSpawner.gsi_key_path = '/certs/x509_%U'
