@@ -49,7 +49,7 @@ RUN \
 
 # Config and entrypoint script
 
-ADD docker-entrypoint.sh jupyterhub /srv/
+ADD docker-entrypoint.sh jupyterhub_config.py /srv/
  
 WORKDIR /srv
 RUN chmod +x docker-entrypoint.sh
