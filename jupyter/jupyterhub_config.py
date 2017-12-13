@@ -632,6 +632,7 @@ c.Spawner.notebook_dir = '/'
 #  
 #  Defaults to an empty set, in which case no user has admin access.
 #c.Authenticator.admin_users = set()
+c.Authenticator.admin_users = set(os.environ.get("ADMINS", "").split(","))
 
 ## Automatically begin the login process
 #  
