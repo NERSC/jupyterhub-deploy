@@ -1,5 +1,7 @@
 # Configuration file for jupyterhub.
 
+import os
+
 #------------------------------------------------------------------------------
 # Application(SingletonConfigurable) configuration
 #------------------------------------------------------------------------------
