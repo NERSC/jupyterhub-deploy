@@ -47,11 +47,11 @@ RUN \
     ln -s /global/common/datatran /usr/common   && \
     echo "datatran" > /etc/clustername
 
-ADD jupyterhub /srv/
+# Config and entrypoint script
 
-ADD entrypoint.sh /entrypoint.sh
+ADD docker-entrypoint.sh jupyterhub /srv/
  
-EXPOSE 80 443
 WORKDIR /srv
-ENTRYPOINT [ "/entrypoint.sh" ]
-CMD  []
+RUN chmod +x docker-entrypoint.sh
+CMD ["jupyterhub", "--debug"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
