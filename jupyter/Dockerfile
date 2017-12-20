@@ -34,27 +34,24 @@ RUN \
     /opt/anaconda2/bin/ipython kernel install                   && \
     /opt/anaconda2/bin/conda clean --yes --all
 
-# LDAP
+# PAM, LDAP
 
-ADD ldap /tmp/ldap
+COPY etc/ /etc/
+
+# GPFS
+
 RUN \
-    mkdir -p  /etc/httpd/ssl && \
-    cp /tmp/ldap/ldap.conf /etc/ldap.conf && \
-    cp /tmp/ldap/nslcd.conf /etc/nslcd.conf && \
-    cp /tmp/ldap/nsswitch.conf /etc/nsswitch.conf && \
-    cp /tmp/ldap/password-auth /etc/pam.d/password-auth && \
-    mkdir /global && \
-    ln -sf /global/u1 /global/homes && \
-    ln -sf /global/project /project && \
-    ln -s /global/common/datatran /usr/common && \
+    mkdir /global                               && \
+    ln -sf /global/u1 /global/homes             && \
+    ln -sf /global/project /project             && \
+    ln -s /global/common/datatran /usr/common   && \
     echo "datatran" > /etc/clustername
 
-ADD jupyterhub /srv/
-RUN mv /srv/jupyterhub.pamd /etc/pam.d/jupyterhub
+# Config and entrypoint script
 
-ADD entrypoint.sh /entrypoint.sh
+ADD docker-entrypoint.sh jupyterhub_config.py /srv/
  
-EXPOSE 80 443
 WORKDIR /srv
-ENTRYPOINT [ "/entrypoint.sh" ]
-CMD  []
+RUN chmod +x docker-entrypoint.sh
+CMD ["jupyterhub", "--debug"]
+ENTRYPOINT ["./docker-entrypoint.sh"]

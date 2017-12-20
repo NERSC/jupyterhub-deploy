@@ -1,5 +1,7 @@
 # Configuration file for jupyterhub.
 
+import os
+
 #------------------------------------------------------------------------------
 # Application(SingletonConfigurable) configuration
 #------------------------------------------------------------------------------
@@ -158,7 +160,6 @@
 #  This will *only* include the logs of the Hub itself, not the logs of the proxy
 #  or any single-user servers.
 #c.JupyterHub.extra_log_file = ''
-c.JupyterHub.extra_log_file = '/var/log/jupyterhub/jupyterhub.log'
 
 ## Extra log handlers to set on JupyterHub logger
 #c.JupyterHub.extra_log_handlers = []
@@ -633,6 +634,7 @@ c.Spawner.notebook_dir = '/'
 #  
 #  Defaults to an empty set, in which case no user has admin access.
 #c.Authenticator.admin_users = set()
+c.Authenticator.admin_users = set(os.environ.get("ADMINS", "").split(","))
 
 ## Automatically begin the login process
 #  
