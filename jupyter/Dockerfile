@@ -4,7 +4,9 @@ MAINTAINER Rollin Thomas <rcthomas@lbl.com>
 # Additional Ubuntu packages
 
 RUN \
+    apt-get update      &&  \
     apt-get --yes install   \
+        dvipng              \
         ldap-utils          \
         libnss-ldapd        \
         libpam-ldap         \
