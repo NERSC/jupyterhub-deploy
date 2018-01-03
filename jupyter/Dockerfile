@@ -11,6 +11,7 @@ RUN \
         libnss-ldapd        \
         libpam-ldap         \
         nscd                \
+        rsyslog             \
         texlive-xetex
 
 # Python 3 Anaconda and additional packages
