@@ -50,6 +50,12 @@ RUN \
     ln -s /global/common/datatran /usr/common   && \
     echo "datatran" > /etc/clustername
 
+# Jupyterhub features
+
+RUN \
+    /opt/anaconda3/bin/jupyter nbextension enable --sys-prefix --py widgetsnbextension   && \
+    /opt/anaconda2/bin/jupyter nbextension enable --sys-prefix --py widgetsnbextension
+
 # Config and entrypoint script
 
 ADD docker-entrypoint.sh jupyterhub_config.py /srv/
