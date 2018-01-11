@@ -6,13 +6,15 @@ MAINTAINER Rollin Thomas <rcthomas@lbl.com>
 RUN \
     apt-get update      &&  \
     apt-get --yes install   \
+        csh                 \
         dvipng              \
         ldap-utils          \
         libnss-ldapd        \
         libpam-ldap         \
         nscd                \
         rsyslog             \
-        texlive-xetex
+        texlive-xetex       \
+        zsh
 
 # Python 3 Anaconda and additional packages
 
