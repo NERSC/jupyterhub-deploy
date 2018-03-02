@@ -5,6 +5,7 @@ biopython
 blaze
 jupyter
 netcdf4
+r-car
 r-essentials
 rpy2
 theano
