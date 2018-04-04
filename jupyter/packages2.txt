@@ -10,3 +10,4 @@ r-essentials
 rpy2
 theano
 ujson
+notebook=5.4.1

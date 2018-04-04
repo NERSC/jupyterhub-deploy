@@ -8,3 +8,4 @@ r-car
 r-essentials
 rpy2
 ujson
+notebook=5.4.1
