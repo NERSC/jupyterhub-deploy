@@ -10,3 +10,4 @@ rpy2
 ujson
 notebook=5.4.1
 scikit-learn
+seaborn
