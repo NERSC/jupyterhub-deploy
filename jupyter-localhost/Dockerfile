@@ -1,5 +1,5 @@
 FROM registry.spin.nersc.gov/das/jupyterhub-base:latest
-MAINTAINER Rollin Thomas <rcthomas@lbl.com>
+LABEL maintainer="Rollin Thomas <rcthomas@lbl.com>"
 
 # Python 3 Anaconda and additional packages
 
