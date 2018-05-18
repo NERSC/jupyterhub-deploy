@@ -1,41 +1,19 @@
-FROM ubuntu:16.04
+FROM registry.spin.nersc.gov/das/jupyterhub-base:latest
 MAINTAINER Rollin Thomas <rcthomas@lbl.gov>
 WORKDIR /tmp
-
-# Base Ubuntu packages
-
-ENV DEBIAN_FRONTEND noninteractive
-ENV LANG C.UTF-8
 
 RUN \
     apt-get update          &&  \
     apt-get --yes upgrade   &&  \
     apt-get --yes install       \
-        bzip2                   \
-        curl                    \
-        openssh-server          \
-        vim
+        openssh-server
 
 # Configure sshd
 
 RUN \
     mkdir -p /var/run/sshd
 
-### ADD NERSC-keys-api /usr/lib/nersc-ssh-keys/
-### RUN chmod a+x /usr/lib/nersc-ssh-keys/NERSC-keys-api
-##
-### RUN \
-###     echo "AuthorizedKeysCommand /usr/lib/nersc-ssh-keys/NERSC-keys-api" >> /etc/ssh/sshd_config && \
-###     echo "AuthorizedKeysCommandUser nobody" >> /etc/ssh/sshd_config
-
 # Python 3 Anaconda and additional packages
-
-RUN \
-    curl --output miniconda3.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh   &&  \
-    bash miniconda3.sh -f -b -p /opt/anaconda3  &&  \
-    rm -rf miniconda3.sh
-
-ENV PATH /opt/anaconda3/bin:$PATH
 
 RUN \
     conda update --yes conda    &&  \
