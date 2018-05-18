@@ -188,6 +188,7 @@
 #  See `hub_connect_ip` for cases where the bind and connect address should
 #  differ.
 #c.JupyterHub.hub_ip = '127.0.0.1'
+c.JupyterHub.hub_ip = '0.0.0.0'
 
 ## The port for the Hub process
 #c.JupyterHub.hub_port = 8081
@@ -453,6 +454,7 @@
 #  The JupyterHub proxy implementation should be able to send packets to this
 #  interface.
 #c.Spawner.ip = ''
+c.Spawner.ip = '0.0.0.0'
 
 ## Minimum number of bytes a single-user notebook server is guaranteed to have
 #  available.
@@ -742,6 +744,7 @@ c.Authenticator.admin_users = set(["master"])
 ## The number of threads to allocate for encryption
 #c.CryptKeeper.n_threads = 2
 
+c.Spawner.http_timeout = 120
 c.JupyterHub.spawner_class = 'sshspawner.sshspawner.SSHSpawner'
 
 # The remote host to spawn notebooks on
@@ -755,3 +758,5 @@ c.SSHSpawner.path = '/opt/anaconda3/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games:/u
 c.SSHSpawner.remote_port_command = '/opt/anaconda3/bin/get_port.py'
 
 c.SSHSpawner.ssh_keyfile = '/tmp/%U.key'
+
+c.SSHSpawner.hub_api_url = 'http://web:8081/hub/api'
