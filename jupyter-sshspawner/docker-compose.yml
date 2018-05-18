@@ -1,13 +1,13 @@
-web:
-  image: jupyter/web:sshspawner
-  links:
-      - app
-  volumes:
-      - ./config:/config
-  ports:
-      - 8000:8000/tcp
-      - 8081:8081/tcp
-app:
-  image: jupyter/app:sshspawner
-  volumes:
-      - ./config:/config
+version: "3"
+services:
+    web:
+        image: jupyter/web:sshspawner
+        volumes:
+            - ./config:/config
+        ports:
+            - 8000:8000
+            - 8081:8081
+    app:
+        image: jupyter/app:sshspawner
+        volumes:
+            - ./config:/config
