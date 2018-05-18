@@ -741,3 +741,17 @@ c.Authenticator.admin_users = set(["master"])
 
 ## The number of threads to allocate for encryption
 #c.CryptKeeper.n_threads = 2
+
+c.JupyterHub.spawner_class = 'sshspawner.sshspawner.SSHSpawner'
+
+# The remote host to spawn notebooks on
+c.SSHSpawner.remote_host = 'app'
+c.SSHSpawner.remote_port = '22'
+
+# The system path for the remote SSH session. Must have the jupyter-singleuser and python executables
+c.SSHSpawner.path = '/opt/anaconda3/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games:/usr/lib/mit/bin:/usr/lib/mit/sbin'
+
+# The command to return an unused port on the target system. See scripts/get_port.py for an example
+c.SSHSpawner.remote_port_command = '/opt/anaconda3/bin/get_port.py'
+
+c.SSHSpawner.ssh_keyfile = '/tmp/%U.key'
