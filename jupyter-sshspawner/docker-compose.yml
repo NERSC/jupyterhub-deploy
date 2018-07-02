@@ -7,7 +7,12 @@ services:
         ports:
             - 8000:8000
             - 8081:8081
-    app:
+    app1:
+        image: jupyter/app:sshspawner
+        volumes:
+            - ./config:/config
+
+    app2:
         image: jupyter/app:sshspawner
         volumes:
             - ./config:/config

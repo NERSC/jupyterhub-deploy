@@ -4,7 +4,7 @@ MAINTAINER Rollin Thomas <rcthomas@lbl.com>
 # JupyterHub components
 
 RUN \
-    pip install git+https://github.com/NERSC/sshspawner.git
+    pip install git+https://github.com/krinsman/sshspawner.git
 
 # Some dummy users
 

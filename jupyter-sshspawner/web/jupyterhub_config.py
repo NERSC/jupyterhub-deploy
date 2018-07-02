@@ -748,7 +748,8 @@ c.Spawner.http_timeout = 120
 c.JupyterHub.spawner_class = 'sshspawner.sshspawner.SSHSpawner'
 
 # The remote host to spawn notebooks on
-c.SSHSpawner.remote_host = 'app'
+# c.SSHSpawner.remote_host = 'app'
+c.SSHSpawner.nodes = ['app1', 'app2']
 c.SSHSpawner.remote_port = '22'
 
 # The system path for the remote SSH session. Must have the jupyter-singleuser and python executables
@@ -757,6 +758,6 @@ c.SSHSpawner.path = '/opt/anaconda3/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games:/u
 # The command to return an unused port on the target system. See scripts/get_port.py for an example
 c.SSHSpawner.remote_port_command = '/opt/anaconda3/bin/get_port.py'
 
-c.SSHSpawner.ssh_keyfile = '/tmp/%U.key'
+c.SSHSpawner.ssh_keyfile = '/tmp/{username}.key'
 
 c.SSHSpawner.hub_api_url = 'http://web:8081/hub/api'
