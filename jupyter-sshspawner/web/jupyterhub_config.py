@@ -748,7 +748,8 @@ c.Spawner.http_timeout = 120
 c.JupyterHub.spawner_class = 'sshspawner.sshspawner.SSHSpawner'
 
 # The remote host to spawn notebooks on
-c.SSHSpawner.remote_host = 'app'
+# c.SSHSpawner.remote_host = 'app'
+c.SSHSpawner.nodes = ['app1', 'app2']
 c.SSHSpawner.remote_port = '22'
 
 # The system path for the remote SSH session. Must have the jupyter-singleuser and python executables
