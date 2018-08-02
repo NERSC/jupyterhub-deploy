@@ -10,14 +10,15 @@ RUN \
     apt-get update          &&  \
     apt-get --yes upgrade   &&  \
     apt-get --yes install       \
+        --no-install-recommends \
         bzip2                   \
         curl                    \
+        ca-certificates         \
         git                     \
         libffi-dev              \
         lsb-release             \
         tzdata                  \
-        vim                     \
-        wget
+        vim
 
 # Timezone to Berkeley
 
@@ -29,11 +30,12 @@ RUN \
 # Python 3 Miniconda and dependencies for JupyterHub we can get via conda
 
 RUN \
-    wget -q -O /tmp/miniconda3.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh    &&  \
+    curl -s -o /tmp/miniconda3.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh    &&  \
     bash /tmp/miniconda3.sh -f -b -p /opt/anaconda3     &&  \
     rm -rf /tmp/anaconda3.sh                            &&  \
     /opt/anaconda3/bin/conda update --yes conda         &&  \
     /opt/anaconda3/bin/conda install --yes                  \
+        alembic         \
         decorator       \
         jinja2          \
         mako            \
@@ -42,6 +44,7 @@ RUN \
         psycopg2        \
         pyopenssl       \
         python-dateutil \
+        python-editor   \
         sqlalchemy      \
         tornado         \
         traitlets
@@ -54,9 +57,9 @@ RUN \
     npm install -g configurable-http-proxy                          &&  \
     git clone https://github.com/jupyterhub/jupyterhub.git          &&  \
     cd jupyterhub                                                   &&  \
-    git checkout tags/0.8.0                                         &&  \
+    git checkout tags/0.9.1                                         &&  \
     /opt/anaconda3/bin/python setup.py js                           &&  \
-    /opt/anaconda3/bin/pip install .                                &&  \
+    /opt/anaconda3/bin/pip --no-cache-dir install .                 &&  \
     cp examples/cull-idle/cull_idle_servers.py /opt/anaconda3/bin/. &&  \
     chmod u+x /opt/anaconda3/bin/cull_idle_servers.py               &&  \
     rm -rf ~/.cache ~/.npm
