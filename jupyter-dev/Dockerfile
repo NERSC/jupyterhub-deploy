@@ -16,8 +16,8 @@ ADD certs /etc/grid-security/certificates
 # JupyterHub GSI Authenticator and SSH Spawner from NERSC
   
 RUN \
-    pip install git+https://github.com/NERSC/gsiauthenticator.git && \
-    pip install git+https://github.com/NERSC/sshspawner.git
+    pip install --no-cache-dir git+https://github.com/NERSC/gsiauthenticator.git && \
+    pip install --no-cache-dir git+https://github.com/NERSC/sshspawner.git
 
 # Volume for user cert/key files
 
