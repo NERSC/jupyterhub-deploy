@@ -1,5 +1,5 @@
 FROM ubuntu:18.04
-MAINTAINER Rollin Thomas <rcthomas@lbl.gov>
+LABEL maintainer="Rollin Thomas <rcthomas@lbl.gov>"
 
 # Base Ubuntu packages
 
