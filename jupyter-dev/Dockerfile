@@ -4,10 +4,15 @@ LABEL maintainer="Rollin Thomas <rcthomas@lbl.gov>"
 # Install gsissh
 
 RUN \
-  echo "deb http://downloads.globus.org/toolkit/gt6/stable/deb/ jessie contrib" >> /etc/apt/sources.list && \
-  apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 44AE7EC2FAF24365 && \
-  apt-get update && \
-  apt-get --yes install gsi-openssh-clients
+    apt-get update              &&  \
+    apt-get install --yes           \
+        --no-install-recommends     \
+        gnupg2                  &&  \
+    echo "deb http://downloads.globus.org/toolkit/gt6/stable/deb/ jessie contrib" >> /etc/apt/sources.list && \
+    apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 44AE7EC2FAF24365 && \
+    apt-get update              &&  \
+    apt-get install --yes           \
+        gsi-openssh-clients
 
 # Add certs
 
