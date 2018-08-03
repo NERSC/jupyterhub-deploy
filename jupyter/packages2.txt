@@ -1,15 +1,9 @@
-astropy
 basemap
 beautiful-soup
 biopython
-blaze
-jupyter
 netcdf4
 r-car
 r-essentials
 rpy2
 theano
 ujson
-notebook=5.4.1
-scikit-learn
-seaborn
