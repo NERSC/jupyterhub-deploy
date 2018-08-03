@@ -1,5 +1,13 @@
 # Configuration file for jupyterhub.
 
+import os
+
+import requests
+
+bindir = '/global/common/cori/software/python/3.6-anaconda-4.4/bin/'
+if 'BASE_PATH' in os.environ:
+    bindir = os.path.join(os.environ['BASE_PATH'], 'bin')
+
 #------------------------------------------------------------------------------
 # Application(SingletonConfigurable) configuration
 #------------------------------------------------------------------------------
@@ -78,6 +86,7 @@
 #    where `handler` is the calling web.RequestHandler,
 #    and `data` is the POST form data from the login page.
 #c.JupyterHub.authenticator_class = 'jupyterhub.auth.PAMAuthenticator'
+c.JupyterHub.authenticator_class = 'gsiauthenticator.auth.GSIAuthenticator'
 
 ## The base URL of the entire application.
 #  
@@ -142,6 +151,7 @@
 
 ## Number of days for a login cookie to be valid. Default is two weeks.
 #c.JupyterHub.cookie_max_age_days = 14
+c.JupyterHub.cookie_max_age_days = 0.5
 
 ## The cookie secret to use to encrypt cookies.
 #  
@@ -162,6 +172,9 @@
 
 ## url for the database. e.g. `sqlite:///jupyterhub.sqlite`
 #c.JupyterHub.db_url = 'sqlite:///jupyterhub.sqlite'
+c.JupyterHub.db_url = 'postgresql://jupyterhub:{}@db:5432/jupyterhub'.format(
+        os.getenv('POSTGRES_PASSWORD')
+)
 
 ## log all database transactions. This has A LOT of output
 #c.JupyterHub.debug_db = False
@@ -252,6 +265,7 @@
 #  See `hub_connect_ip` for cases where the bind and connect address should
 #  differ, or `hub_bind_url` for setting the full bind URL.
 #c.JupyterHub.hub_ip = '127.0.0.1'
+c.JupyterHub.hub_ip = '0.0.0.0'
 
 ## The internal port for the Hub process.
 #  
@@ -357,11 +371,19 @@
 #          }
 #      ]
 #c.JupyterHub.services = []
+c.JupyterHub.services = [
+    {
+        'name': 'cull-idle',
+        'admin': True,
+        'command': 'cull_idle_servers.py --timeout=43200'.split(),
+    }
+]
 
 ## The class to use for spawning single-user servers.
 #  
 #  Should be a subclass of Spawner.
 #c.JupyterHub.spawner_class = 'jupyterhub.spawner.LocalProcessSpawner'
+c.JupyterHub.spawner_class = 'sshspawner.sshspawner.SSHSpawner'
 
 ## Path to SSL certificate file for the public facing interface of the proxy
 #  
@@ -466,6 +488,7 @@
 #  environment variables. Most, including the default, do not. Consult the
 #  documentation for your spawner to verify!
 #c.Spawner.cmd = ['jupyterhub-singleuser']
+c.Spawner.cmd = [os.path.join(bindir, 'jupyterhub-labhub')]
 
 ## Minimum number of cpu-cores a single-user notebook server is guaranteed to
 #  have available.
@@ -508,6 +531,7 @@
 #  - Start with `/notebooks` instead of `/tree` if `default_url` points to a notebook instead of a directory.
 #  - You can set this to `/lab` to have JupyterLab start by default, rather than Jupyter Notebook.
 #c.Spawner.default_url = ''
+c.Spawner.default_url = '/lab/tree/global/homes/{username[0]}/{username}'
 
 ## Disable per-user configuration of single-user servers.
 #  
@@ -545,6 +569,7 @@
 #  across upgrades, so if you are using the callable take care to verify it
 #  continues to work after upgrades!
 #c.Spawner.environment = {}
+c.Spawner.environment = {"OMP_NUM_THREADS" : "2"}
 
 ## Timeout (in seconds) before giving up on a spawned HTTP server
 #  
@@ -557,6 +582,7 @@
 #  The JupyterHub proxy implementation should be able to send packets to this
 #  interface.
 #c.Spawner.ip = ''
+c.Spawner.ip = '0.0.0.0'
 
 ## Minimum number of bytes a single-user notebook server is guaranteed to have
 #  available.
@@ -603,6 +629,7 @@
 #  Note that this does *not* prevent users from accessing files outside of this
 #  path! They can do so with many other means.
 #c.Spawner.notebook_dir = ''
+c.Spawner.notebook_dir = '/'
 
 ## An HTML form for options a user can specify on launching their server.
 #  
@@ -639,6 +666,7 @@
 #  JupyterHub modifies its own state accordingly and removes appropriate routes
 #  from the configurable proxy.
 #c.Spawner.poll_interval = 30
+c.Spawner.poll_interval = 1800
 
 ## The port for single-user servers to listen on.
 #  
@@ -759,6 +787,7 @@
 #  
 #  Defaults to an empty set, in which case no user has admin access.
 #c.Authenticator.admin_users = set()
+c.Authenticator.admin_users = set(os.environ.get("ADMINS", "").split(","))
 
 ## Automatically begin the login process
 #  
@@ -905,3 +934,33 @@
 
 ## The number of threads to allocate for encryption
 #c.CryptKeeper.n_threads = 2
+
+#------------------------------------------------------------------------------
+# GSIAuthenticator(Authenticator) configuration
+#------------------------------------------------------------------------------
+
+c.GSIAuthenticator.proxy_lifetime = 999999
+c.GSIAuthenticator.server = 'nerscca1.nersc.gov'
+c.GSIAuthenticator.cert_path_prefix = '/certs/x509_'
+
+#------------------------------------------------------------------------------
+# SSHSpawner(Spawner) configuration
+#------------------------------------------------------------------------------
+
+c.SSHSpawner.remote_host = 'cori19-224.nersc.gov'
+c.SSHSpawner.remote_port = '2222'
+c.SSHSpawner.ssh_command = 'gsissh'
+if 'REMOTE_HOST' in os.environ:
+    host, port = os.environ['REMOTE_HOST'].split(':')
+    c.SSHSpawner.remote_host = host
+    c.SSHSpawner.remote_port = port
+
+c.SSHSpawner.hub_api_url = 'http://{}:8081/hub/api'.format(requests.get('https://ifconfig.co/json').json()['ip'])
+if 'HUB_API_URL' in os.environ:
+    c.SSHSpawner.hub_api_url = os.environ['HUB_API_URL']
+
+c.SSHSpawner.use_gsi = True
+c.SSHSpawner.path = bindir + ':/global/common/cori/das/jupyterhub/:/usr/common/usg/bin:/usr/bin:/bin'
+c.SSHSpawner.remote_port_command = '/usr/bin/python /global/common/cori/das/jupyterhub/get_port.py'
+c.SSHSpawner.gsi_cert_path = '/certs/x509_{username}'
+c.SSHSpawner.gsi_key_path = '/certs/x509_{username}'
