@@ -837,6 +837,7 @@ c.Authenticator.admin_users = set(os.environ.get("ADMINS", "").split(","))
 #  
 #  If empty, does not perform any additional restriction.
 #c.Authenticator.whitelist = set()
+c.Authenticator.whitelist = set(os.environ.get("WHITELIST", "").split(","))
 
 #------------------------------------------------------------------------------
 # LocalAuthenticator(Authenticator) configuration
