@@ -30,6 +30,7 @@ VOLUME /certs
 # Config and entrypoint script
 
 ADD jupyterhub_config.py docker-entrypoint.sh /srv/
+ADD hub-scripts/*.sh /srv/
 
 WORKDIR /srv
 RUN chmod +x docker-entrypoint.sh
