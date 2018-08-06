@@ -56,8 +56,10 @@ RUN \
 # Jupyterhub features
 
 RUN \
-    /opt/anaconda3/bin/jupyter nbextension enable --sys-prefix --py widgetsnbextension   && \
-    /opt/anaconda2/bin/jupyter nbextension enable --sys-prefix --py widgetsnbextension
+    /opt/anaconda3/bin/jupyter nbextension enable --sys-prefix --py widgetsnbextension      && \
+    /opt/anaconda2/bin/jupyter nbextension enable --sys-prefix --py widgetsnbextension      && \
+    /opt/anaconda3/bin/jupyter labextension install @jupyterlab/hub-extension
+
 
 # Config and entrypoint script
 
