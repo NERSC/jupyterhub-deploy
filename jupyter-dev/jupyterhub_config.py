@@ -948,7 +948,7 @@ c.GSIAuthenticator.cert_path_prefix = '/certs/x509_'
 # SSHSpawner(Spawner) configuration
 #------------------------------------------------------------------------------
 
-c.SSHSpawner.remote_host = 'cori19-224.nersc.gov'
+c.SSHSpawner.remote_hosts = ['cori19-224.nersc.gov']
 c.SSHSpawner.remote_port = '2222'
 c.SSHSpawner.ssh_command = 'gsissh'
 if 'REMOTE_HOST' in os.environ:
