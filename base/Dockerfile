@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:16.04
 LABEL maintainer="Rollin Thomas <rcthomas@lbl.gov>"
 
 # Base Ubuntu packages
@@ -10,15 +10,14 @@ RUN \
     apt-get update          &&  \
     apt-get --yes upgrade   &&  \
     apt-get --yes install       \
-        --no-install-recommends \
         bzip2                   \
         curl                    \
-        ca-certificates         \
         git                     \
         libffi-dev              \
         lsb-release             \
         tzdata                  \
-        vim
+        vim                     \
+        wget
 
 # Timezone to Berkeley
 
