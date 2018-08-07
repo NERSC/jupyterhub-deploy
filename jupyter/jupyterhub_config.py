@@ -520,7 +520,7 @@ c.Spawner.cmd = ['/opt/anaconda3/bin/jupyter-labhub']
 #  - Start with `/notebooks` instead of `/tree` if `default_url` points to a notebook instead of a directory.
 #  - You can set this to `/lab` to have JupyterLab start by default, rather than Jupyter Notebook.
 #c.Spawner.default_url = ''
-c.Spawner.default_url = '/tree/global/homes/{username[0]}/{username}'
+c.Spawner.default_url = '/lab/tree/global/homes/{username[0]}/{username}'
 
 ## Disable per-user configuration of single-user servers.
 #  
