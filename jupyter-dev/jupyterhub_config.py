@@ -4,7 +4,7 @@ import os
 
 import requests
 
-bindir = '/global/common/cori/software/python/3.6-anaconda-4.4/bin/'
+bindir = '/global/common/cori/software/python/3.6-anaconda-5.2/bin/'
 if 'BASE_PATH' in os.environ:
     bindir = os.path.join(os.environ['BASE_PATH'], 'bin')
 
