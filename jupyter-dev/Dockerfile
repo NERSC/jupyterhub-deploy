@@ -6,7 +6,7 @@ LABEL maintainer="Rollin Thomas <rcthomas@lbl.gov>"
 RUN \
     apt-get update              &&  \
     apt-get install --yes           \
-        gnupg2                  &&  \
+        apt-transport-https     &&  \
     echo "deb http://downloads.globus.org/toolkit/gt6/stable/deb/ jessie contrib" >> /etc/apt/sources.list && \
     apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 44AE7EC2FAF24365 && \
     apt-get update              &&  \
