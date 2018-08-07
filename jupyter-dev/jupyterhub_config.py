@@ -488,7 +488,7 @@ c.JupyterHub.spawner_class = 'sshspawner.sshspawner.SSHSpawner'
 #  environment variables. Most, including the default, do not. Consult the
 #  documentation for your spawner to verify!
 #c.Spawner.cmd = ['jupyterhub-singleuser']
-c.Spawner.cmd = [os.path.join(bindir, 'jupyterhub-labhub')]
+c.Spawner.cmd = [os.path.join(bindir, 'jupyter-labhub')]
 
 ## Minimum number of cpu-cores a single-user notebook server is guaranteed to
 #  have available.
