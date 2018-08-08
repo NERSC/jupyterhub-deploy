@@ -14,6 +14,7 @@ RUN \
         libpam-ldap             \
         nscd                    \
         rsyslog                 \
+        supervisor              \
         texlive-xetex           \
         zsh
 
@@ -60,12 +61,14 @@ RUN \
     /opt/anaconda2/bin/jupyter nbextension enable --sys-prefix --py widgetsnbextension      && \
     /opt/anaconda3/bin/jupyter labextension install @jupyterlab/hub-extension
 
-
 # Config and entrypoint script
 
 ADD docker-entrypoint.sh jupyterhub_config.py /srv/
  
 WORKDIR /srv
-RUN chmod +x docker-entrypoint.sh
-CMD ["jupyterhub", "--debug"]
-ENTRYPOINT ["./docker-entrypoint.sh"]
+
+# TEMPORARILY HERE: Set up supervisord
+
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
