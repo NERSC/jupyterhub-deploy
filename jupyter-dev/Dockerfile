@@ -1,4 +1,4 @@
-FROM registry.spin.nersc.gov/das/jupyterhub-base.deploy-august-14:latest
+FROM registry.spin.nersc.gov/das/jupyterhub-base.gaffer:latest
 LABEL maintainer="Rollin Thomas <rcthomas@lbl.gov>"
 
 # Install gsissh
