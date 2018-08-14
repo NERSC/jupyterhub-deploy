@@ -1,19 +1,21 @@
-FROM registry.spin.nersc.gov/das/jupyterhub-base:latest
-MAINTAINER Rollin Thomas <rcthomas@lbl.com>
+FROM registry.spin.nersc.gov/das/jupyterhub-base.deploy-august-14:latest
+LABEL maintainer="Rollin Thomas <rcthomas@lbl.gov>"
 
 # Additional Ubuntu packages
 
 RUN \
-    apt-get update      &&  \
-    apt-get --yes install   \
-        csh                 \
-        dvipng              \
-        ldap-utils          \
-        libnss-ldapd        \
-        libpam-ldap         \
-        nscd                \
-        rsyslog             \
-        texlive-xetex       \
+    apt-get update      &&      \
+    apt-get install --yes       \
+        --no-install-recommends \
+        csh                     \
+        dvipng                  \
+        ldap-utils              \
+        libnss-ldapd            \
+        libpam-ldap             \
+        nscd                    \
+        rsyslog                 \
+        supervisor              \
+        texlive-xetex           \
         zsh
 
 # Python 3 Anaconda and additional packages
@@ -30,7 +32,7 @@ RUN \
 
 ADD packages2.txt /tmp/packages2.txt
 RUN \
-    wget -q -O /tmp/miniconda2.sh https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh  && \
+    curl -s -o /tmp/miniconda2.sh https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh  && \
     bash /tmp/miniconda2.sh -f -b -p /opt/anaconda2             && \
     rm /tmp/miniconda2.sh                                       && \
     /opt/anaconda2/bin/conda update --yes conda                 && \
@@ -55,14 +57,18 @@ RUN \
 # Jupyterhub features
 
 RUN \
-    /opt/anaconda3/bin/jupyter nbextension enable --sys-prefix --py widgetsnbextension   && \
-    /opt/anaconda2/bin/jupyter nbextension enable --sys-prefix --py widgetsnbextension
+    /opt/anaconda3/bin/jupyter nbextension enable --sys-prefix --py widgetsnbextension      && \
+    /opt/anaconda2/bin/jupyter nbextension enable --sys-prefix --py widgetsnbextension      && \
+    /opt/anaconda3/bin/jupyter labextension install @jupyterlab/hub-extension
 
 # Config and entrypoint script
 
 ADD docker-entrypoint.sh jupyterhub_config.py /srv/
  
 WORKDIR /srv
-RUN chmod +x docker-entrypoint.sh
-CMD ["jupyterhub", "--debug"]
-ENTRYPOINT ["./docker-entrypoint.sh"]
+
+# TEMPORARILY HERE: Set up supervisord
+
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]

@@ -1,0 +1,7 @@
+basemap
+biopython
+netcdf4
+r-car
+r-essentials
+rpy2
+ujson
