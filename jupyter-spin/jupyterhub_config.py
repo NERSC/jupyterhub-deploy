@@ -479,6 +479,16 @@ c.JupyterHub.services = [
 #c.Spawner.cmd = ['jupyterhub-singleuser']
 c.Spawner.cmd = ['/opt/anaconda3/bin/jupyter-labhub']
 
+## Maximum number of consecutive failures to allow before shutting down
+#  JupyterHub.
+#  
+#  This helps JupyterHub recover from a certain class of problem preventing
+#  launch in contexts where the Hub is automatically restarted (e.g. systemd,
+#  docker, kubernetes).
+#  
+#  A limit of 0 means no limit and consecutive failures will not be tracked.
+#c.Spawner.consecutive_failure_limit = 0
+
 ## Minimum number of cpu-cores a single-user notebook server is guaranteed to
 #  have available.
 #  
