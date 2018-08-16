@@ -2,6 +2,17 @@
 
 import os
 
+def comma_split(string):
+    """Handle env variables that may be None, empty string, or have spaces"""
+    try:
+        stripped = string.strip()
+    except AttributeError:
+        return list()
+    if stripped:
+        return [s.strip() for s in stripped.split(",")]
+    else:
+        return list()
+
 #------------------------------------------------------------------------------
 # Application(SingletonConfigurable) configuration
 #------------------------------------------------------------------------------
@@ -785,7 +796,7 @@ c.Spawner.notebook_dir = '/'
 #  
 #  Defaults to an empty set, in which case no user has admin access.
 #c.Authenticator.admin_users = set()
-c.Authenticator.admin_users = set(os.environ.get("ADMINS", "").split(","))
+c.Authenticator.admin_users = set(comma_split(os.environ.get("ADMINS")))
 
 ## Automatically begin the login process
 #  
@@ -847,7 +858,7 @@ c.Authenticator.admin_users = set(os.environ.get("ADMINS", "").split(","))
 #  
 #  If empty, does not perform any additional restriction.
 #c.Authenticator.whitelist = set()
-c.Authenticator.whitelist = set(os.environ.get("WHITELIST", "").split(","))
+c.Authenticator.whitelist = set(comma_split(os.environ.get("WHITELIST")))
 
 #------------------------------------------------------------------------------
 # LocalAuthenticator(Authenticator) configuration
