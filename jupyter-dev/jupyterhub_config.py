@@ -4,6 +4,18 @@ import os
 
 import requests
 
+def comma_split(string):
+    """Handle env variables that may be None, empty string, or have spaces"""
+    try:
+        stripped = string.strip()
+    except AttributeError:
+        return list()
+    if stripped:
+        return [s.strip() for s in stripped.split(",")]
+    else:
+        return list()
+
+
 bindir = '/global/common/cori/software/python/3.6-anaconda-5.2/bin/'
 if 'BASE_PATH' in os.environ:
     bindir = os.path.join(os.environ['BASE_PATH'], 'bin')
@@ -797,7 +809,7 @@ c.Spawner.poll_interval = 1800
 #  
 #  Defaults to an empty set, in which case no user has admin access.
 #c.Authenticator.admin_users = set()
-c.Authenticator.admin_users = set(os.environ.get("ADMINS", "").split(","))
+c.Authenticator.admin_users = set(comma_split(os.environ.get("ADMINS")))
 
 ## Automatically begin the login process
 #  
@@ -859,7 +871,7 @@ c.Authenticator.admin_users = set(os.environ.get("ADMINS", "").split(","))
 #  
 #  If empty, does not perform any additional restriction.
 #c.Authenticator.whitelist = set()
-c.Authenticator.whitelist = set(os.environ.get("WHITELIST", "").split(","))
+c.Authenticator.whitelist = set(comma_split(os.environ.get("WHITELIST")))
 
 #------------------------------------------------------------------------------
 # LocalAuthenticator(Authenticator) configuration
