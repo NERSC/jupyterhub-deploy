@@ -6,7 +6,6 @@ LABEL maintainer="Rollin Thomas <rcthomas@lbl.gov>"
 RUN \
     apt-get update      &&      \
     apt-get install --yes       \
-        --no-install-recommends \
         csh                     \
         dvipng                  \
         ldap-utils              \
@@ -54,12 +53,23 @@ RUN \
     ln -s /global/common/datatran /usr/common   && \
     echo "datatran" > /etc/clustername
 
-# Jupyterhub features
+# Jupyterhub/lab features
 
 RUN \
-    /opt/anaconda3/bin/jupyter nbextension enable --sys-prefix --py widgetsnbextension      && \
-    /opt/anaconda2/bin/jupyter nbextension enable --sys-prefix --py widgetsnbextension      && \
-    /opt/anaconda3/bin/jupyter labextension install @jupyterlab/hub-extension
+    conda install --yes jupyterlab=0.33.8                           && \
+    pip install --no-cache-dir ipympl                               && \
+    jupyter nbextension enable --sys-prefix --py widgetsnbextension && \
+    jupyter labextension install            \
+        @jupyterlab/hub-extension           \
+        @jupyter-widgets/jupyterlab-manager \
+        jupyter-matplotlib                  \
+        @jupyterlab/toc                     \
+        jupyterlab_bokeh
+
+# Not sure we need this
+
+RUN \
+    /opt/anaconda2/bin/jupyter nbextension enable --sys-prefix --py widgetsnbextension
 
 # Config and entrypoint script
 
