@@ -979,7 +979,7 @@ c.SSHAPIAuthenticator.skey = os.environ.get('SKEY')
 
 c.SSHSpawner.remote_hosts = ['cori19-224.nersc.gov']
 c.SSHSpawner.remote_port = '22'
-c.SSHSpawner.hub_api_url = "http://{}:8081/hub/api".format(ip),
+c.SSHSpawner.hub_api_url = "http://{}:8081/hub/api".format(ip)
 c.SSHSpawner.path = bindir + ':/global/common/cori/das/jupyterhub/:/usr/common/usg/bin:/usr/bin:/bin'
 c.SSHSpawner.remote_port_command = '/usr/bin/python /global/common/cori/das/jupyterhub/get_port.py'
 c.SSHSpawner.ssh_keyfile = '/certs/{username}.key'
