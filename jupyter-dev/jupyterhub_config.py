@@ -972,6 +972,7 @@ c.Authenticator.whitelist = set(comma_split(os.environ.get("WHITELIST")))
 
 c.SSHAPIAuthenticator.server = 'https://sshproxy.nersc.gov/create_pair/jupyter/'
 c.SSHAPIAuthenticator.skey = os.environ.get('SKEY')
+c.SSHAPIAuthenticator.cert_path = '/certs'
 
 #------------------------------------------------------------------------------
 # SSHSpawner(Spawner) configuration
