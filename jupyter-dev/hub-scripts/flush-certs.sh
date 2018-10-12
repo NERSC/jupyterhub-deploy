@@ -1,5 +1,9 @@
 #!/bin/bash
 
-# Get rid of any certs older than 2 weeks
+# Get rid of any cert files older than 2 weeks
 
-find /certs -type f -name 'x509_*' -mtime +14 -exec rm {} \;
+limit=14
+
+find /certs -type f -name '*.key'           -mtime +$limit -exec rm {} \;
+find /certs -type f -name '*.key-cert.pub'  -mtime +$limit -exec rm {} \;
+find /certs -type f -name '*.key.pub'       -mtime +$limit -exec rm {} \;
