@@ -24,5 +24,6 @@ file_env() {
 }
 
 file_env 'POSTGRES_PASSWORD'
+file_env 'SKEY'
 
 exec "$@"

@@ -1,6 +1,7 @@
 # Configuration file for jupyterhub.
 
 import os
+import sys
 
 import requests
 
@@ -15,6 +16,7 @@ def comma_split(string):
     else:
         return list()
 
+ip = requests.get('https://v4.ifconfig.co/json').json()['ip']
 
 bindir = '/global/common/cori/software/python/3.6-anaconda-5.2/bin/'
 if 'BASE_PATH' in os.environ:
@@ -98,7 +100,7 @@ if 'BASE_PATH' in os.environ:
 #    where `handler` is the calling web.RequestHandler,
 #    and `data` is the POST form data from the login page.
 #c.JupyterHub.authenticator_class = 'jupyterhub.auth.PAMAuthenticator'
-c.JupyterHub.authenticator_class = 'gsiauthenticator.auth.GSIAuthenticator'
+c.JupyterHub.authenticator_class = 'sshapiauthenticator.auth.SSHAPIAuthenticator'
 
 ## The base URL of the entire application.
 #  
@@ -388,6 +390,11 @@ c.JupyterHub.services = [
         'name': 'cull-idle',
         'admin': True,
         'command': 'cull_idle_servers.py --timeout=43200'.split(),
+    },
+    {
+        'name': 'announcement',
+        'url': 'http://127.0.0.1:8888',
+        'command': ["python", "-m", "announcement"],
     }
 ]
 
@@ -434,6 +441,7 @@ c.JupyterHub.spawner_class = 'sshspawner.sshspawner.SSHSpawner'
 
 ## Paths to search for jinja templates, before using the default templates.
 #c.JupyterHub.template_paths = []
+c.JupyterHub.template_paths = ["templates"]
 
 ## Extra variables to be passed into jinja templates
 #c.JupyterHub.template_vars = {}
@@ -688,7 +696,7 @@ c.Spawner.notebook_dir = '/'
 #  JupyterHub modifies its own state accordingly and removes appropriate routes
 #  from the configurable proxy.
 #c.Spawner.poll_interval = 30
-c.Spawner.poll_interval = 1800
+c.Spawner.poll_interval = 900
 
 ## The port for single-user servers to listen on.
 #  
@@ -959,31 +967,20 @@ c.Authenticator.whitelist = set(comma_split(os.environ.get("WHITELIST")))
 #c.CryptKeeper.n_threads = 2
 
 #------------------------------------------------------------------------------
-# GSIAuthenticator(Authenticator) configuration
+# SSHAPIAuthenticator(Authenticator) configuration
 #------------------------------------------------------------------------------
 
-c.GSIAuthenticator.proxy_lifetime = 999999
-c.GSIAuthenticator.server = 'nerscca1.nersc.gov'
-c.GSIAuthenticator.cert_path_prefix = '/certs/x509_'
+c.SSHAPIAuthenticator.server = 'https://sshproxy.nersc.gov/create_pair/jupyter/'
+c.SSHAPIAuthenticator.skey = os.environ.get('SKEY')
+c.SSHAPIAuthenticator.cert_path = '/certs'
 
 #------------------------------------------------------------------------------
 # SSHSpawner(Spawner) configuration
 #------------------------------------------------------------------------------
 
 c.SSHSpawner.remote_hosts = ['cori19-224.nersc.gov']
-c.SSHSpawner.remote_port = '2222'
-c.SSHSpawner.ssh_command = 'gsissh'
-if 'REMOTE_HOST' in os.environ:
-    host, port = os.environ['REMOTE_HOST'].split(':')
-    c.SSHSpawner.remote_host = host
-    c.SSHSpawner.remote_port = port
-
-c.SSHSpawner.hub_api_url = 'http://{}:8081/hub/api'.format(requests.get('https://ifconfig.co/json').json()['ip'])
-if 'HUB_API_URL' in os.environ:
-    c.SSHSpawner.hub_api_url = os.environ['HUB_API_URL']
-
-c.SSHSpawner.use_gsi = True
+c.SSHSpawner.remote_port = '22'
+c.SSHSpawner.hub_api_url = "http://{}:8081/hub/api".format(ip)
 c.SSHSpawner.path = bindir + ':/global/common/cori/das/jupyterhub/:/usr/common/usg/bin:/usr/bin:/bin'
 c.SSHSpawner.remote_port_command = '/usr/bin/python /global/common/cori/das/jupyterhub/get_port.py'
-c.SSHSpawner.gsi_cert_path = '/certs/x509_{username}'
-c.SSHSpawner.gsi_key_path = '/certs/x509_{username}'
+c.SSHSpawner.ssh_keyfile = '/certs/{username}.key'

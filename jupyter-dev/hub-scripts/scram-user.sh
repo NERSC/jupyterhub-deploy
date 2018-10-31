@@ -6,20 +6,21 @@
 
 for username in "$@"
 do
-    cert=/certs/x509_$username
+    cert=/certs/$username.key
     echo $username $cert
     if [ ! -f $cert ]; then
         echo " ... SKIPPED no cert for $username"
         continue
     fi
-    export X509_USER_CERT=$cert
-    export X509_USER_KEY=$cert
     for i in 1 2 3
     do
-        gsissh \
-            -o StrictHostKeyChecking=no \
-            -l $username \
-            -p 2222 cori19-224.nersc.gov \
+        /usr/bin/ssh                                \
+            -i $cert                                \
+            -l $username                            \
+            -o PreferredAuthentications=publickey   \
+            -o StrictHostKeyChecking=no             \
+            -p 22                                   \
+            cori19-224.nersc.gov                    \
             killall -u $username
         sleep 1
     done
