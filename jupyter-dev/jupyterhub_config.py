@@ -984,3 +984,20 @@ c.SSHSpawner.hub_api_url = "http://{}:8081/hub/api".format(ip)
 c.SSHSpawner.path = bindir + ':/global/common/cori/das/jupyterhub/:/usr/common/usg/bin:/usr/bin:/bin'
 c.SSHSpawner.remote_port_command = '/usr/bin/python /global/common/cori/das/jupyterhub/get_port.py'
 c.SSHSpawner.ssh_keyfile = '/certs/{username}.key'
+
+from tornado import web
+import asyncio, asyncssh
+
+async def my_quota(spawner):
+    host = spawner.choose_remote_host()
+    username = spawner.user.name
+    k = asyncssh.read_private_key(spawner.ssh_keyfile.format(username=username))
+    async with asyncssh.connect(host,username=username,client_keys=[k],known_hosts=None) as conn:
+        result = await conn.run("myquota -c")
+        retcode = result.exit_status
+    if retcode:
+        e = web.HTTPError(507,reason="Insufficient Storage")
+        e.my_message = "There is insufficient space in your home directory; please clear up some files and try again."
+        raise e
+
+c.Spawner.pre_spawn_hook = my_quota
