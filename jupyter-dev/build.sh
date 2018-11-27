@@ -1,6 +1,6 @@
 #!/bin/bash
 
-branch=deploy-18-10
+branch=$(git symbolic-ref --short HEAD)
 
 docker build                    \
     --build-arg branch=$branch  \
