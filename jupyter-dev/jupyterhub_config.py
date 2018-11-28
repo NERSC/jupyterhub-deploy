@@ -978,9 +978,34 @@ c.SSHAPIAuthenticator.cert_path = '/certs'
 # SSHSpawner(Spawner) configuration
 #------------------------------------------------------------------------------
 
-c.SSHSpawner.remote_hosts = ['cori19-224.nersc.gov']
-c.SSHSpawner.remote_port = '22'
 c.SSHSpawner.hub_api_url = "http://{}:8081/hub/api".format(ip)
 c.SSHSpawner.path = bindir + ':/global/common/cori/das/jupyterhub/:/usr/common/usg/bin:/usr/bin:/bin'
-c.SSHSpawner.remote_port_command = '/usr/bin/python /global/common/cori/das/jupyterhub/get_port.py'
 c.SSHSpawner.ssh_keyfile = '/certs/{username}.key'
+
+import asyncssh, random
+from tornado import web
+
+remote_hosts = ['cori19-224.nersc.gov']
+remote_port_cmd = "python -c 'import socket; s=socket.socket(); s.bind((\"\", 0)); print(s.getsockname()[1]); s.close()'"
+
+async def setup(spawner):
+    username = spawner.user.name
+    remote_host = random.choice(spawner.remote_hosts)
+    keyfile = spawner.ssh_keyfile.format(username=username)
+    k = asyncssh.read_private_key(keyfile)
+    async with asyncssh.connect(remote_host,
+                            username=username,
+                            client_keys=[k],
+                            known_hosts=None) as conn:
+        result = await conn.run("myquota -c")
+        retcode = result.exit_status
+        result = await conn.run(remote_port_cmd)
+        remote_port = int(result.stdout)
+    if retcode:
+        e = web.HTTPError(507,reason="Insufficient Storage")
+        e.my_message = "There is insufficient space in your home directory; please clear up some files and try again."
+        raise e
+    spawner.remote_host = remote_host
+    spawner.remote_port = remote_port
+
+c.Spawner.pre_spawn_hook = setup
