@@ -988,6 +988,12 @@ from tornado import web
 remote_hosts = ['cori19-224.nersc.gov']
 remote_port_cmd = "python -c 'import socket; s=socket.socket(); s.bind((\"\", 0)); print(s.getsockname()[1]); s.close()'"
 
+import asyncssh, random
+from tornado import web
+
+remote_hosts = ['cori19-224.nersc.gov']
+remote_port_cmd = "python -c 'import socket; s=socket.socket(); s.bind((\"\", 0)); print(s.getsockname()[1]); s.close()'"
+
 async def setup(spawner):
     username = spawner.user.name
     remote_host = random.choice(spawner.remote_hosts)

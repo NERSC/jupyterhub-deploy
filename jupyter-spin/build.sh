@@ -1,3 +1,8 @@
 #!/bin/bash
 
-docker build --no-cache -t registry.spin.nersc.gov/das/jupyterhub-jupyter-spin.gaffer:latest .
+branch=$(git symbolic-ref --short HEAD)
+
+docker build                    \
+    --build-arg branch=$branch  \
+    --no-cache                  \
+    --tag registry.spin.nersc.gov/das/jupyterhub-jupyter-spin.$branch:latest .
