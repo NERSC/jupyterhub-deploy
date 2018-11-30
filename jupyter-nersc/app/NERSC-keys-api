@@ -1,0 +1,7 @@
+#!/bin/sh
+
+URL=https://sshproxy.nersc.gov/get_keys
+USER=$1
+
+
+curl $URL/$USER

@@ -1,0 +1,10 @@
+astropy
+basemap
+biopython
+blaze
+jupyter
+jupyterlab
+netcdf4
+#r-essentials
+rpy2
+ujson
