@@ -17,13 +17,31 @@ RUN \
 
 # Python 3 Anaconda and additional packages
 
-ADD packages3.txt /tmp/packages3.txt
+### TESTING ...
+
 RUN \
-    /opt/anaconda3/bin/conda update --yes conda                 && \
-    /opt/anaconda3/bin/conda install --yes anaconda             && \
-    /opt/anaconda3/bin/conda install --file /tmp/packages3.txt  && \
-    /opt/anaconda3/bin/ipython kernel install                   && \
+    /opt/anaconda3/bin/conda update --yes conda &&  \
+    /opt/anaconda3/bin/conda install --yes          \
+        ipykernel                                   \
+        ipywidgets                                  \
+        notebook                                &&  \
+    /opt/anaconda3/bin/ipython kernel install   &&  \
     /opt/anaconda3/bin/conda clean --yes --all
+
+# Typical extension
+
+RUN \
+    /opt/anaconda3/bin/jupyter nbextension enable --sys-prefix --py widgetsnbextension
+
+### TESTING DONE ...
+
+### ADD packages3.txt /tmp/packages3.txt
+### RUN \
+###     /opt/anaconda3/bin/conda update --yes conda                 && \
+###     /opt/anaconda3/bin/conda install --yes anaconda             && \
+###     /opt/anaconda3/bin/conda install --file /tmp/packages3.txt  && \
+###     /opt/anaconda3/bin/ipython kernel install                   && \
+###     /opt/anaconda3/bin/conda clean --yes --all
 
 ### # Python 2 Anaconda and additional packages
 ### 
