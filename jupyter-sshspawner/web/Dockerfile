@@ -1,4 +1,4 @@
-FROM registry.spin.nersc.gov/das/jupyterhub-jupyter-dev.deploy-18-10:latest
+FROM registry.spin.nersc.gov/das/jupyter-dev-nersc.deploy-18-10:latest
 MAINTAINER Rollin Thomas <rcthomas@lbl.com>
 
 # JupyterHub components

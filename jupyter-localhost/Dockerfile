@@ -1,4 +1,4 @@
-FROM registry.spin.nersc.gov/das/jupyterhub-base:latest
+FROM registry.spin.nersc.gov/das/jupyter-base:latest
 MAINTAINER Rollin Thomas <rcthomas@lbl.com>
 
 # Python 3 Anaconda and additional packages
