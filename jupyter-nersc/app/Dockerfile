@@ -24,6 +24,7 @@ RUN \
     /opt/anaconda3/bin/conda install --yes          \
         ipykernel                                   \
         ipywidgets                                  \
+        jupyterlab                                  \
         notebook                                &&  \
     /opt/anaconda3/bin/ipython kernel install   &&  \
     /opt/anaconda3/bin/conda clean --yes --all
