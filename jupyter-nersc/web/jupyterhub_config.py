@@ -186,6 +186,9 @@ c.JupyterHub.cookie_max_age_days = 0.5
 
 ## url for the database. e.g. `sqlite:///jupyterhub.sqlite`
 #c.JupyterHub.db_url = 'sqlite:///jupyterhub.sqlite'
+c.JupyterHub.db_url = 'postgresql://jupyterhub:{}@db:5432/jupyterhub'.format(
+        os.getenv('POSTGRES_PASSWORD')
+)
 
 ## log all database transactions. This has A LOT of output
 #c.JupyterHub.debug_db = False
@@ -978,6 +981,6 @@ c.SSHAPIAuthenticator.cert_path = '/certs'
 c.SSHSpawner.remote_hosts = ['app']
 c.SSHSpawner.remote_port = '22'
 c.SSHSpawner.hub_api_url = "http://{}:8081/hub/api".format(ip)
-c.SSHSpawner.path = bindir + ':/usr/bin:/bin'
+c.SSHSpawner.path = bindir + ':/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 c.SSHSpawner.remote_port_command = bindir + 'python /opt/anaconda3/bin/get_port.py'
 c.SSHSpawner.ssh_keyfile = '/certs/{username}.key'
