@@ -2,9 +2,9 @@ ARG branch=unknown
 
 FROM registry.spin.nersc.gov/das/jupyter-base.${branch}:latest
 LABEL maintainer="Rollin Thomas <rcthomas@lbl.gov>"
+WORKDIR /srv
 
 # Additional Ubuntu packages
-# TODO: resolve zsh thing that Rollin ran into b/c datatran
 
 RUN \
     apt-get --yes install   \
@@ -13,7 +13,7 @@ RUN \
         libpam-ldap         \
         nscd                \
         openssh-server      \
-        zsh
+        supervisor
 
 # Python 3 Anaconda and additional packages
 
@@ -57,7 +57,12 @@ RUN \
 ###     /opt/anaconda2/bin/ipython kernel install                   && \
 ###     /opt/anaconda2/bin/conda clean --yes --all
 
-# SSHD
+# For ssh auth API
+
+ADD NERSC-keys-api /usr/lib/nersc-ssh-keys/
+RUN chmod a+x /usr/lib/nersc-ssh-keys/NERSC-keys-api
+
+# For sshd
 
 RUN \
     mkdir -p /var/run/sshd  && \
@@ -65,7 +70,7 @@ RUN \
     echo "AuthorizedKeysCommandUser nobody" >> /etc/ssh/sshd_config && \
     echo "TrustedUserCAKeys /etc/user_ca.pub"  >> /etc/ssh/sshd_config
 
-# PAM, LDAP
+# For PAM/LDAP
 
 COPY etc/ /etc/
 
@@ -78,12 +83,11 @@ RUN \
     ln -s /global/common/datatran /usr/common   && \
     echo "datatran" > /etc/clustername
 
-ADD docker-entrypoint.sh /srv/
-ADD NERSC-keys-api /usr/lib/nersc-ssh-keys/
-ADD get_port.py /opt/anaconda3/bin/
-RUN chmod a+x /usr/lib/nersc-ssh-keys/NERSC-keys-api
+# Get port script
 
-WORKDIR /srv
-RUN chmod +x docker-entrypoint.sh
-ENTRYPOINT [ "./docker-entrypoint.sh" ]
-CMD [ "/usr/sbin/sshd", "-p", "22", "-D" ]
+ADD get_port.py /opt/anaconda3/bin/
+
+# Supervisord to launch sshd and nslcd
+
+ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
