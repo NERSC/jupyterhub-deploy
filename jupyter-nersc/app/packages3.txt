@@ -5,6 +5,6 @@ blaze
 jupyter
 jupyterlab
 netcdf4
-#r-essentials
+r-essentials
 rpy2
 ujson
