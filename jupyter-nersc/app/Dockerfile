@@ -17,45 +17,41 @@ RUN \
 
 # Python 3 Anaconda and additional packages
 
-### TESTING ...
+##### RUN \
+#####     /opt/anaconda3/bin/conda update --yes conda &&  \
+#####     /opt/anaconda3/bin/conda install --yes          \
+#####         ipykernel                                   \
+#####         ipywidgets                                  \
+#####         jupyterlab                                  \
+#####         notebook                                &&  \
+#####     /opt/anaconda3/bin/ipython kernel install   &&  \
+#####     /opt/anaconda3/bin/conda clean --yes --all
+##### 
+##### # Typical extension
+##### 
+##### RUN \
+#####     /opt/anaconda3/bin/jupyter nbextension enable --sys-prefix --py widgetsnbextension
 
+ADD packages3.txt /tmp/packages3.txt
 RUN \
-    /opt/anaconda3/bin/conda update --yes conda &&  \
-    /opt/anaconda3/bin/conda install --yes          \
-        ipykernel                                   \
-        ipywidgets                                  \
-        jupyterlab                                  \
-        notebook                                &&  \
-    /opt/anaconda3/bin/ipython kernel install   &&  \
+    /opt/anaconda3/bin/conda update --yes conda                 && \
+    /opt/anaconda3/bin/conda install --yes anaconda             && \
+    /opt/anaconda3/bin/conda install --file /tmp/packages3.txt  && \
+    /opt/anaconda3/bin/ipython kernel install                   && \
     /opt/anaconda3/bin/conda clean --yes --all
 
-# Typical extension
+# Python 2 Anaconda and additional packages
 
+ADD packages2.txt /tmp/packages2.txt
 RUN \
-    /opt/anaconda3/bin/jupyter nbextension enable --sys-prefix --py widgetsnbextension
-
-### TESTING DONE ...
-
-### ADD packages3.txt /tmp/packages3.txt
-### RUN \
-###     /opt/anaconda3/bin/conda update --yes conda                 && \
-###     /opt/anaconda3/bin/conda install --yes anaconda             && \
-###     /opt/anaconda3/bin/conda install --file /tmp/packages3.txt  && \
-###     /opt/anaconda3/bin/ipython kernel install                   && \
-###     /opt/anaconda3/bin/conda clean --yes --all
-
-### # Python 2 Anaconda and additional packages
-### 
-### ADD packages2.txt /tmp/packages2.txt
-### RUN \
-###     wget -q -O /tmp/miniconda2.sh https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh  && \
-###     bash /tmp/miniconda2.sh -f -b -p /opt/anaconda2             && \
-###     rm /tmp/miniconda2.sh                                       && \
-###     /opt/anaconda2/bin/conda update --yes conda                 && \
-###     /opt/anaconda2/bin/conda install --yes anaconda             && \
-###     /opt/anaconda2/bin/conda install --file /tmp/packages2.txt  && \
-###     /opt/anaconda2/bin/ipython kernel install                   && \
-###     /opt/anaconda2/bin/conda clean --yes --all
+    wget -q -O /tmp/miniconda2.sh https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh  && \
+    bash /tmp/miniconda2.sh -f -b -p /opt/anaconda2             && \
+    rm /tmp/miniconda2.sh                                       && \
+    /opt/anaconda2/bin/conda update --yes conda                 && \
+    /opt/anaconda2/bin/conda install --yes anaconda             && \
+    /opt/anaconda2/bin/conda install --file /tmp/packages2.txt  && \
+    /opt/anaconda2/bin/ipython kernel install                   && \
+    /opt/anaconda2/bin/conda clean --yes --all
 
 # For ssh auth API
 
