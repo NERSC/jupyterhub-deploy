@@ -79,6 +79,21 @@ RUN \
     ln -s /global/common/datatran /usr/common   && \
     echo "datatran" > /etc/clustername
 
+# JupyterHub/lab features
+
+RUN \
+    pip install --no-cache-dir ipympl                               && \
+    jupyter nbextension enable --sys-prefix --py widgetsnbextension && \
+    jupyter labextension install            \
+        @jupyterlab/hub-extension           \
+        @jupyter-widgets/jupyterlab-manager \
+        jupyter-matplotlib                  \
+        @jupyterlab/toc                     \
+        jupyterlab_bokeh
+
+RUN \
+    /opt/anaconda2/bin/jupyter nbextension enable --sys-prefix --py widgetsnbextension
+
 # Get port script
 
 ADD get_port.py /opt/anaconda3/bin/
