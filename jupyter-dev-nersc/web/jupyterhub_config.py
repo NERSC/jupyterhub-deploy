@@ -18,8 +18,7 @@ def comma_split(string):
 
 ip = requests.get('https://v4.ifconfig.co/json').json()['ip']
 
-#bindir = '/global/common/cori/software/python/3.6-anaconda-5.2/bin/'
-bindir = '/global/common/gerty/software/python/3.6-anaconda-5.2/bin/'
+bindir = '/global/common/cori/software/python/3.6-anaconda-5.2/bin/'
 if 'BASE_PATH' in os.environ:
     bindir = os.path.join(os.environ['BASE_PATH'], 'bin')
 
@@ -979,8 +978,7 @@ c.SSHAPIAuthenticator.cert_path = '/certs'
 # SSHSpawner(Spawner) configuration
 #------------------------------------------------------------------------------
 
-#c.SSHSpawner.remote_hosts = ['cori19-224.nersc.gov']
-c.SSHSpawner.remote_hosts = ['gert01-224.nersc.gov']
+c.SSHSpawner.remote_hosts = ['cori19-224.nersc.gov']
 c.SSHSpawner.remote_port = '22'
 c.SSHSpawner.hub_api_url = "http://{}:8081/hub/api".format(ip)
 c.SSHSpawner.path = bindir + ':/global/common/cori/das/jupyterhub/:/usr/common/usg/bin:/usr/bin:/bin'
