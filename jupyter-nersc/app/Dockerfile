@@ -8,6 +8,7 @@ WORKDIR /srv
 
 RUN \
     apt-get --yes install   \
+        csh                 \
         ldap-utils          \
         libnss-ldapd        \
         libpam-ldap         \
