@@ -1,6 +1,9 @@
 # Configuration file for jupyterhub.
 
 import os
+import sys
+
+import requests
 
 def comma_split(string):
     """Handle env variables that may be None, empty string, or have spaces"""
@@ -12,6 +15,13 @@ def comma_split(string):
         return [s.strip() for s in stripped.split(",")]
     else:
         return list()
+
+ip = requests.get('https://v4.ifconfig.co/json').json()['ip']
+
+#bindir = '/global/common/gerty/software/python/3.6-anaconda-5.2/bin/'
+bindir = '/global/common/cori/software/python/3.6-anaconda-5.2/bin/'
+if 'BASE_PATH' in os.environ:
+    bindir = os.path.join(os.environ['BASE_PATH'], 'bin')
 
 #------------------------------------------------------------------------------
 # Application(SingletonConfigurable) configuration
@@ -91,6 +101,7 @@ def comma_split(string):
 #    where `handler` is the calling web.RequestHandler,
 #    and `data` is the POST form data from the login page.
 #c.JupyterHub.authenticator_class = 'jupyterhub.auth.PAMAuthenticator'
+c.JupyterHub.authenticator_class = 'sshapiauthenticator.auth.SSHAPIAuthenticator'
 
 ## The base URL of the entire application.
 #  
@@ -155,6 +166,7 @@ def comma_split(string):
 
 ## Number of days for a login cookie to be valid. Default is two weeks.
 #c.JupyterHub.cookie_max_age_days = 14
+c.JupyterHub.cookie_max_age_days = 0.5
 
 ## The cookie secret to use to encrypt cookies.
 #  
@@ -175,6 +187,9 @@ def comma_split(string):
 
 ## url for the database. e.g. `sqlite:///jupyterhub.sqlite`
 #c.JupyterHub.db_url = 'sqlite:///jupyterhub.sqlite'
+c.JupyterHub.db_url = 'postgresql://jupyterhub:{}@db:5432/jupyterhub'.format(
+        os.getenv('POSTGRES_PASSWORD')
+)
 
 ## log all database transactions. This has A LOT of output
 #c.JupyterHub.debug_db = False
@@ -265,6 +280,7 @@ def comma_split(string):
 #  See `hub_connect_ip` for cases where the bind and connect address should
 #  differ, or `hub_bind_url` for setting the full bind URL.
 #c.JupyterHub.hub_ip = '127.0.0.1'
+c.JupyterHub.hub_ip = '0.0.0.0'
 
 ## The internal port for the Hub process.
 #  
@@ -286,7 +302,6 @@ def comma_split(string):
 #  .. deprecated: 0.9
 #      Use JupyterHub.bind_url
 #c.JupyterHub.ip = ''
-c.JupyterHub.ip = '0.0.0.0'
 
 ## Supply extra arguments that will be passed to Jinja environment.
 #c.JupyterHub.jinja_environment_options = {}
@@ -320,7 +335,6 @@ c.JupyterHub.ip = '0.0.0.0'
 
 ## DEPRECATED since version 0.8 : Use ConfigurableHTTPProxy.api_url
 #c.JupyterHub.proxy_api_ip = ''
-c.JupyterHub.proxy_api_ip = '127.0.0.1'
 
 ## DEPRECATED since version 0.8 : Use ConfigurableHTTPProxy.api_url
 #c.JupyterHub.proxy_api_port = 0
@@ -377,6 +391,11 @@ c.JupyterHub.services = [
         'name': 'cull-idle',
         'admin': True,
         'command': 'cull_idle_servers.py --timeout=43200'.split(),
+    },
+    {
+        'name': 'announcement',
+        'url': 'http://127.0.0.1:8888',
+        'command': ["python", "-m", "announcement"],
     }
 ]
 
@@ -384,6 +403,7 @@ c.JupyterHub.services = [
 #  
 #  Should be a subclass of Spawner.
 #c.JupyterHub.spawner_class = 'jupyterhub.spawner.LocalProcessSpawner'
+c.JupyterHub.spawner_class = 'sshspawner.sshspawner.SSHSpawner'
 
 ## Path to SSL certificate file for the public facing interface of the proxy
 #  
@@ -422,6 +442,7 @@ c.JupyterHub.services = [
 
 ## Paths to search for jinja templates, before using the default templates.
 #c.JupyterHub.template_paths = []
+c.JupyterHub.template_paths = ["templates"]
 
 ## Extra variables to be passed into jinja templates
 #c.JupyterHub.template_vars = {}
@@ -488,7 +509,7 @@ c.JupyterHub.services = [
 #  environment variables. Most, including the default, do not. Consult the
 #  documentation for your spawner to verify!
 #c.Spawner.cmd = ['jupyterhub-singleuser']
-c.Spawner.cmd = ['/opt/anaconda3/bin/jupyter-labhub']
+c.Spawner.cmd = [os.path.join(bindir, 'jupyter-labhub')]
 
 ## Maximum number of consecutive failures to allow before shutting down
 #  JupyterHub.
@@ -592,7 +613,7 @@ c.Spawner.environment = {"OMP_NUM_THREADS" : "2"}
 #  The JupyterHub proxy implementation should be able to send packets to this
 #  interface.
 #c.Spawner.ip = ''
-c.Spawner.ip = '127.0.0.1'
+c.Spawner.ip = '0.0.0.0'
 
 ## Minimum number of bytes a single-user notebook server is guaranteed to have
 #  available.
@@ -676,6 +697,7 @@ c.Spawner.notebook_dir = '/'
 #  JupyterHub modifies its own state accordingly and removes appropriate routes
 #  from the configurable proxy.
 #c.Spawner.poll_interval = 30
+c.Spawner.poll_interval = 900
 
 ## The port for single-user servers to listen on.
 #  
@@ -930,7 +952,6 @@ c.Authenticator.whitelist = set(comma_split(os.environ.get("WHITELIST")))
 
 ## The name of the PAM service to use for authentication
 #c.PAMAuthenticator.service = 'login'
-c.PAMAuthenticator.service = 'jupyterhub'
 
 #------------------------------------------------------------------------------
 # CryptKeeper(SingletonConfigurable) configuration
@@ -945,3 +966,51 @@ c.PAMAuthenticator.service = 'jupyterhub'
 
 ## The number of threads to allocate for encryption
 #c.CryptKeeper.n_threads = 2
+
+#------------------------------------------------------------------------------
+# SSHAPIAuthenticator(Authenticator) configuration
+#------------------------------------------------------------------------------
+
+c.SSHAPIAuthenticator.server = 'https://sshproxy.nersc.gov/create_pair/jupyter/'
+c.SSHAPIAuthenticator.skey = os.environ.get('SKEY')
+c.SSHAPIAuthenticator.cert_path = '/certs'
+
+#------------------------------------------------------------------------------
+# SSHSpawner(Spawner) configuration
+#------------------------------------------------------------------------------
+
+c.SSHSpawner.hub_api_url = "http://{}:8081/hub/api".format(ip)
+c.SSHSpawner.path = bindir + ':/global/common/cori/das/jupyterhub/:/usr/common/usg/bin:/usr/bin:/bin'
+c.SSHSpawner.ssh_keyfile = '/certs/{username}.key'
+
+import asyncssh, random
+from tornado import web
+
+c.SSHSpawner.remote_hosts = ['cori19-224.nersc.gov']
+#c.SSHSpawner.remote_host = ['gert01-224.nersc.gov']
+c.SSHSpawner.remote_port_command = "python -c 'import socket; s=socket.socket(); s.bind((\"\", 0)); print(s.getsockname()[1]); s.close()'"
+
+# async def setup(spawner):
+#     username = spawner.user.name
+#     remote_host = random.choice(spawner.remote_hosts)
+#     keyfile = spawner.ssh_keyfile.format(username=username)
+#     certfile = keyfile + "-cert.pub"
+#     k = asyncssh.read_private_key(keyfile)
+#     c = asyncssh.read_certificate(certfile)
+#     print(username, remote_host, keyfile, certfile)
+#     async with asyncssh.connect(remote_host,
+#                             username=username,
+#                             client_keys=[(k,c)],
+#                             known_hosts=None) as conn:
+#         result = await conn.run("myquota -c")
+#         retcode = result.exit_status
+#         result = await conn.run(spawner.remote_port_command)
+#         remote_port = int(result.stdout)
+#     if retcode:
+#         e = web.HTTPError(507,reason="Insufficient Storage")
+#         e.my_message = "There is insufficient space in your home directory; please clear up some files and try again."
+#         raise e
+#     spawner.remote_host = remote_host
+#     spawner.port = remote_port
+# 
+# c.Spawner.pre_spawn_hook = setup

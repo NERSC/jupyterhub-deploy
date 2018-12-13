@@ -1,6 +1,6 @@
 ARG branch=unknown
 
-FROM registry.spin.nersc.gov/das/jupyterhub-base.${branch}:latest
+FROM registry.spin.nersc.gov/das/jupyter-base.${branch}:latest
 LABEL maintainer="Rollin Thomas <rcthomas@lbl.gov>"
 WORKDIR /srv
 

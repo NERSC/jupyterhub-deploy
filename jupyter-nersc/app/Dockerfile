@@ -1,23 +1,37 @@
-FROM registry.spin.nersc.gov/das/jupyterhub-base.gaffer:latest
+ARG branch=unknown
+
+FROM registry.spin.nersc.gov/das/jupyter-base.${branch}:latest
 LABEL maintainer="Rollin Thomas <rcthomas@lbl.gov>"
+WORKDIR /srv
 
 # Additional Ubuntu packages
 
 RUN \
-    apt-get update      &&      \
-    apt-get install --yes       \
-        csh                     \
-        dvipng                  \
-        ldap-utils              \
-        libnss-ldapd            \
-        libpam-ldap             \
-        nscd                    \
-        rsyslog                 \
-        supervisor              \
-        texlive-xetex           \
-        zsh
+    apt-get --yes install   \
+        csh                 \
+        ldap-utils          \
+        libnss-ldapd        \
+        libpam-ldap         \
+        nscd                \
+        openssh-server      \
+        supervisor
 
 # Python 3 Anaconda and additional packages
+
+##### RUN \
+#####     /opt/anaconda3/bin/conda update --yes conda &&  \
+#####     /opt/anaconda3/bin/conda install --yes          \
+#####         ipykernel                                   \
+#####         ipywidgets                                  \
+#####         jupyterlab                                  \
+#####         notebook                                &&  \
+#####     /opt/anaconda3/bin/ipython kernel install   &&  \
+#####     /opt/anaconda3/bin/conda clean --yes --all
+##### 
+##### # Typical extension
+##### 
+##### RUN \
+#####     /opt/anaconda3/bin/jupyter nbextension enable --sys-prefix --py widgetsnbextension
 
 ADD packages3.txt /tmp/packages3.txt
 RUN \
@@ -31,7 +45,7 @@ RUN \
 
 ADD packages2.txt /tmp/packages2.txt
 RUN \
-    curl -s -o /tmp/miniconda2.sh https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh  && \
+    wget -q -O /tmp/miniconda2.sh https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh  && \
     bash /tmp/miniconda2.sh -f -b -p /opt/anaconda2             && \
     rm /tmp/miniconda2.sh                                       && \
     /opt/anaconda2/bin/conda update --yes conda                 && \
@@ -40,7 +54,20 @@ RUN \
     /opt/anaconda2/bin/ipython kernel install                   && \
     /opt/anaconda2/bin/conda clean --yes --all
 
-# PAM, LDAP
+# For ssh auth API
+
+ADD NERSC-keys-api /usr/lib/nersc-ssh-keys/
+RUN chmod a+x /usr/lib/nersc-ssh-keys/NERSC-keys-api
+
+# For sshd
+
+RUN \
+    mkdir -p /var/run/sshd  && \
+    echo "AuthorizedKeysCommand /usr/lib/nersc-ssh-keys/NERSC-keys-api" >> /etc/ssh/sshd_config && \
+    echo "AuthorizedKeysCommandUser nobody" >> /etc/ssh/sshd_config && \
+    echo "TrustedUserCAKeys /etc/user_ca.pub"  >> /etc/ssh/sshd_config
+
+# For PAM/LDAP
 
 COPY etc/ /etc/
 
@@ -53,10 +80,9 @@ RUN \
     ln -s /global/common/datatran /usr/common   && \
     echo "datatran" > /etc/clustername
 
-# Jupyterhub/lab features
+# JupyterHub/lab features
 
 RUN \
-    conda install --yes jupyterlab=0.33.8                           && \
     pip install --no-cache-dir ipympl                               && \
     jupyter nbextension enable --sys-prefix --py widgetsnbextension && \
     jupyter labextension install            \
@@ -66,19 +92,14 @@ RUN \
         @jupyterlab/toc                     \
         jupyterlab_bokeh
 
-# Not sure we need this
-
 RUN \
     /opt/anaconda2/bin/jupyter nbextension enable --sys-prefix --py widgetsnbextension
 
-# Config and entrypoint script
+# Get port script
 
-ADD docker-entrypoint.sh jupyterhub_config.py /srv/
- 
-WORKDIR /srv
+ADD get_port.py /opt/anaconda3/bin/
 
-# TEMPORARILY HERE: Set up supervisord
+# Supervisord to launch sshd and nslcd
 
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
+ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]

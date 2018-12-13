@@ -16,20 +16,17 @@
         <div class="container">
             <div class="row">
                 <div class="col-6">
-                    <img src="/rectanglelogo-greytext-orangebody-greymoons.png" class="float-left" height="80">
+                    <img src="{{ url_for('static', filename='rectanglelogo-greytext-orangebody-greymoons.png') }}" class="float-left" height="80">
                 </div>
                 <div class="col-6">
-                    <img src="/logo.png" class="float-right" height="80">
+                    <img src="{{ url_for('static', filename='logo.png') }}" class="float-right" height="80">
                 </div>
             </div>
             <hr>
             <div class="row">
                 <div class="col-12">
                     <h1 class="display-4">Jupyter is Offline</h1>
-                    <p class="lead">Sorry for the inconvenience.
-                    NERSC's Jupyter service is offline.
-                    It will return when maintenance is over. 
-                    Please try again later.</p>
+                    <p class="lead">Sorry for the inconvenience. {{ message }}</p>
                 </div>
             </div>
         </div>
