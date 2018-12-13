@@ -1,9 +1,0 @@
-basemap
-beautiful-soup
-biopython
-netcdf4
-r-car
-r-essentials
-rpy2
-theano
-ujson
