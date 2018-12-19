@@ -990,27 +990,37 @@ c.SSHSpawner.remote_hosts = ['cori19-224.nersc.gov']
 #c.SSHSpawner.remote_host = ['gert01-224.nersc.gov']
 c.SSHSpawner.remote_port_command = "python -c 'import socket; s=socket.socket(); s.bind((\"\", 0)); print(s.getsockname()[1]); s.close()'"
 
-# async def setup(spawner):
-#     username = spawner.user.name
-#     remote_host = random.choice(spawner.remote_hosts)
-#     keyfile = spawner.ssh_keyfile.format(username=username)
-#     certfile = keyfile + "-cert.pub"
-#     k = asyncssh.read_private_key(keyfile)
-#     c = asyncssh.read_certificate(certfile)
-#     print(username, remote_host, keyfile, certfile)
-#     async with asyncssh.connect(remote_host,
-#                             username=username,
-#                             client_keys=[(k,c)],
-#                             known_hosts=None) as conn:
-#         result = await conn.run("myquota -c")
-#         retcode = result.exit_status
-#         result = await conn.run(spawner.remote_port_command)
-#         remote_port = int(result.stdout)
-#     if retcode:
-#         e = web.HTTPError(507,reason="Insufficient Storage")
-#         e.my_message = "There is insufficient space in your home directory; please clear up some files and try again."
-#         raise e
-#     spawner.remote_host = remote_host
-#     spawner.port = remote_port
-# 
-# c.Spawner.pre_spawn_hook = setup
+def space_error():
+        """Extra message pointing users to try spawning again from /hub/home.
+        """
+        home = "https://jupyter-dev.nersc.gov/hub/home"
+        return (
+            "There is insufficient space in your home directory; please clear up some files and then "
+            "<a href='{home}'>navigate to the hub home</a> and start your server.".format(home=home)
+        )
+
+async def setup(spawner):
+    username = spawner.user.name
+    remote_host = random.choice(spawner.remote_hosts)
+    keyfile = spawner.ssh_keyfile.format(username=username)
+    certfile = keyfile + "-cert.pub"
+    k = asyncssh.read_private_key(keyfile)
+    c = asyncssh.read_certificate(certfile)
+    # print(username, remote_host, keyfile, certfile)
+    async with asyncssh.connect(remote_host,
+                            username=username,
+                            client_keys=[(k,c)],
+                            known_hosts=None) as conn:
+        result = await conn.run("myquota -c")
+        retcode = result.exit_status
+        # result = await conn.run(spawner.remote_port_command)
+        # remote_port = int(result.stdout)
+    if retcode:
+        e = web.HTTPError(507,reason="Insufficient Storage")
+        em = space_error()
+        e.my_message = em
+        raise e
+    # spawner.remote_host = remote_host
+    # spawner.port = remote_port
+
+c.Spawner.pre_spawn_hook = setup
