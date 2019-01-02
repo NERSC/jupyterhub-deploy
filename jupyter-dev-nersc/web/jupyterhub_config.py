@@ -985,15 +985,16 @@ c.SSHSpawner.ssh_keyfile = '/certs/{username}.key'
 
 import asyncssh, random
 from tornado import web
+from jupyterhub.utils import url_path_join
 
 c.SSHSpawner.remote_hosts = ['cori19-224.nersc.gov']
 #c.SSHSpawner.remote_host = ['gert01-224.nersc.gov']
 c.SSHSpawner.remote_port_command = "python -c 'import socket; s=socket.socket(); s.bind((\"\", 0)); print(s.getsockname()[1]); s.close()'"
 
-def space_error():
+def space_error(home):
         """Extra message pointing users to try spawning again from /hub/home.
         """
-        home = "https://jupyter-dev.nersc.gov/hub/home"
+        home = url_path_join(home, 'home')
         return (
             "There is insufficient space in your home directory; please clear up some files and then "
             "<a href='{home}'>navigate to the hub home</a> and start your server.".format(home=home)
@@ -1017,7 +1018,7 @@ async def setup(spawner):
         # remote_port = int(result.stdout)
     if retcode:
         e = web.HTTPError(507,reason="Insufficient Storage")
-        em = space_error()
+        em = space_error(spawner.hub.base_url)
         e.my_message = em
         raise e
     # spawner.remote_host = remote_host
