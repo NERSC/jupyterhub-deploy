@@ -3,7 +3,7 @@
 {% block error_detail %}
 {% if exception and exception.my_message %}
 <div class="error">
-<p>{{ exception.my_message }}</p>
+<p>{{ exception.my_message | safe }}</p>
 </div>
 {% else %}
 {{ super() }}
