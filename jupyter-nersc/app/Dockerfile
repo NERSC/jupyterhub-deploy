@@ -9,12 +9,14 @@ WORKDIR /srv
 RUN \
     apt-get --yes install   \
         csh                 \
+        dvipng              \
         ldap-utils          \
         libnss-ldapd        \
         libpam-ldap         \
         nscd                \
         openssh-server      \
-        supervisor
+        supervisor          \
+        texlive-xetex
 
 # Python 3 Anaconda and additional packages
 
