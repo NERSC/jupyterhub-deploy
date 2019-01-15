@@ -10,13 +10,16 @@ RUN \
     apt-get --yes install   \
         csh                 \
         dvipng              \
+        ksh                 \
         ldap-utils          \
         libnss-ldapd        \
         libpam-ldap         \
         nscd                \
         openssh-server      \
         supervisor          \
-        texlive-xetex
+        tcsh                \
+        texlive-xetex       \
+        zsh
 
 # Python 3 Anaconda and additional packages
 
