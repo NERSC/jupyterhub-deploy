@@ -10,15 +10,13 @@ RUN \
     pip install git+https://github.com/nersc/sshapiauthenticator.git    && \
     pip install git+https://github.com/nersc/sshspawner.git
 
-# MFA-enabled login template
+# Customized templates
 
 ADD templates templates
 
-# Install announcement service components
+# Announcement service
 
-RUN \
-    cp /tmp/jupyterhub/examples/service-announcement/announcement.py .  &&  \
-    cp /tmp/jupyterhub/examples/service-announcement/templates/page.html templates/.
+ADD announcement.py .
 
 # Hub scripts
 

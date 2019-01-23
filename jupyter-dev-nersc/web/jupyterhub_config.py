@@ -1012,7 +1012,8 @@ async def setup(spawner):
                             username=username,
                             client_keys=[(k,c)],
                             known_hosts=None) as conn:
-        result = await conn.run("myquota -c")
+        home = "/global/homes/{}/{}".format(username[0], username)
+        result = await conn.run("myquota -c {}".format(home))
         retcode = result.exit_status
         # result = await conn.run(spawner.remote_port_command)
         # remote_port = int(result.stdout)
