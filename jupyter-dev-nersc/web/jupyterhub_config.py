@@ -987,9 +987,9 @@ import asyncssh, random
 from tornado import web
 from jupyterhub.utils import url_path_join
 
-c.SSHSpawner.remote_hosts = ['cori19-224.nersc.gov', 'cori13-224.nersc.gov']
+c.SSHSpawner.remote_hosts = ['corijupyter.nersc.gov']
 #c.SSHSpawner.remote_host = ['gert01-224.nersc.gov']
-c.SSHSpawner.remote_port_command = "python -c 'import socket; s=socket.socket(); s.bind((\"\", 0)); print(s.getsockname()[1]); s.close()'"
+c.SSHSpawner.remote_port_command = "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip"
 
 def space_error(home):
         """Extra message pointing users to try spawning again from /hub/home.
