@@ -1003,7 +1003,8 @@ c.NERSCSpawner.systems = [
 c.NERSCSpawner.spawners = {
     "cori-shared-node-cpu": (
         "sshspawner.sshspawner.SSHSpawner", {
-            "cmd": ["/global/common/cori/software/python/3.6-anaconda-5.2/bin/jupyter-labhub"],
+            "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh", 
+                "/global/common/cori/software/python/3.6-anaconda-5.2/bin/jupyter-labhub"],
             "remote_hosts": ["corijupyter.nersc.gov"],
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
             "hub_api_url": "http://{}:8081/hub/api".format(ip),
@@ -1013,7 +1014,8 @@ c.NERSCSpawner.spawners = {
     ),
     "spin-shared-node-cpu": (
         "sshspawner.sshspawner.SSHSpawner", {
-            "cmd": ["/opt/anaconda3/bin/jupyter-labhub"],
+            "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
+                "/opt/anaconda3/bin/jupyter-labhub"],
             "remote_hosts": ["app"],
             "remote_port_command": "/opt/anaconda3/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
             "hub_api_url": "http://{}:8081/hub/api".format(ip),
