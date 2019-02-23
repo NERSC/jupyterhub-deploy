@@ -18,10 +18,6 @@ def comma_split(string):
 
 ip = requests.get('https://v4.ifconfig.co/json').json()['ip']
 
-bindir = '/opt/anaconda3/bin/'
-if 'BASE_PATH' in os.environ:
-    bindir = os.path.join(os.environ['BASE_PATH'], 'bin')
-
 #------------------------------------------------------------------------------
 # Application(SingletonConfigurable) configuration
 #------------------------------------------------------------------------------
@@ -71,6 +67,7 @@ if 'BASE_PATH' in os.environ:
 
 ## Allow named single-user servers per user
 #c.JupyterHub.allow_named_servers = False
+c.JupyterHub.allow_named_servers = True
 
 ## Answer yes to any questions (e.g. confirm overwrite)
 #c.JupyterHub.answer_yes = False
@@ -200,6 +197,7 @@ c.JupyterHub.db_url = 'postgresql://jupyterhub:{}@db:5432/jupyterhub'.format(
 #  
 #  By default, redirects users to their own server.
 #c.JupyterHub.default_url = ''
+c.JupyterHub.default_url = '/hub/home'
 
 ## Register extra tornado Handlers for jupyterhub.
 #  
@@ -402,7 +400,7 @@ c.JupyterHub.services = [
 #  
 #  Should be a subclass of Spawner.
 #c.JupyterHub.spawner_class = 'jupyterhub.spawner.LocalProcessSpawner'
-c.JupyterHub.spawner_class = 'sshspawner.sshspawner.SSHSpawner'
+c.JupyterHub.spawner_class = 'nerscspawner.nerscspawner.NERSCSpawner'
 
 ## Path to SSL certificate file for the public facing interface of the proxy
 #  
@@ -508,7 +506,7 @@ c.JupyterHub.template_paths = ["templates"]
 #  environment variables. Most, including the default, do not. Consult the
 #  documentation for your spawner to verify!
 #c.Spawner.cmd = ['jupyterhub-singleuser']
-c.Spawner.cmd = [os.path.join(bindir, 'jupyter-labhub')]
+c.Spawner.cmd = ['/usr/bin/false']
 
 ## Maximum number of consecutive failures to allow before shutting down
 #  JupyterHub.
@@ -975,12 +973,91 @@ c.SSHAPIAuthenticator.skey = os.environ.get('SKEY')
 c.SSHAPIAuthenticator.cert_path = '/certs'
 
 #------------------------------------------------------------------------------
-# SSHSpawner(Spawner) configuration
+# NERSCSpawner(Spawner) configuration
 #------------------------------------------------------------------------------
 
-c.SSHSpawner.remote_hosts = ['app']
-c.SSHSpawner.remote_port = '22'
-c.SSHSpawner.hub_api_url = "http://{}:8081/hub/api".format(ip)
-c.SSHSpawner.path = bindir + ':/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
-c.SSHSpawner.remote_port_command = bindir + 'python /opt/anaconda3/bin/get_port.py'
-c.SSHSpawner.ssh_keyfile = '/certs/{username}.key'
+c.NERSCSpawner.profiles = [
+    { "name": "cori-shared-node-cpu" },
+    { "name": "spin-shared-node-cpu" },
+]
+
+c.NERSCSpawner.setups = [
+    {
+        "name": "shared-node",
+        "architectures": [
+            {
+                "name": "cpu",
+                "description": "Shared CPU Node",
+            }
+        ],
+        "resources": "Use a node shared with other users' notebooks but outside the batch queues.",
+        "use_cases": "Visualization and analytics that are not memory intensive and can run on just a few cores."
+    }
+]
+
+c.NERSCSpawner.systems = [
+    { "name": "cori" },
+    { "name": "spin" }
+]
+
+c.NERSCSpawner.spawners = {
+    "cori-shared-node-cpu": (
+        "sshspawner.sshspawner.SSHSpawner", {
+            "cmd": ["/global/common/cori/software/python/3.6-anaconda-5.2/bin/jupyter-labhub"],
+            "remote_hosts": ["corijupyter.nersc.gov"],
+            "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
+            "hub_api_url": "http://{}:8081/hub/api".format(ip),
+            "path": "/global/common/cori/software/python/3.6-anaconda-5.2/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "ssh_keyfile": '/certs/{username}.key'
+        }
+    ),
+    "spin-shared-node-cpu": (
+        "sshspawner.sshspawner.SSHSpawner", {
+            "cmd": ["/opt/anaconda3/bin/jupyter-labhub"],
+            "remote_hosts": ["app"],
+            "remote_port_command": "/opt/anaconda3/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
+            "hub_api_url": "http://{}:8081/hub/api".format(ip),
+            "path": "/opt/anaconda3/bin:/usr/bin:/usr/local/bin:/bin",
+            "ssh_keyfile": '/certs/{username}.key'
+        }
+    )
+}
+
+## c.NERSCSpawner.spawners = [
+##         ("spin", "sshspawner.sshspawner.SSHSpawner", {
+##             "remote_hosts"          : ["jupyter"],
+##             "remote_port"           : "22",
+##             "hub_api_url"           : "http://{}:8081/hub/api".format(ip),
+##             "path"                  : "/opt/anaconda3/bin:/usr/bin:/usr/local/bin:/bin",
+##             "remote_port_command"   : "/opt/anaconda3/bin/get_port.py",
+##             "ssh_keyfile"           : "/tmp/{username}.key",
+##         }),
+##         ("cori-shared", "sshspawner.sshspawner.SSHSpawner", {
+##             "remote_hosts"          : ["cori19-224.nersc.gov"],
+##             "remote_port"           : "22",
+##             "hub_api_url"           : "http://{}:8081/hub/api".format(ip),
+##             "path"                  : bindir + ":/global/common/cori/das/jupyterhub/:/usr/common/usg/bin:/usr/bin:/bin",
+##             "remote_port_command"   : "/global/common/cori/das/jupyterhub/get_port.py",
+##             "ssh_keyfile"           : "/tmp/{username}.key",
+##         }),
+##         ("cori-exclusive-cpu", "nerscspawner.nerscspawner.NERSCSlurmSpawner", {
+##             "exec_prefix"           :
+##                 "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /tmp/{username}.key {remote_host}",
+##             "startup_poll_interval" : 10.0,
+##             "req_remote_host"       : "cori19-224.nersc.gov",
+##             "req_homedir"           : "/tmp",
+##             "req_runtime"           : "30",
+##             "hub_api_url"           : "http://{}:8081/hub/api".format(ip),
+##             "path"                  : bindir + ":/global/common/cori/das/jupyterhub/:/usr/common/usg/bin:/usr/bin:/bin",
+##         }),
+##         ("cori-config", "nerscspawner.nerscspawner.NERSCSlurmSpawner", {
+##             "exec_prefix"           :
+##                 "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /tmp/{username}.key {remote_host}",
+##             "startup_poll_interval" : 10.0,
+##             "req_remote_host"       : "cori19-224.nersc.gov",
+##             "req_homedir"           : "/tmp",
+##             "req_runtime"           : "30",
+##             "hub_api_url"           : "http://{}:8081/hub/api".format(ip),
+##             "path"                  : bindir + ":/global/common/cori/das/jupyterhub/:/usr/common/usg/bin:/usr/bin:/bin",
+##         }),
+## ]
