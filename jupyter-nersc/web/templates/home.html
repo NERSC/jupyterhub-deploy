@@ -55,12 +55,12 @@
                     <a role="button" class="stop-server btn btn-xs btn-danger" id="stop-{{ profile_key }}">stop</a>
                     <a role="button" class="btn btn-xs btn-primary" href="{{ user.server_url(profile_key) }}">server</a>
                 {% else %}
-                    <a role="button" class="btn btn-xs btn-primary" href="{{ user.server_url(profile_key) }}">server</a>
-                    {# <a role="button" class="start-server btn btn-xs btn-primary" id="start-{{ profile_key }}">start server</a> #}
+                    {# <a role="button" class="btn btn-xs btn-primary" href="{{ user.server_url(profile_key) }}">server</a> #}
+                    <a role="button" class="start-server btn btn-xs btn-primary" id="start-{{ profile_key }}">server</a>
                 {% endif %}
             {% else %}
-                <a role="button" class="btn btn-xs btn-primary" href="{{ user.server_url(profile_key) }}">server</a>
-                {# <a role="button" class="start-server btn btn-xs btn-primary" id="start-{{ profile_key }}">start server</a> #}
+                {# <a role="button" class="btn btn-xs btn-primary" href="{{ user.server_url(profile_key) }}">server</a> #}
+                <a role="button" class="start-server btn btn-xs btn-primary" id="start-{{ profile_key }}">server</a>
             {% endif %}
         {% endif %}
     </td>
