@@ -54,14 +54,19 @@ RUN \
 ENV PATH=/opt/anaconda3/bin:$PATH
 WORKDIR /tmp
 RUN \
-    npm install -g configurable-http-proxy                          &&  \
-#   git clone https://github.com/jupyterhub/jupyterhub.git          &&  \
-    git clone https://github.com/rcthomas/jupyterhub.git            &&  \
-    cd jupyterhub                                                   &&  \
-#   git checkout tags/0.9.4                                         &&  \
-    git checkout reload-if-stop                                     &&  \
-    /opt/anaconda3/bin/python setup.py js                           &&  \
-    /opt/anaconda3/bin/pip --no-cache-dir install .                 &&  \
-    cp examples/cull-idle/cull_idle_servers.py /opt/anaconda3/bin/. &&  \
-    chmod u+x /opt/anaconda3/bin/cull_idle_servers.py               &&  \
+    npm install -g configurable-http-proxy                                  &&  \
+#   git clone https://github.com/jupyterhub/jupyterhub.git                  &&  \
+    git clone https://github.com/minrk/jupyterhub.git                       &&  \
+    cd jupyterhub                                                           &&  \
+#   git checkout tags/0.9.4                                                 &&  \
+    git checkout named-options-form                                         &&  \
+    git config --global user.email "you@example.com"                        &&  \
+    git config --global user.name "Your Name"                               &&  \
+    git remote add upstream https://github.com/jupyterhub/jupyterhub.git    &&  \
+    git fetch upstream                                                      &&  \
+    git merge upstream/master                                               &&  \
+    /opt/anaconda3/bin/python setup.py js                                   &&  \
+    /opt/anaconda3/bin/pip --no-cache-dir install .                         &&  \
+    cp examples/cull-idle/cull_idle_servers.py /opt/anaconda3/bin/.         &&  \
+    chmod u+x /opt/anaconda3/bin/cull_idle_servers.py                       &&  \
     rm -rf ~/.cache ~/.npm
