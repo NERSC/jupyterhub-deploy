@@ -9,8 +9,8 @@ WORKDIR /srv
 RUN \
     pip install git+https://github.com/nersc/sshapiauthenticator.git        &&  \
     pip install git+https://github.com/jupyterhub/wrapspawner.git           &&  \
-    pip install git+https://github.com/nersc/nerscspawner.git@converge-hubs &&  \
-    pip install git+https://github.com/nersc/sshspawner.git@converged-hub
+    pip install git+https://github.com/nersc/nerscspawner.git               &&  \
+    pip install git+https://github.com/nersc/sshspawner.git
 
 # Customized templates
 
