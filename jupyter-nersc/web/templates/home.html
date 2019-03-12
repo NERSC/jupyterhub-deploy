@@ -50,13 +50,13 @@
         {% if user.spawner.profiles | selectattr("name", "equalto", profile_key) | first %}
             {% if profile_key in user.spawners or profile_key in user.orm_user.orm_spawners %}
                 {% set spawner = user.spawners[profile_key] | default(user.orm_user.orm_spawners[profile_key]) %}
-                <a role="button" class="stop-server btn btn-xs btn-danger {% if not spawner.active %}hidden{% endif %}" id="stop-{{ spawner.name }}">stop</a>
-                <a role="button" class="server-link btn btn-xs btn-primary {% if not spawner.ready or not spawner.active %}hidden{% endif %}" href="{{ user.server_url(profile_key) }}">server</a>
-                <a role="button" class="start-server btn btn-xs btn-primary {% if spawner.active %} hidden{% endif %}" id="start-{{ spawner.name }}" href="{{ base_url }}spawn/{{ user.name }}/{{ spawner.name }}">
+                <a role="button" class="stop-server btn btn-sm btn-danger {% if not spawner.active %}hidden{% endif %}" id="stop-{{ spawner.name }}">stop</a>
+                <a role="button" class="server-link btn btn-sm btn-primary {% if not spawner.ready or not spawner.active %}hidden{% endif %}" href="{{ user.server_url(profile_key) }}">server</a>
+                <a role="button" class="start-server btn btn-sm btn-primary {% if spawner.active %} hidden{% endif %}" id="start-{{ spawner.name }}" href="{{ base_url }}spawn/{{ user.name }}/{{ spawner.name }}">
                 start
                 </a>
             {% else %}
-                <a role="button" class="start-server btn btn-xs btn-primary" id="start-{{ profile_key }}" href="{{ base_url }}spawn/{{ user.name }}/{{ profile_key }}">start</a>
+                <a role="button" class="start-server btn btn-sm btn-primary" id="start-{{ profile_key }}" href="{{ base_url }}spawn/{{ user.name }}/{{ profile_key }}">start</a>
             {% endif %}
         {% endif %}
     </td>
