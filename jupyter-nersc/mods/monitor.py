@@ -60,7 +60,7 @@ def parse_arguments():
     parser.add_argument("--api-token", "-o",
             default=os.environ["MODS_JUPYTERHUB_API_TOKEN"])
     parser.add_argument("--subcategory", "-s",
-            default="jupyterhub_v1")
+            default="jupyterhub_v8")
     return parser.parse_args()
 
 
@@ -216,15 +216,26 @@ class Publisher(object):
         r.raise_for_status()
         users = r.json()
 
-        servers = list()
+        current_users = 0
+        running_servers = dict(total=0)
         for user in users:
-            for name, info in user["servers"].items():
-                 servers.append(info["url"])
+            if not user["servers"]:
+                continue
+            servers = user["servers"]
+            if "" in servers:
+                servers["default"] = servers.pop("")
+            current_users += 1
+            for key in servers:
+                if key not in running_servers:
+                    running_servers[key] = 0
+                running_servers[key] += 1
+                running_servers["total"] += 1
 
         message = dict()
         message["category"] = "MODS"
         message["subcategory"] = self.subcategory
-        message["servers"] = sorted(servers)
+        message["current_users"] = current_users
+        message["running_servers"] = running_servers
 
         self.channel.basic_publish(self.exchange, self.routing_key,
                                     json.dumps(message))
