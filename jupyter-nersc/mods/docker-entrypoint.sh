@@ -23,8 +23,9 @@ file_env() {
     unset "$fileVar"
 }
 
-file_env 'POSTGRES_PASSWORD'
-file_env 'SKEY'
+file_env 'MODS_USERNAME'
+file_env 'MODS_PASSWORD'
+file_env 'MODS_RABBITMQ_HOST'
 file_env 'MODS_JUPYTERHUB_API_TOKEN'
 
 exec "$@"
