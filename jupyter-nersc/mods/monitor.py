@@ -205,7 +205,7 @@ class Publisher(object):
         LOGGER.info('Scheduling next message for %0.1f seconds',
                     self.publish_interval)
         self.connection.add_timeout(self.publish_interval,
-                                     self._publish_message)
+                                     self.publish_message)
 
     def publish_message(self):
         if self.stopping:
