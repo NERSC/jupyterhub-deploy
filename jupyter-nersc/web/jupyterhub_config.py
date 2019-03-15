@@ -393,6 +393,11 @@ c.JupyterHub.services = [
         'name': 'announcement',
         'url': 'http://127.0.0.1:8888',
         'command': ["python", "-m", "announcement"],
+    },
+    {
+        'name': 'mods',
+        'admin': True,
+        'api_token': os.environ["MODS_JUPYTERHUB_API_TOKEN"]
     }
 ]
 
