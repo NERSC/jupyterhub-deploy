@@ -7,4 +7,5 @@ jupyterlab
 netcdf4
 r-essentials
 rpy2
+scipy
 ujson
