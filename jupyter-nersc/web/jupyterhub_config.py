@@ -243,6 +243,7 @@ c.JupyterHub.default_url = '/hub/home'
 #  
 #  .. versionadded:: 0.8
 #c.JupyterHub.hub_connect_ip = ''
+c.JupyterHub.hub_connect_ip = ip
 
 ## DEPRECATED
 #  
