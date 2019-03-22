@@ -21,23 +21,6 @@ RUN \
         texlive-xetex       \
         zsh
 
-# Python 3 Anaconda and additional packages
-
-##### RUN \
-#####     /opt/anaconda3/bin/conda update --yes conda &&  \
-#####     /opt/anaconda3/bin/conda install --yes          \
-#####         ipykernel                                   \
-#####         ipywidgets                                  \
-#####         jupyterlab                                  \
-#####         notebook                                &&  \
-#####     /opt/anaconda3/bin/ipython kernel install   &&  \
-#####     /opt/anaconda3/bin/conda clean --yes --all
-##### 
-##### # Typical extension
-##### 
-##### RUN \
-#####     /opt/anaconda3/bin/jupyter nbextension enable --sys-prefix --py widgetsnbextension
-
 ADD packages3.txt /tmp/packages3.txt
 RUN \
     /opt/anaconda3/bin/conda update --yes conda                 && \
