@@ -1,8 +1,0 @@
-jupyterdev:
-  image: registry.spin.nersc.gov/das/jupyterhub-dev:latest 
-  environment:
-      - PATH=/opt/anaconda3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-      - HUB_API_URL='http://jupyter-dev.nersc.gov:8081/hub/api'
-  ports:
-      - 8000:8000/tcp
-      - 8081:8081/tcp
