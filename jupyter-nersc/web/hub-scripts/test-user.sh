@@ -2,8 +2,8 @@
 
 # Test user's ability to ssh
 
-hostname=app
-username=$1
+hostname=$1
+username=$2
 cert=/certs/$username.key
 echo $username $cert
 if [ ! -f $cert ]; then
