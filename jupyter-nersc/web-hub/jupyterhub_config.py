@@ -1022,7 +1022,7 @@ c.NERSCSpawner.spawners = {
         "sshspawner.sshspawner.SSHSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
                 "/opt/anaconda3/bin/jupyter-labhub"],
-            "remote_hosts": ["app"],
+            "remote_hosts": ["app-notebooks"],
             "remote_port_command": "/opt/anaconda3/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
             "hub_api_url": "http://{}:8081/hub/api".format(ip),
             "path": "/opt/anaconda3/bin:/usr/bin:/usr/local/bin:/bin",
