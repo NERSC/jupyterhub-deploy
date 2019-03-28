@@ -37,10 +37,13 @@ RUN \
     /opt/anaconda3/bin/conda install --yes                      \
         alembic         \
         decorator       \
+        entrypoints     \
         jinja2          \
         mako            \
         markupsafe      \
         nodejs          \
+        oauthlib=2      \
+        pamela          \
         psycopg2        \
         pyopenssl       \
         python-dateutil \
@@ -57,7 +60,7 @@ RUN \
     npm install -g configurable-http-proxy                                  &&  \
     git clone https://github.com/jupyterhub/jupyterhub.git                  &&  \
     cd jupyterhub                                                           &&  \
-    git checkout tags/1.0.0b1                                               &&  \
+    git checkout tags/0.9.5                                                 &&  \
     /opt/anaconda3/bin/python setup.py js                                   &&  \
     /opt/anaconda3/bin/pip --no-cache-dir install .                         &&  \
     cp examples/cull-idle/cull_idle_servers.py /opt/anaconda3/bin/.         &&  \
