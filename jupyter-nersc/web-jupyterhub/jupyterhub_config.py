@@ -183,7 +183,7 @@ c.JupyterHub.cookie_max_age_days = 0.5
 
 ## url for the database. e.g. `sqlite:///jupyterhub.sqlite`
 #c.JupyterHub.db_url = 'sqlite:///jupyterhub.sqlite'
-c.JupyterHub.db_url = 'postgresql://jupyterhub:{}@db:5432/jupyterhub'.format(
+c.JupyterHub.db_url = 'postgresql://jupyterhub:{}@db-jupyterhub:5432/jupyterhub'.format(
         os.getenv('POSTGRES_PASSWORD')
 )
 
@@ -388,7 +388,7 @@ c.JupyterHub.services = [
     {
         'name': 'cull-idle',
         'admin': True,
-        'command': 'cull_idle_servers.py --timeout=43200'.split(),
+        'command': 'cull_idle_servers.py --timeout=64800'.split(),
     },
     {
         'name': 'announcement',
