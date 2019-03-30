@@ -5,6 +5,7 @@ blaze
 jupyter
 jupyterlab
 netcdf4
+notebook=5.7.7
 r-essentials
 rpy2
 scipy
