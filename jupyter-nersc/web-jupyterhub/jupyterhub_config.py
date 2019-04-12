@@ -1035,17 +1035,16 @@ c.NERSCSpawner.spawners = {
 # Pre-spawn myquota check
 
 def space_error(home):
-	"""Extra message pointing users to try spawning again from /hub/home.  """
-	home = url_path_join(home, 'home')
-    return (
-            "There is insufficient space in your home directory; please clear up some files and then "
-            "<a href='{home}'>navigate to the hub home</a> and start your server.".format(home=home)
-    )
+    """Extra message pointing users to try spawning again from /hub/home.  """
+    home = url_path_join(home, 'home')
+    return ("There is insufficient space in your home directory; please clear up some files and then " +
+            "<a href='{home}'>navigate to the hub home</a> and start your server.".format(home=home))
 
 async def setup(spawner):
     username = spawner.user.name
     remote_host = "corijupyter.nersc.gov"
-    keyfile = spawner.ssh_keyfile.format(username=username)
+#   keyfile = spawner.ssh_keyfile.format(username=username)
+    keyfile = "/certs/{username}.key".format(username=username) # NEED to have in NERSCSpawner now
     certfile = keyfile + "-cert.pub"
     k = asyncssh.read_private_key(keyfile)
     c = asyncssh.read_certificate(certfile)
