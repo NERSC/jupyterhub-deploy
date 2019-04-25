@@ -3,7 +3,11 @@
 import os
 import sys
 
+import asyncssh
 import requests
+from tornado import web
+from jupyterhub.utils import url_path_join
+
 
 def comma_split(string):
     """Handle env variables that may be None, empty string, or have spaces"""
@@ -183,7 +187,7 @@ c.JupyterHub.cookie_max_age_days = 0.5
 
 ## url for the database. e.g. `sqlite:///jupyterhub.sqlite`
 #c.JupyterHub.db_url = 'sqlite:///jupyterhub.sqlite'
-c.JupyterHub.db_url = 'postgresql://jupyterhub:{}@db:5432/jupyterhub'.format(
+c.JupyterHub.db_url = 'postgresql://jupyterhub:{}@db-jupyterhub:5432/jupyterhub'.format(
         os.getenv('POSTGRES_PASSWORD')
 )
 
@@ -388,7 +392,7 @@ c.JupyterHub.services = [
     {
         'name': 'cull-idle',
         'admin': True,
-        'command': 'cull_idle_servers.py --timeout=43200'.split(),
+        'command': 'cull_idle_servers.py --timeout=86400'.split(),
     },
     {
         'name': 'announcement',
@@ -1022,7 +1026,7 @@ c.NERSCSpawner.spawners = {
         "sshspawner.sshspawner.SSHSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
                 "/opt/anaconda3/bin/jupyter-labhub"],
-            "remote_hosts": ["app"],
+            "remote_hosts": ["app-notebooks"],
             "remote_port_command": "/opt/anaconda3/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
             "hub_api_url": "http://{}:8081/hub/api".format(ip),
             "path": "/opt/anaconda3/bin:/usr/bin:/usr/local/bin:/bin",
@@ -1030,6 +1034,40 @@ c.NERSCSpawner.spawners = {
         }
     )
 }
+
+# Pre-spawn myquota check
+
+def space_error(home):
+    """Extra message pointing users to try spawning again from /hub/home.  """
+    home = url_path_join(home, 'home')
+    return ("There is insufficient space in your home directory; please clear up some files and then " +
+            "<a href='{home}'>navigate to the hub home</a> and start your server.".format(home=home))
+
+async def setup(spawner):
+    username = spawner.user.name
+    remote_host = "corijupyter.nersc.gov"
+#   keyfile = spawner.ssh_keyfile.format(username=username)
+    keyfile = "/certs/{username}.key".format(username=username) # NEED to have in NERSCSpawner now
+    certfile = keyfile + "-cert.pub"
+    k = asyncssh.read_private_key(keyfile)
+    c = asyncssh.read_certificate(certfile)
+    # print(username, remote_host, keyfile, certfile)
+    async with asyncssh.connect(remote_host, username=username, 
+            client_keys=[(k,c)], known_hosts=None) as conn:
+        home = "/global/homes/{}/{}".format(username[0], username)
+        result = await conn.run("myquota -c {}".format(home))
+        retcode = result.exit_status
+        # result = await conn.run(spawner.remote_port_command)
+        # remote_port = int(result.stdout)
+    if retcode:
+        e = web.HTTPError(507,reason="Insufficient Storage")
+        em = space_error(spawner.hub.base_url)
+        e.my_message = em
+        raise e
+    # spawner.remote_host = remote_host
+    # spawner.port = remote_port
+
+# c.Spawner.pre_spawn_hook = setup
 
 ## c.NERSCSpawner.spawners = [
 ##         ("spin", "sshspawner.sshspawner.SSHSpawner", {

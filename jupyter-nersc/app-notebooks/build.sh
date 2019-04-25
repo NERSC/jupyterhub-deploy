@@ -5,4 +5,4 @@ branch=$(git symbolic-ref --short HEAD)
 docker build                    \
     --build-arg branch=$branch  \
     "$@"                        \
-    --tag registry.spin.nersc.gov/das/jupyter-nersc-web.$branch:latest .
+    --tag registry.spin.nersc.gov/das/app-notebooks.jupyter-nersc-$branch:latest .

@@ -56,7 +56,7 @@ def parse_arguments():
     parser.add_argument("--queue", "-q",
             default="text")
     parser.add_argument("--api-url", "-a",
-            default="http://web:8081/hub/api")
+            default="http://web-jupyterhub:8081/hub/api")
     parser.add_argument("--api-token", "-o",
             default=os.environ["MODS_JUPYTERHUB_API_TOKEN"])
     parser.add_argument("--subcategory", "-s",
