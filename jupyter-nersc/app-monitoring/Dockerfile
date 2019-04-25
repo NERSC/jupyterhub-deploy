@@ -31,7 +31,7 @@ RUN \
     echo "python 3.6.*" >> /opt/anaconda3/conda-meta/pinned &&  \
     /opt/anaconda3/bin/conda update --yes conda             &&  \
     /opt/anaconda3/bin/pip install --no-cache-dir               \
-        pika
+        pika==0.13.1
 
 ENV PATH=/opt/anaconda3/bin:$PATH
 
