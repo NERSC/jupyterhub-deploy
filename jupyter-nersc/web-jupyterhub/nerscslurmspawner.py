@@ -1,0 +1,338 @@
+
+from textwrap import dedent
+
+import asyncssh
+from traitlets import default, Unicode
+from tornado import escape, httpclient
+
+from batchspawner import BatchSpawnerRegexStates
+
+class NERSCSlurmSpawner(BatchSpawnerRegexStates):
+    """Spawner that connects to a job-submit (login node) and submits a job to
+    start a process running in the Slurm batch queue.
+    NOTE Right now we allow the hub to pre-select a random port but when multiple
+    users are on the same compute node, a la shared-interactive, we need to control
+    the port selected deterministically or ensure they don't collide in some way.
+    This has been done in later versions of BatchSpawner."""
+
+    exec_prefix = Unicode(
+            "ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /tmp/{username}.key {remote_host}",
+            config=True)
+
+    req_constraint = Unicode('haswell',
+            help="""Users specify which features are required by their job
+            using the constraint option, which is required at NERSC on Cori/Gerty."""
+            ).tag(config=True)
+
+    req_nodes = Unicode('1',
+            help="Number of nodes",
+            config=True)
+
+    req_qos = Unicode('jupyter',
+            help="QoS name to submit job to resource manager"
+            ).tag(config=True)
+
+    req_remote_host = Unicode('remote_host',
+                          help="""The SSH remote host to spawn sessions on."""
+                          ).tag(config=True)
+
+    hub_api_url = Unicode().tag(config=True)
+
+    path = Unicode().tag(config=True)
+
+    req_homedir = Unicode().tag(config=True)
+
+    req_env_text = Unicode()
+
+    @default("req_env_text")
+    def _req_env_text(self):
+        env = self.get_env()
+        text = ""
+        for item in env.items():
+            text += 'export %s=%s\n' % item
+        return text
+
+#   sim_url=Unicode("https://sim-stage.nersc.gov/graphql").tag(config=True)
+    sim_url=Unicode("https://sim.nersc.gov/graphql").tag(config=True)
+
+    async def query_sim_accounts(self, name): #rename
+        query = dedent("""
+        query {{
+          systemInfo {{
+            users(name: "{}") {{
+              baseRepos {{
+                computeAllocation {{
+                  repoName
+                }}
+              }}
+            }}
+          }}
+          systemInfo {{
+            users(name: "{}") {{
+              userAllocations {{
+                computeAllocation {{
+                  repoName
+                }}
+              }}
+            }}
+          }}
+        }}""".format(name, name)).strip()
+        data = await self.query_sim(query)
+        user = data["data"]["systemInfo"]["users"][0]
+        default_account = user["baseRepos"][0]["computeAllocation"]["repoName"]
+        accounts = [a["computeAllocation"]["repoName"] for a in user["userAllocations"]]
+        accounts.sort()
+        accounts.remove(default_account)
+        accounts.insert(0, default_account)
+        return accounts
+
+    async def query_sim(self, query):
+        http_client = httpclient.AsyncHTTPClient()
+        request = self.sim_request(query)
+        response = await http_client.fetch(request)
+        return escape.json_decode(response.body)
+
+    def sim_request(self, query):
+        return httpclient.HTTPRequest(self.sim_url,
+            method="POST",
+            headers={"Content-Type": "application/json"},
+            body=escape.json_encode({"query": query}))
+
+    # outputs line like "Submitted batch job 209"
+    batch_submit_cmd = Unicode("/usr/bin/sbatch").tag(config=True)
+    # outputs status and exec node like "RUNNING hostname"
+    batch_query_cmd = Unicode("/usr/bin/python /global/common/cori/das/jupyterhub/new-get-ip.py {job_id}").tag(config=True)
+    batch_cancel_cmd = Unicode("/usr/bin/scancel {job_id}").tag(config=True)
+    # use long-form states: PENDING,  CONFIGURING = pending
+    #  RUNNING,  COMPLETING = running
+    state_pending_re = Unicode(r'^(?:PENDING|CONFIGURING)').tag(config=True)
+    state_running_re = Unicode(r'^(?:RUNNING|COMPLETING)').tag(config=True)
+    state_exechost_re = Unicode(r'\s+((?:[\w_-]+\.?)+)$').tag(config=True)
+
+    def parse_job_id(self, output):
+        # make sure jobid is really a number
+        try:
+            id = output.split(' ')[-1]
+            int(id)
+        except Exception as e:
+            self.log.error("SlurmSpawner unable to parse job ID from text: " + output)
+            raise e
+        return id
+
+    # This is based on SSH Spawner
+    def get_env(self):
+        """Add user environment variables"""
+        env = super().get_env()
+
+        env.update(dict(
+            JPY_USER=self.user.name,
+            #JPY_BASE_URL=self.user.server.base_url,
+            JPY_HUB_PREFIX=self.hub.server.base_url,
+            JUPYTERHUB_PREFIX=self.hub.server.base_url,
+            # PATH=self.path
+            # NERSC local mod
+            PATH=self.path
+        ))
+
+        if self.notebook_dir:
+            env['NOTEBOOK_DIR'] = self.notebook_dir
+
+        hub_api_url = self.hub.api_url
+        if self.hub_api_url != '':
+            hub_api_url = self.hub_api_url
+
+        env['JPY_HUB_API_URL'] = hub_api_url
+        env['JUPYTERHUB_API_URL'] = hub_api_url
+
+        return env
+
+class NERSCExclusiveSlurmSpawner(NERSCSlurmSpawner):
+
+    batch_script = Unicode("""#!/bin/bash
+{%- if constraint %}
+#SBATCH --constraint={{ constraint }}
+{%- endif %}
+#SBATCH --job-name=jupyter
+#SBATCH --nodes={{ nodes }}
+#SBATCH --qos={{ qos }}
+#SBATCH --sdn
+#SBATCH --time={{ runtime }}
+{{ env_text }}
+unset XDG_RUNTIME_DIR
+{{ cmd }}""").tag(config=True)
+
+
+class NERSCConfigurableSlurmSpawner(NERSCSlurmSpawner):
+
+    req_image = Unicode("",
+            help="Shifter image",
+            config=True)
+
+    req_reservation = Unicode("",
+            help="Reservation.",
+            config=True)
+
+    async def options_form(self, spawner):
+        form = ""
+
+        # Account
+
+        form += dedent("""
+        <label for="account">Account:</label>
+        <select class="form-control" name="account" required autofocus>
+        """)
+
+        accounts = await self.query_sim_accounts(spawner.user.name)
+        for account in accounts:
+            form += """<option value="{}">{}</option>""".format(account, account)
+
+        form += dedent("""
+        </select>
+        """)
+
+        # Nodes, should come from model
+
+        form += dedent("""
+        <label for="nodes">Nodes:</label>
+        <input class="form-control" type="number" name="nodes" min="1" max="5" value="1" required autofocus>
+        """)
+
+        # Time, should come from model
+
+        form += dedent("""
+        <label for="time">Time Limit:</label>
+        <input class="form-control" type="number" name="time" min="10" max="240" value="30" step="10" required autofocus>
+        """)
+
+        # QOS, should come from model
+
+        form += dedent("""
+        <label for="qos">QOS:</label>
+        <select class="form-control" name="qos" required autofocus>
+        <option value="regular">regular</option>
+        <option value="debug">debug</option>
+        <option value="jupyter">'jupyter'</option>
+        </select>
+        """)
+
+        # Constraint, should come from model
+
+        form += dedent("""
+        <label for="account">Constraint:</label>
+        <select class="form-control" name="constraint" required autofocus>
+        <option value="haswell">haswell</option>
+        <option value="knl">knl</option>
+        </select>
+        """)
+
+        # Reservation
+
+        form += dedent("""
+        <label for="reservation">Reservation:</label>
+        <select class="form-control" name="reservation" autofocus>
+        """)
+
+        reservations = await self.query_reservations(spawner.user.name)
+        for reservation in reservations:
+            form += """<option value="{}">{}</option>""".format(reservation, reservation)
+
+        form += dedent("""
+        </select>
+        """)
+
+        # Images
+
+        form += dedent("""
+        <label for="image">Shifter Image:</label>
+        <select class="form-control" name="image" autofocus>
+        """)
+
+        images = await self.query_images(spawner.user.name)
+        for image in images:
+            form += """<option value="{}">{}</option>""".format(image, image)
+
+        form += dedent("""
+        </select>
+        """)
+
+        return form
+
+    async def query_reservations(self, name):
+        # Should filter on username
+        remote_host = self.req_remote_host
+        keyfile = "/certs/{}.key".format(name)
+        certfile = keyfile + "-cert.pub"
+        k = asyncssh.read_private_key(keyfile)
+        c = asyncssh.read_certificate(certfile)
+        async with asyncssh.connect(remote_host,
+                username=name,
+                client_keys=[(k,c)],
+                known_hosts=None) as conn:
+            result = await conn.run("/usr/bin/scontrol show reservation --oneliner")
+        reservations = [""]
+        for line in result.stdout.split("\n"):
+            columns = line.split()
+            for column in columns:
+                key, value = column.split("=", 1)
+                if key == "ReservationName":
+                    reservations.append(value)
+                    break
+        return reservations
+
+    async def query_images(self, name):
+        # Some better filtering is needed...
+        remote_host = self.req_remote_host
+        keyfile = "/certs/{}.key".format(name)
+        certfile = keyfile + "-cert.pub"
+        k = asyncssh.read_private_key(keyfile)
+        c = asyncssh.read_certificate(certfile)
+        async with asyncssh.connect(remote_host,
+                username=name,
+                client_keys=[(k,c)],
+                known_hosts=None) as conn:
+            result = await conn.run("/usr/bin/shifterimg images")
+        images = [""]
+        for line in result.stdout.split("\n"):
+            columns = line.split()
+            if columns:
+                image_name = columns[-1]
+                if image_name.find("jupyterlab") < 0:
+                    continue
+                images.append(image_name)
+        return images
+
+    def options_from_form(self, formdata):
+        options = dict()
+        options["account"] = formdata["account"][0]
+        options["constraint"] = formdata["constraint"][0]
+        options["image"] = formdata["image"][0]
+        options["nodes"] = formdata["nodes"][0]
+        options["qos"] = formdata["qos"][0]
+        options["reservation"] = formdata["reservation"][0]
+        options["time"] = formdata["time"][0]
+        return options
+
+    batch_script = Unicode("""#!/bin/bash
+#SBATCH --account={{ account }}
+{%- if constraint %}
+#SBATCH --constraint={{ constraint }}
+{%- endif %}
+{%- if image %}
+#SBATCH --image={{ image }}
+{%- endif %}
+#SBATCH --job-name=jupyter
+#SBATCH --nodes={{ nodes }}
+#SBATCH --output=jupyter-%j.log
+#SBATCH --qos={{ qos }}
+{%- if reservation %}
+#SBATCH --reservation={{ reservation }}
+{%- endif %}
+#SBATCH --sdn
+#SBATCH --time={{ time }}
+{{ env_text }}
+unset XDG_RUNTIME_DIR
+{% if image %}
+shifter jupyter-labhub {{ cmd.split()[2:] | join(" ") }}
+{% else %}
+{{ cmd }}
+{% endif %}""").tag(config=True)
