@@ -745,7 +745,7 @@ c.Spawner.poll_interval = 900
 #  takes longer than this. start should return when the server process is started
 #  and its location is known.
 #c.Spawner.start_timeout = 60
-c.Spawner.start_timeout = 300
+c.Spawner.start_timeout = 900
 
 #------------------------------------------------------------------------------
 # LocalProcessSpawner(Spawner) configuration
