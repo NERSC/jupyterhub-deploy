@@ -745,6 +745,7 @@ c.Spawner.poll_interval = 900
 #  takes longer than this. start should return when the server process is started
 #  and its location is known.
 #c.Spawner.start_timeout = 60
+c.Spawner.start_timeout = 300
 
 #------------------------------------------------------------------------------
 # LocalProcessSpawner(Spawner) configuration
@@ -987,8 +988,9 @@ c.SSHAPIAuthenticator.cert_path = '/certs'
 #------------------------------------------------------------------------------
 
 c.NERSCSpawner.profiles = [
-    { "name": "cori-shared-node-cpu" },
-    { "name": "spin-shared-node-cpu" },
+    { "name": "cori-shared-node-cpu"    },
+    { "name": "cori-exclusive-node-cpu" },
+    { "name": "spin-shared-node-cpu"    },
 ]
 
 c.NERSCSpawner.setups = [
@@ -1002,7 +1004,18 @@ c.NERSCSpawner.setups = [
         ],
         "resources": "Use a node shared with other users' notebooks but outside the batch queues.",
         "use_cases": "Visualization and analytics that are not memory intensive and can run on just a few cores."
-    }
+    },
+    {
+        "name": "exclusive-node",
+        "architectures": [
+            {
+                "name": "cpu",
+                "description": "Exclusive CPU Node",
+            }
+        ],
+        "resources": "Use your own node within a job allocation using defaults.",
+        "use_cases": "Visualization, analytics, machine learning that is compute or memory intensive but can be done on a single node."
+    },
 ]
 
 c.NERSCSpawner.systems = [
@@ -1020,6 +1033,19 @@ c.NERSCSpawner.spawners = {
             "hub_api_url": "http://{}:8081/hub/api".format(ip),
             "path": "/global/common/cori/software/python/3.6-anaconda-5.2/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "ssh_keyfile": '/certs/{username}.key'
+        }
+    ),
+    "cori-exclusive-node-cpu": (
+        "nerscslurmspawner.NERSCExclusiveSlurmSpawner", {
+            "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
+                "/global/common/cori/software/python/3.6-anaconda-5.2/bin/jupyter-labhub"],
+            "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",
+            "startup_poll_interval": 30.0,
+            "req_remote_host": "cori19-224.nersc.gov",
+            "req_homedir": "/tmp",
+            "req_runtime": "240",
+            "hub_api_url": "http://{}:8081/hub/api".format(ip),
+            "path": "/global/common/cori/software/python/3.6-anaconda-5.2/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
         }
     ),
     "spin-shared-node-cpu": (
