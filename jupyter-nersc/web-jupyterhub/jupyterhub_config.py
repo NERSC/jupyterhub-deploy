@@ -5,6 +5,9 @@ import sys
 
 import asyncssh
 import requests
+from tornado import web
+from jupyterhub.utils import url_path_join
+
 
 def comma_split(string):
     """Handle env variables that may be None, empty string, or have spaces"""
@@ -1064,7 +1067,7 @@ async def setup(spawner):
     # spawner.remote_host = remote_host
     # spawner.port = remote_port
 
-c.Spawner.pre_spawn_hook = setup
+# c.Spawner.pre_spawn_hook = setup
 
 ## c.NERSCSpawner.spawners = [
 ##         ("spin", "sshspawner.sshspawner.SSHSpawner", {
