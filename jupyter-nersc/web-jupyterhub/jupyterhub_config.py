@@ -990,6 +990,7 @@ c.SSHAPIAuthenticator.cert_path = '/certs'
 c.NERSCSpawner.profiles = [
     { "name": "cori-shared-node-cpu"    },
     { "name": "cori-exclusive-node-cpu" },
+    { "name": "cori-exclusive-node-gpu" },
     { "name": "spin-shared-node-cpu"    },
 ]
 
@@ -1011,7 +1012,11 @@ c.NERSCSpawner.setups = [
             {
                 "name": "cpu",
                 "description": "Exclusive CPU Node",
-            }
+            },
+            {
+                "name": "gpu",
+                "description": "Exclusive GPU Node",
+            } 
         ],
         "resources": "Use your own node within a job allocation using defaults.",
         "use_cases": "Visualization, analytics, machine learning that is compute or memory intensive but can be done on a single node."
@@ -1037,6 +1042,19 @@ c.NERSCSpawner.spawners = {
     ),
     "cori-exclusive-node-cpu": (
         "nerscslurmspawner.NERSCExclusiveSlurmSpawner", {
+            "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
+                "/global/common/cori/software/python/3.6-anaconda-5.2/bin/jupyter-labhub"],
+            "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",
+            "startup_poll_interval": 30.0,
+            "req_remote_host": "cori19-224.nersc.gov",
+            "req_homedir": "/tmp",
+            "req_runtime": "240",
+            "hub_api_url": "http://{}:8081/hub/api".format(ip),
+            "path": "/global/common/cori/software/python/3.6-anaconda-5.2/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+        }
+    ),
+    "cori-exclusive-node-gpu": (
+        "nerscslurmspawner.NERSCExclusiveGPUSlurmSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
                 "/global/common/cori/software/python/3.6-anaconda-5.2/bin/jupyter-labhub"],
             "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",
