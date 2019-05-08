@@ -6,25 +6,25 @@ WORKDIR /srv
 
 # Authenticator and spawner
 
+#   pip install git+https://github.com/nersc/nerscspawner.git                       &&  \
+
 RUN \
     pip install git+https://github.com/nersc/sshapiauthenticator.git        &&  \
     pip install git+https://github.com/jupyterhub/batchspawner.git@4747946  &&  \
     pip install git+https://github.com/jupyterhub/wrapspawner.git           &&  \
-    pip install git+https://github.com/nersc/nerscspawner.git               &&  \
     pip install git+https://github.com/nersc/sshspawner.git
 
 # Customized templates
 
 ADD templates templates
 
-# Announcement service
-
-ADD announcement.py .
-
-# FIXME Install this
+# FIXME Install this stuff
 
 ENV PYTHONPATH=/srv
+ADD nerscspawner.py .
 ADD nerscslurmspawner.py .
+ADD announcement.py .
+ADD iris.py .
 
 # Hub scripts
 

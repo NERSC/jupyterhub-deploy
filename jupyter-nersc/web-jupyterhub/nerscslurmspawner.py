@@ -5,7 +5,7 @@ import asyncssh
 from traitlets import default, Unicode
 from tornado import escape, httpclient
 
-from batchspawner import BatchSpawnerRegexStates
+from batchspawner import format_template, BatchSpawnerRegexStates
 
 class NERSCSlurmSpawner(BatchSpawnerRegexStates):
     """Spawner that connects to a job-submit (login node) and submits a job to
@@ -161,6 +161,7 @@ class NERSCExclusiveSlurmSpawner(NERSCSlurmSpawner):
 unset XDG_RUNTIME_DIR
 {{ cmd }}""").tag(config=True)
 
+
 class NERSCExclusiveGPUSlurmSpawner(NERSCSlurmSpawner):
 
     batch_submit_cmd = Unicode("/global/common/cori/das/jupyterhub/esslurm-wrapper.sh sbatch").tag(config=True)
@@ -168,7 +169,7 @@ class NERSCExclusiveGPUSlurmSpawner(NERSCSlurmSpawner):
     batch_cancel_cmd = Unicode("/global/common/cori/das/jupyterhub/esslurm-wrapper.sh scancel {job_id}").tag(config=True)
 
     batch_script = Unicode("""#!/bin/bash
-#SBATCH --account=nstaff
+#SBATCH --account={{ account }}
 #SBATCH --constraint=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --job-name=jupyter
@@ -178,6 +179,22 @@ class NERSCExclusiveGPUSlurmSpawner(NERSCSlurmSpawner):
 {{ env_text }}
 unset XDG_RUNTIME_DIR
 {{ cmd }}""").tag(config=True)
+
+    # Have to override this to call get_auth_state() I think
+    async def _get_batch_script(self, **subvars):
+        """Format batch script from vars"""
+        auth_state = await self.user.get_auth_state()
+        accounts = auth_state["accounts"]
+        if "nstaff" in accounts:
+            account = "nstaff"
+        elif "dasrepo" in accounts:
+            account = "dasrepo"
+        elif "m1759" in accounts:
+            account = "m1759"
+        else:
+            account = accounts[0]
+        subvars["account"] = account
+        return format_template(self.batch_script, **subvars)
 
 
 class NERSCConfigurableSlurmSpawner(NERSCSlurmSpawner):
