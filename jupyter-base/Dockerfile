@@ -36,6 +36,7 @@ RUN \
     /opt/anaconda3/bin/conda update --yes conda             &&  \
     /opt/anaconda3/bin/conda install --yes                      \
         alembic         \
+        cryptography    \
         decorator       \
         entrypoints     \
         jinja2          \
@@ -60,6 +61,7 @@ RUN \
     npm install -g configurable-http-proxy                                  &&  \
     git clone https://github.com/jupyterhub/jupyterhub.git                  &&  \
     cd jupyterhub                                                           &&  \
+    git checkout tags/1.0.0                                                 &&  \
     /opt/anaconda3/bin/python setup.py js                                   &&  \
     /opt/anaconda3/bin/pip --no-cache-dir install .                         &&  \
     cp examples/cull-idle/cull_idle_servers.py /opt/anaconda3/bin/.         &&  \
