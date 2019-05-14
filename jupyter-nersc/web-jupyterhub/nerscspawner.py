@@ -26,6 +26,46 @@ class NERSCSpawner(WrapSpawner):
 
     child_profile = Unicode()
 
+    userdata = Dict()
+
+    def check_roles(self, roles):
+        """User has one or more of these roles"""
+        if roles:
+            for role in roles:
+                if self.check_role(role):
+                    return True
+            return False
+        else:
+            return True
+
+    def check_role(self, role):
+        if role == "gpu":
+            return self.check_role_gpu()
+        if role == "staff":
+            return self.check_role_staff()
+        return False
+
+    def check_role_gpu(self):
+        return self.default_gpu_repo() is not None
+
+    def check_role_staff(self):
+        for allocation in self.user_allocations(["nstaff"]):
+            return True
+        return False
+
+    def default_gpu_repo(self):
+        for allocation in self.user_allocations(["nstaff", "m1759", "dasrepo"]):
+            for qos in allocation["userAllocationQos"]:
+                if qos["qos"]["qos"] == "gpu":
+                    return allocation["computeAllocation"]["repoName"]
+        return None
+
+    def user_allocations(self, repos=[]):
+        for allocation in self.userdata["userAllocations"]:
+            if repos and allocation["computeAllocation"]["repoName"] not in repos:
+                continue
+            yield allocation
+
     def select_profile(self, profile):
         self.log.debug("select_profile: " + profile)
         if profile in self.spawners:
