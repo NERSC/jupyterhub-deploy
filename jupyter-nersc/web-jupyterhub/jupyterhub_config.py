@@ -991,6 +991,7 @@ c.SSHAPIAuthenticator.cert_path = '/certs'
 #------------------------------------------------------------------------------
 
 c.NERSCSpawner.profiles = [
+    { "name": "gerty-shared-node-cpu"   },
     { "name": "cori-shared-node-cpu"    },
     { "name": "cori-exclusive-node-cpu" },
     { "name": "cori-exclusive-node-gpu" },
@@ -1004,7 +1005,7 @@ c.NERSCSpawner.setups = [
             {
                 "name": "cpu",
                 "description": "Shared CPU Node",
-                "users": [],
+                "roles": [],
             }
         ],
         "resources": "Use a node shared with other users' notebooks but outside the batch queues.",
@@ -1016,12 +1017,12 @@ c.NERSCSpawner.setups = [
             {
                 "name": "cpu",
                 "description": "Exclusive CPU Node",
-                "users": [],
+                "roles": [],
             },
             {
                 "name": "gpu",
                 "description": "Exclusive GPU Node",
-                "users": comma_split(os.environ.get("GPU_USERS")),
+                "roles": ["gpu"],
             } 
         ],
         "resources": "Use your own node within a job allocation using defaults.",
@@ -1030,11 +1031,33 @@ c.NERSCSpawner.setups = [
 ]
 
 c.NERSCSpawner.systems = [
-    { "name": "cori" },
-    { "name": "spin" }
+    { 
+        "name": "gerty",
+        "roles": ["staff"]
+    },
+    { 
+        "name": "cori",
+        "roles": []
+    },
+    { 
+        "name": "spin",
+        "roles": []
+    }
 ]
 
 c.NERSCSpawner.spawners = {
+    "gerty-shared-node-cpu": (
+        "sshspawner.sshspawner.SSHSpawner", {
+            "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh", 
+                "/global/common/cori/software/python/3.6-anaconda-5.2/bin/jupyter-labhub"],
+            "environment": {"OMP_NUM_THREADS" : "2"},
+            "remote_hosts": ["gert01.nersc.gov"],
+            "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
+            "hub_api_url": "http://{}:8081/hub/api".format(ip),
+            "path": "/global/common/cori/software/python/3.6-anaconda-5.2/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "ssh_keyfile": '/certs/{username}.key'
+        }
+    ),
     "cori-shared-node-cpu": (
         "sshspawner.sshspawner.SSHSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh", 
@@ -1128,13 +1151,24 @@ from iris import Iris
 
 async def post_auth_hook(authenticator, handler, authentication):
     iris = Iris()
-    accounts = await iris.query_accounts(authentication["name"])
+    userdata = await iris.query_user(authentication["name"])
     if authentication["auth_state"] is None:
         authentication["auth_state"] = {}
-    authentication["auth_state"]["accounts"] = accounts
+    authentication["auth_state"]["userdata"] = userdata
     return authentication
 
 c.Authenticator.post_auth_hook = post_auth_hook
+
+###
+
+def auth_state_hook(spawner, auth_state):
+    spawner.userdata = auth_state["userdata"]
+
+c.Spawner.auth_state_hook = auth_state_hook
+
+### Prometheus
+
+c.JupyterHub.authenticate_prometheus = False
 
 
 ## c.NERSCSpawner.spawners = [
