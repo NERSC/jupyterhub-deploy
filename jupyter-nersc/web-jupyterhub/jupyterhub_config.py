@@ -1017,7 +1017,7 @@ c.NERSCSpawner.setups = [
             {
                 "name": "cpu",
                 "description": "Exclusive CPU Node",
-                "roles": [],
+                "roles": ["cori-exclusive-node-cpu"],
             },
             {
                 "name": "gpu",
