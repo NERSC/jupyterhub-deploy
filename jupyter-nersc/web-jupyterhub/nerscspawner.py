@@ -1,4 +1,6 @@
 
+import os
+
 from jupyterhub.spawner import LocalProcessSpawner
 
 from tornado import httpclient
@@ -43,7 +45,16 @@ class NERSCSpawner(WrapSpawner):
             return self.check_role_gpu()
         if role == "staff":
             return self.check_role_staff()
+        if role == "cori-exclusive-node-cpu":
+            return self.check_role_cori_exclusive_node_cpu()
         return False
+
+    def check_role_cori_exclusive_node_cpu(self):
+        users = os.environ.get("CORI_EXCLUSIVE_NODE_CPU_USERS")
+        if users:
+            return self.user.name in users.split(",")
+        else:
+            return True
 
     def check_role_gpu(self):
         return self.default_gpu_repo() is not None
