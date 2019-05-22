@@ -32,10 +32,11 @@ RUN \
     curl -s -o /tmp/miniconda3.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh    &&  \
     bash /tmp/miniconda3.sh -f -b -p /opt/anaconda3         &&  \
     rm -rf /tmp/miniconda3.sh                               &&  \
-    echo "python 3.6.*" >> /opt/anaconda3/conda-meta/pinned &&  \
+    echo "python 3.7.*" >> /opt/anaconda3/conda-meta/pinned &&  \
     /opt/anaconda3/bin/conda update --yes conda             &&  \
     /opt/anaconda3/bin/conda install --yes                      \
         alembic         \
+        cryptography    \
         decorator       \
         entrypoints     \
         jinja2          \
@@ -58,8 +59,11 @@ ENV PATH=/opt/anaconda3/bin:$PATH
 WORKDIR /tmp
 RUN \
     npm install -g configurable-http-proxy                                  &&  \
-    git clone https://github.com/jupyterhub/jupyterhub.git                  &&  \
+#   git clone https://github.com/jupyterhub/jupyterhub.git                  &&  \
+    git clone https://github.com/rcthomas/jupyterhub.git                    &&  \
     cd jupyterhub                                                           &&  \
+#   git checkout tags/1.0.0                                                 &&  \
+    git checkout auth-state-to-spawner                                      &&  \
     /opt/anaconda3/bin/python setup.py js                                   &&  \
     /opt/anaconda3/bin/pip --no-cache-dir install .                         &&  \
     cp examples/cull-idle/cull_idle_servers.py /opt/anaconda3/bin/.         &&  \

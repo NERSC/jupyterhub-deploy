@@ -410,7 +410,8 @@ c.JupyterHub.services = [
 #  
 #  Should be a subclass of Spawner.
 #c.JupyterHub.spawner_class = 'jupyterhub.spawner.LocalProcessSpawner'
-c.JupyterHub.spawner_class = 'nerscspawner.nerscspawner.NERSCSpawner'
+#c.JupyterHub.spawner_class = 'nerscspawner.nerscspawner.NERSCSpawner'
+c.JupyterHub.spawner_class = 'nerscspawner.NERSCSpawner'
 
 ## Path to SSL certificate file for the public facing interface of the proxy
 #  
@@ -588,6 +589,7 @@ c.Spawner.default_url = '/lab/tree/global/homes/{username[0]}/{username}'
 #  process's environment (such as `CONFIGPROXY_AUTH_TOKEN`) is not passed to the
 #  single-user server's process.
 #c.Spawner.env_keep = ['PATH', 'PYTHONPATH', 'CONDA_ROOT', 'CONDA_DEFAULT_ENV', 'VIRTUAL_ENV', 'LANG', 'LC_ALL']
+c.Spawner.env_keep = ['PATH', 'CONDA_ROOT', 'CONDA_DEFAULT_ENV', 'VIRTUAL_ENV', 'LANG', 'LC_ALL']
 
 ## Extra environment variables to set for the single-user server's process.
 #  
@@ -607,13 +609,13 @@ c.Spawner.default_url = '/lab/tree/global/homes/{username[0]}/{username}'
 #  across upgrades, so if you are using the callable take care to verify it
 #  continues to work after upgrades!
 #c.Spawner.environment = {}
-c.Spawner.environment = {"OMP_NUM_THREADS" : "2"}
 
 ## Timeout (in seconds) before giving up on a spawned HTTP server
 #  
 #  Once a server has successfully been spawned, this is the amount of time we
 #  wait before assuming that the server is unable to accept connections.
 #c.Spawner.http_timeout = 30
+c.Spawner.http_timeout = 300
 
 ## The IP address (or hostname) the single-user server should listen on.
 #  
@@ -745,6 +747,7 @@ c.Spawner.poll_interval = 900
 #  takes longer than this. start should return when the server process is started
 #  and its location is known.
 #c.Spawner.start_timeout = 60
+c.Spawner.start_timeout = 900
 
 #------------------------------------------------------------------------------
 # LocalProcessSpawner(Spawner) configuration
@@ -865,6 +868,7 @@ c.Authenticator.admin_users = set(comma_split(os.environ.get("ADMINS")))
 #  
 #  New in JupyterHub 0.8
 #c.Authenticator.enable_auth_state = False
+c.Authenticator.enable_auth_state = True
 
 ## Dictionary mapping authenticator usernames to JupyterHub users.
 #  
@@ -987,8 +991,11 @@ c.SSHAPIAuthenticator.cert_path = '/certs'
 #------------------------------------------------------------------------------
 
 c.NERSCSpawner.profiles = [
-    { "name": "cori-shared-node-cpu" },
-    { "name": "spin-shared-node-cpu" },
+    { "name": "gerty-shared-node-cpu"   },
+    { "name": "cori-shared-node-cpu"    },
+    { "name": "cori-exclusive-node-cpu" },
+    { "name": "cori-exclusive-node-gpu" },
+    { "name": "spin-shared-node-cpu"    },
 ]
 
 c.NERSCSpawner.setups = [
@@ -998,23 +1005,64 @@ c.NERSCSpawner.setups = [
             {
                 "name": "cpu",
                 "description": "Shared CPU Node",
+                "roles": [],
             }
         ],
         "resources": "Use a node shared with other users' notebooks but outside the batch queues.",
         "use_cases": "Visualization and analytics that are not memory intensive and can run on just a few cores."
-    }
+    },
+    {
+        "name": "exclusive-node",
+        "architectures": [
+            {
+                "name": "cpu",
+                "description": "Exclusive CPU Node",
+                "roles": ["cori-exclusive-node-cpu"],
+            },
+            {
+                "name": "gpu",
+                "description": "Exclusive GPU Node",
+                "roles": ["gpu"],
+            } 
+        ],
+        "resources": "Use your own node within a job allocation using defaults.",
+        "use_cases": "Visualization, analytics, machine learning that is compute or memory intensive but can be done on a single node."
+    },
 ]
 
 c.NERSCSpawner.systems = [
-    { "name": "cori" },
-    { "name": "spin" }
+    { 
+        "name": "gerty",
+        "roles": ["staff"]
+    },
+    { 
+        "name": "cori",
+        "roles": []
+    },
+    { 
+        "name": "spin",
+        "roles": []
+    }
 ]
 
 c.NERSCSpawner.spawners = {
+    "gerty-shared-node-cpu": (
+        "sshspawner.sshspawner.SSHSpawner", {
+            "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh", 
+                "/global/common/cori/software/python/3.6-anaconda-5.2/bin/jupyter-labhub"],
+            "environment": {"OMP_NUM_THREADS" : "2"},
+            "remote_hosts": ["gert01.nersc.gov"],
+            "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
+            "hub_api_url": "http://{}:8081/hub/api".format(ip),
+            "path": "/global/common/cori/software/python/3.6-anaconda-5.2/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "ssh_keyfile": '/certs/{username}.key'
+        }
+    ),
     "cori-shared-node-cpu": (
         "sshspawner.sshspawner.SSHSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh", 
                 "/global/common/cori/software/python/3.6-anaconda-5.2/bin/jupyter-labhub"],
+            "environment": {"OMP_NUM_THREADS" : "2"},
             "remote_hosts": ["corijupyter.nersc.gov"],
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
             "hub_api_url": "http://{}:8081/hub/api".format(ip),
@@ -1022,10 +1070,38 @@ c.NERSCSpawner.spawners = {
             "ssh_keyfile": '/certs/{username}.key'
         }
     ),
+    "cori-exclusive-node-cpu": (
+        "nerscslurmspawner.NERSCExclusiveSlurmSpawner", {
+            "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
+                "/global/common/cori/software/python/3.6-anaconda-5.2/bin/jupyter-labhub"],
+            "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",
+            "http_timeout": 300,
+            "startup_poll_interval": 30.0,
+            "req_remote_host": "cori19-224.nersc.gov",
+            "req_homedir": "/tmp",
+            "req_runtime": "240",
+            "hub_api_url": "http://{}:8081/hub/api".format(ip),
+            "path": "/global/common/cori/software/python/3.6-anaconda-5.2/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+        }
+    ),
+    "cori-exclusive-node-gpu": (
+        "nerscslurmspawner.NERSCExclusiveGPUSlurmSpawner", {
+            "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
+                "/global/common/cori/software/python/3.6-anaconda-5.2/bin/jupyter-labhub"],
+            "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",
+            "startup_poll_interval": 30.0,
+            "req_remote_host": "cori19-224.nersc.gov",
+            "req_homedir": "/tmp",
+            "req_runtime": "240",
+            "hub_api_url": "http://{}:8081/hub/api".format(ip),
+            "path": "/global/common/cori/software/python/3.6-anaconda-5.2/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+        }
+    ),
     "spin-shared-node-cpu": (
         "sshspawner.sshspawner.SSHSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
                 "/opt/anaconda3/bin/jupyter-labhub"],
+            "environment": {"OMP_NUM_THREADS" : "2"},
             "remote_hosts": ["app-notebooks"],
             "remote_port_command": "/opt/anaconda3/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
             "hub_api_url": "http://{}:8081/hub/api".format(ip),
@@ -1068,6 +1144,32 @@ async def setup(spawner):
     # spawner.port = remote_port
 
 # c.Spawner.pre_spawn_hook = setup
+
+###
+
+from iris import Iris
+
+async def post_auth_hook(authenticator, handler, authentication):
+    iris = Iris()
+    userdata = await iris.query_user(authentication["name"])
+    if authentication["auth_state"] is None:
+        authentication["auth_state"] = {}
+    authentication["auth_state"]["userdata"] = userdata
+    return authentication
+
+c.Authenticator.post_auth_hook = post_auth_hook
+
+###
+
+def auth_state_hook(spawner, auth_state):
+    spawner.userdata = auth_state["userdata"]
+
+c.Spawner.auth_state_hook = auth_state_hook
+
+### Prometheus
+
+c.JupyterHub.authenticate_prometheus = False
+
 
 ## c.NERSCSpawner.spawners = [
 ##         ("spin", "sshspawner.sshspawner.SSHSpawner", {
