@@ -43,7 +43,7 @@ RUN \
         mako            \
         markupsafe      \
         nodejs          \
-        oauthlib=2      \
+        oauthlib        \
         pamela          \
         psycopg2        \
         pyopenssl       \
