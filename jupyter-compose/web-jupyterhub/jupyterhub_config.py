@@ -369,6 +369,7 @@ c.JupyterHub.hub_ip = '0.0.0.0'
 #  environment variables. Most, including the default, do not. Consult the
 #  documentation for your spawner to verify!
 #c.Spawner.cmd = ['jupyterhub-singleuser']
+c.Spawner.cmd = ['jupyter-labhub']
 
 ## Minimum number of cpu-cores a single-user notebook server is guaranteed to
 #  have available.
