@@ -1,5 +1,7 @@
-FROM registry.spin.nersc.gov/das/jupyter-base:latest
-MAINTAINER Rollin Thomas <rcthomas@lbl.gov>
+ARG branch=unknown
+
+FROM registry.spin.nersc.gov/das/jupyter-base-${branch}:latest
+LABEL maintainer="Rollin Thomas <rcthomas@lbl.gov>"
 WORKDIR /tmp
 
 RUN \
