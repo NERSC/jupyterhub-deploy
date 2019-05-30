@@ -1,7 +1,23 @@
 #!/opt/anaconda3/bin/python
 
 import socket
-sock = socket.socket()
-sock.bind(('', 0))
-print(sock.getsockname()[1])
-sock.close()
+
+def main():
+    print(f"{ip()} {port()}")
+
+def port():
+    s = socket.socket()
+    s.bind(('', 0))
+    port = s.getsockname()[1]
+    s.close()
+    return port
+
+def ip(address=("8.8.8.8", 80)):
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(address)
+    ip = s.getsockname()[0]
+    s.close()
+    return ip
+
+if __name__ == "__main__":
+    main()
