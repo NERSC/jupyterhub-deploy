@@ -184,17 +184,22 @@ unset XDG_RUNTIME_DIR
     async def _get_batch_script(self, **subvars):
         """Format batch script from vars"""
         auth_state = await self.user.get_auth_state()
-        accounts = auth_state["accounts"]
-        if "nstaff" in accounts:
-            account = "nstaff"
-        elif "dasrepo" in accounts:
-            account = "dasrepo"
-        elif "m1759" in accounts:
-            account = "m1759"
-        else:
-            account = accounts[0]
-        subvars["account"] = account
+        self.userdata = auth_state["userdata"]
+        subvars["account"] = self.default_gpu_repo()
         return format_template(self.batch_script, **subvars)
+
+    def default_gpu_repo(self):
+        for allocation in self.user_allocations(["nstaff", "m1759", "dasrepo"]):
+            for qos in allocation["userAllocationQos"]:
+                if qos["qos"]["qos"] == "gpu":
+                    return allocation["computeAllocation"]["repoName"]
+        return None
+
+    def user_allocations(self, repos=[]):
+        for allocation in self.userdata["userAllocations"]:
+            if repos and allocation["computeAllocation"]["repoName"] not in repos:
+                continue
+            yield allocation
 
 
 class NERSCConfigurableSlurmSpawner(NERSCSlurmSpawner):
