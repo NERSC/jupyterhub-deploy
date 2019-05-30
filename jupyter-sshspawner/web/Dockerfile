@@ -1,5 +1,7 @@
-FROM registry.spin.nersc.gov/das/jupyter-dev-nersc.deploy-18-10:latest
-MAINTAINER Rollin Thomas <rcthomas@lbl.com>
+ARG branch=unknown
+
+FROM registry.spin.nersc.gov/das/jupyter-base-${branch}:latest
+LABEL maintainer="Rollin Thomas <rcthomas@lbl.gov>"
 
 # JupyterHub components
 
