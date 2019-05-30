@@ -21,17 +21,22 @@ RUN \
     conda update --yes conda    &&  \
     conda install --yes             \
         ipykernel                   \
-        ipywidgets                  \
+        ipywidgets                  \   
+        jupyterlab                  \
         notebook                &&  \
     ipython kernel install      &&  \
     conda clean --yes --all
 
 ADD get_port.py /opt/anaconda3/bin
 
-# Typical extension
+# Typical extensions
 
 RUN \
     jupyter nbextension enable --sys-prefix --py widgetsnbextension
+
+RUN \
+    jupyter labextension install @jupyterlab/hub-extension  &&  \
+    conda install jupyterhub
 
 # Some dummy users
 
