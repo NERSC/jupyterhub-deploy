@@ -12,6 +12,10 @@ Build the images
     cd web-jupyterhub && bash build.sh && cd ..
     cd app-notebooks && bash build.sh && cd ..
 
+You may want to pull the proxy image ahead of time
+
+    docker pull jupyterhub/configurable-http-proxy
+
 Generate a key file
 
     mkdir config
