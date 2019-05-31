@@ -2,12 +2,17 @@ version: "3"
 services:
   web:
     image: web-jupyterhub:latest
+    environment:
+      - CONFIGPROXY_AUTH_TOKEN=the-sign-pointed-this-way
     volumes:
       - ./config:/config
-    ports:
-      - 8000:8000
-      - 8081:8081
   app:
     image: app-notebooks:latest
     volumes:
       - ./config:/config
+  proxy:
+    image: jupyterhub/configurable-http-proxy:latest
+    environment:
+      - CONFIGPROXY_AUTH_TOKEN=the-sign-pointed-this-way
+    ports:
+      - 8000:8000
