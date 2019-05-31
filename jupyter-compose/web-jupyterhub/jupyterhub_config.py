@@ -972,8 +972,6 @@ c.Authenticator.admin_users = set(["master"])
 
 c.ConfigurableHTTPProxy.should_start = False
 
-#c.ConfigurableHTTPProxy.auth_token = "CONFIGPROXY_AUTH_TOKEN"
-
 c.ConfigurableHTTPProxy.api_url = 'http://proxy:8001'
 
 #------------------------------------------------------------------------------
