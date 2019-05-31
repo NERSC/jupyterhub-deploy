@@ -126,6 +126,7 @@
 #  
 #  The Hub should be able to resume from database state.
 #c.JupyterHub.cleanup_servers = True
+c.JupyterHub.cleanup_servers = False
 
 ## Maximum number of concurrent users that can be spawning at a time.
 #  
@@ -964,6 +965,16 @@ c.Authenticator.admin_users = set(["master"])
 
 ## The number of threads to allocate for encryption
 #c.CryptKeeper.n_threads = 2
+
+#------------------------------------------------------------------------------
+# Additional ConfigurableHTTPProxy configuration
+#------------------------------------------------------------------------------
+
+c.ConfigurableHTTPProxy.should_start = False
+
+#c.ConfigurableHTTPProxy.auth_token = "CONFIGPROXY_AUTH_TOKEN"
+
+c.ConfigurableHTTPProxy.api_url = 'http://proxy:8001'
 
 #------------------------------------------------------------------------------
 # SSHSpawner configuration
