@@ -6,7 +6,7 @@ LABEL maintainer="Rollin Thomas <rcthomas@lbl.gov>"
 # JupyterHub components
 
 RUN \
-    pip install git+https://github.com/NERSC/sshspawner.git
+    pip install git+https://github.com/NERSC/sshspawner.git@clean-up
 
 # Some dummy users
 

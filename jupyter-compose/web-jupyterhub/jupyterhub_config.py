@@ -990,4 +990,7 @@ c.SSHSpawner.remote_port_command = '/opt/anaconda3/bin/get_port.py'
 
 c.SSHSpawner.ssh_keyfile = '/tmp/{username}.key'
 
+c.SSHSpawner.private_key_path = '/tmp/{username}.key'
+c.SSHSpawner.certificate_path = '/tmp/{username}.key-cert.pub'
+
 c.SSHSpawner.hub_api_url = 'http://web:8081/hub/api'
