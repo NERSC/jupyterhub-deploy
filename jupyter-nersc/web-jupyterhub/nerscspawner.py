@@ -1,9 +1,9 @@
 
 import os
 
-from jupyterhub.spawner import LocalProcessSpawner
+from jupyterhub.spawner import Spawner
 
-from tornado import httpclient
+from tornado import httpclient, web
 from traitlets import List, Dict, Unicode, observe
 
 from wrapspawner import WrapSpawner
@@ -79,10 +79,13 @@ class NERSCSpawner(WrapSpawner):
 
     def select_profile(self, profile):
         self.log.debug("select_profile: " + profile)
-        if profile in self.spawners:
-            self.child_class, self.child_config = self.spawners[profile]
+        if profile == "":
+            self.child_class, self.child_config = Spawner, {}
         else:
-            self.child_class, self.child_config = LocalProcessSpawner, {}
+            try:
+                self.child_class, self.child_config = self.spawners[profile]
+            except KeyError:
+                raise web.HTTPError(404)
 
     def construct_child(self):
         self.log.debug("construct_child called")
@@ -90,11 +93,11 @@ class NERSCSpawner(WrapSpawner):
         self.child_profile = self.name
         self.select_profile(self.child_profile)
         super().construct_child()
-        self.child_spawner.orm_spawner = self.orm_spawner  ### IS THIS KOSHER?!?!!?
-        self.options_form = self.child_spawner.options_form # another one...
-        self.options_from_form = self.child_spawner.options_from_form
-        self.child_spawner.user_options = self.user_options
-        ### Think we need to do this to get JUPYTERHUB_OAUTH_CALLBACK_URL set properly
+#       self.child_spawner.orm_spawner = self.orm_spawner  ### IS THIS KOSHER?!?!!?
+#       self.options_form = self.child_spawner.options_form # another one...
+#       self.options_from_form = self.child_spawner.options_from_form
+#       self.child_spawner.user_options = self.user_options
+#       ### Think we need to do this to get JUPYTERHUB_OAUTH_CALLBACK_URL set properly
 
     def load_child_class(self, state):
         self.log.debug("load_child_class called")
