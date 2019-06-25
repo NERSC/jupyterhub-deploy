@@ -517,7 +517,6 @@ c.JupyterHub.template_paths = ["templates"]
 #  environment variables. Most, including the default, do not. Consult the
 #  documentation for your spawner to verify!
 #c.Spawner.cmd = ['jupyterhub-singleuser']
-c.Spawner.cmd = ['/usr/bin/false']
 
 ## Maximum number of consecutive failures to allow before shutting down
 #  JupyterHub.
