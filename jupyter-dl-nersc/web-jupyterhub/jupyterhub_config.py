@@ -1009,3 +1009,4 @@ c.NERSCExclusiveGPUSlurmSpawner.cmd = ["/global/common/cori/das/jupyterhub/jupyt
         "/global/common/cori/software/python/3.6-anaconda-5.2/bin/jupyter-labhub"]
 c.NERSCExclusiveGPUSlurmSpawner.path = "/global/common/cori/software/python/3.6-anaconda-5.2/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin"
 c.NERSCExclusiveGPUSlurmSpawner.req_remote_host = "cori19-224.nersc.gov"
+c.NERSCExclusiveGPUSlurmSpawner.startup_poll_interval = 30
