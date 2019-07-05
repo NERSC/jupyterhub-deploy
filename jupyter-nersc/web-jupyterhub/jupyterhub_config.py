@@ -140,6 +140,7 @@ c.JupyterHub.authenticator_class = 'sshapiauthenticator.auth.SSHAPIAuthenticator
 #  
 #  The Hub should be able to resume from database state.
 #c.JupyterHub.cleanup_servers = True
+c.JupyterHub.cleanup_servers = False
 
 ## Maximum number of concurrent users that can be spawning at a time.
 #  
@@ -984,6 +985,14 @@ c.Authenticator.whitelist = set(comma_split(os.environ.get("WHITELIST")))
 c.SSHAPIAuthenticator.server = 'https://sshproxy.nersc.gov/create_pair/jupyter/'
 c.SSHAPIAuthenticator.skey = os.environ.get('SKEY')
 c.SSHAPIAuthenticator.cert_path = '/certs'
+
+#------------------------------------------------------------------------------
+# Additional ConfigurableHTTPProxy configuration
+#------------------------------------------------------------------------------
+
+c.ConfigurableHTTPProxy.should_start = False
+
+c.ConfigurableHTTPProxy.api_url = 'http://web-proxy:8001'
 
 #------------------------------------------------------------------------------
 # NERSCSpawner(Spawner) configuration
