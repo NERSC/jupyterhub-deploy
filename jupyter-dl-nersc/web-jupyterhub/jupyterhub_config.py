@@ -144,6 +144,7 @@ c.JupyterHub.authenticator_class = 'sshapiauthenticator.auth.SSHAPIAuthenticator
 #  
 #  The Hub should be able to resume from database state.
 #c.JupyterHub.cleanup_servers = True
+c.JupyterHub.cleanup_servers = False
 
 ## Maximum number of concurrent users that can be spawning at a time.
 #  
@@ -994,6 +995,14 @@ c.Authenticator.whitelist = set(comma_split(os.environ.get("WHITELIST")))
 
 ## The number of threads to allocate for encryption
 #c.CryptKeeper.n_threads = 2
+
+#------------------------------------------------------------------------------
+# Additional ConfigurableHTTPProxy configuration
+#------------------------------------------------------------------------------
+
+c.ConfigurableHTTPProxy.should_start = False
+
+c.ConfigurableHTTPProxy.api_url = 'http://web-proxy:8001'
 
 #------------------------------------------------------------------------------
 # SSHAPIAuthenticator configuration
