@@ -106,7 +106,6 @@ class NERSCExclusiveGPUSlurmSpawner(NERSCSlurmSpawner):
     batch_cancel_cmd = Unicode("/global/common/cori/das/jupyterhub/esslurm-wrapper.sh scancel {job_id}").tag(config=True)
 
     batch_script = Unicode("""#!/bin/bash
-#SBATCH --account=nstaff
 #SBATCH --constraint=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --job-name=jupyter-dl
