@@ -102,6 +102,7 @@ class NERSCSlurmSpawner(BatchSpawnerRegexStates):
 class NERSCExclusiveGPUSlurmSpawner(NERSCSlurmSpawner):
 
     batch_submit_cmd = Unicode("/bin/bash -l /global/common/cori/das/jupyterhub/esslurm-wrapper.sh sbatch").tag(config=True)
+#   batch_submit_cmd = Unicode("/usr/bin/false").tag(config=True)
     batch_query_cmd = Unicode("/bin/bash -l /global/common/cori/das/jupyterhub/esslurm-wrapper.sh squeue -h -j {job_id} -o '%T\ %B-144.nersc.gov'").tag(config=True)
     batch_cancel_cmd = Unicode("/bin/bash -l /global/common/cori/das/jupyterhub/esslurm-wrapper.sh scancel {job_id}").tag(config=True)
 
