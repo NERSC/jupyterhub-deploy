@@ -2,7 +2,7 @@ basemap
 beautifulsoup4
 biopython
 netcdf4
-notebook=5.7.8
+notebook
 r-car
 r-essentials
 rpy2
