@@ -34,7 +34,7 @@ RUN \
 ADD packages2.txt /tmp/packages2.txt
 RUN \
     wget -q -O /tmp/miniconda2.sh https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh  && \
-    bash /tmp/miniconda2.sh -f -b -p /opt/anaconda2             && \
+    bash /tmp/miniconda2.sh -b -p /opt/anaconda2                && \
     rm /tmp/miniconda2.sh                                       && \
     /opt/anaconda2/bin/conda update --yes conda                 && \
     /opt/anaconda2/bin/conda install --yes anaconda             && \
