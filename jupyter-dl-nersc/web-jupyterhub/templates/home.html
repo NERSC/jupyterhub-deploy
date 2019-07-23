@@ -1,0 +1,114 @@
+{% extends "page.html" %}
+{% if announcement_home %}
+    {% set announcement = announcement_home %}
+{% endif %}
+
+{% macro spawner_table() -%}
+<div class="col-md-3">
+</div>
+<div class="col-md-6">
+<table class="table">
+    {{ spawner_table_header() }}
+    {{ spawner_table_body() }}
+    {{ spawner_table_footer() }}
+</table>
+</div>
+{%- endmacro %}
+
+{% macro spawner_table_header() -%}
+<thead><tr>
+    <th></th>
+    {% for setup in user.spawner.setups -%}
+        {% for arch in setup.architectures %}
+            <th class="text-center">{{ arch.description }}</th>
+        {% endfor %}
+    {%- endfor %}
+</tr></thead>
+{%- endmacro %}
+
+{% macro spawner_table_body() -%}
+<tbody>
+    {% for system in user.spawner.systems -%}
+        {{ spawner_table_body_row(system) }}
+    {%- endfor %}
+</tbody>
+{%- endmacro %}
+
+{% macro spawner_table_body_row(system) -%}
+<tr>
+    <th>{{ system.name | capitalize }}</th>
+    {% for setup in user.spawner.setups -%}
+        {{ spawner_table_body_row_data(system, setup) }}
+    {%- endfor %}
+</tr>
+{%- endmacro %}
+
+{% macro spawner_table_body_row_data(system, setup) -%}
+{% for arch in setup.architectures %}
+    {% set profile_key = [system.name, setup.name, arch.name] | join("-") %}
+    <td class="text-center home-server-row" data-server-name="{{ profile_key }}">
+        {% set profile = user.spawner.profiles | selectattr("name", "equalto", profile_key) | first %}
+        {% if profile %}
+            {% if profile_key in user.spawners or profile_key in user.orm_user.orm_spawners %}
+                {% set spawner = user.spawners[profile_key] | default(user.orm_user.orm_spawners[profile_key]) %}
+                <a role="button" class="stop-server btn btn-sm btn-danger {% if not spawner.active %}hidden{% endif %}" id="stop-{{ spawner.name }}">stop</a>
+                <a role="button" class="server-link btn btn-sm btn-primary {% if not spawner.ready or not spawner.active %}hidden{% endif %}" href="{{ user.server_url(profile_key) }}">server</a>
+                <a role="button" class="start-server btn btn-sm btn-primary {% if spawner.active %} hidden{% endif %}" id="start-{{ spawner.name }}" href="{{ base_url }}spawn/{{ user.name }}/{{ spawner.name }}">
+                start
+                </a>
+            {% else %}
+                <a role="button" class="start-server btn btn-sm btn-primary" id="start-{{ profile_key }}" href="{{ base_url }}spawn/{{ user.name }}/{{ profile_key }}">start</a>
+            {% endif %}
+        {% endif %}
+    </td>
+{%- endfor %}
+{%- endmacro %}
+
+{# HORRIBLE below, should migrate logic into spawner #}
+
+{% macro spawner_table_footer() -%}
+<tfoot><tr>
+    <td><i>Resources</i></td>
+    {% for setup in user.spawner.setups %}
+        {% set counter = [] %}
+        {% for arch in setup.architectures %}
+            {% if counter.append('1') %}{% endif %}
+        {% endfor %}
+        {% if counter | length %}
+            <td colspan="{{ counter | length }}" class="small">{{ setup.resources }}</td>
+        {% endif %}
+    {% endfor %}
+</tr><tr>
+    <td><i>Use Cases</i></td>
+    {% for setup in user.spawner.setups %}
+        {% set counter = [] %}
+        {% for arch in setup.architectures %}
+            {% if counter.append('1') %}{% endif %}
+        {% endfor %}
+        {% if counter | length %}
+            <td colspan="{{ counter | length }}" class="small">{{ setup.use_cases }}</td>
+        {% endif %}
+    {% endfor %}
+</tr></tfoot>
+{%- endmacro %}
+
+{% block main %}
+
+<div class="container">
+
+{% if not user.spawner.model_updated %}
+Failed to update service model.
+{% else %}
+{{ spawner_table() }}
+{% endif %}
+
+</div>
+
+{% endblock %}
+
+{% block script %}
+{{ super() }}
+<script type="text/javascript">
+require(["home"]);
+</script>
+{% endblock %}
