@@ -8,7 +8,9 @@ WORKDIR /srv
 
 RUN \
     pip install git+https://github.com/nersc/sshapiauthenticator.git        &&  \
-    pip install git+https://github.com/jupyterhub/batchspawner.git@4747946
+    pip install git+https://github.com/jupyterhub/batchspawner.git@4747946  &&  \
+    pip install git+https://github.com/jupyterhub/wrapspawner.git           &&  \
+    pip install git+https://github.com/nersc/sshspawner.git
 
 # Customized templates
 
@@ -18,6 +20,7 @@ ADD templates templates
 
 ENV PYTHONPATH=/srv
 ADD nerscslurmspawner.py .
+ADD nerscspawner.py .
 
 # Hub scripts
 

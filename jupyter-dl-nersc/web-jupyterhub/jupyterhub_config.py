@@ -66,6 +66,7 @@ ip = requests.get('https://v4.ifconfig.co/json').json()['ip']
 
 ## Allow named single-user servers per user
 #c.JupyterHub.allow_named_servers = False
+c.JupyterHub.allow_named_servers = True
 
 ## Answer yes to any questions (e.g. confirm overwrite)
 #c.JupyterHub.answer_yes = False
@@ -206,6 +207,7 @@ c.JupyterHub.db_url = 'postgresql://jupyterhub:{}@db-jupyterhub:5432/jupyterhub'
 #  
 #  By default, redirects users to their own server.
 #c.JupyterHub.default_url = ''
+c.JupyterHub.default_url = '/hub/home'
 
 ## Dict authority:dict(files). Specify the key, cert, and/or ca file for an
 #  authority. This is useful for externally managed proxies that wish to use
@@ -467,7 +469,8 @@ c.JupyterHub.hub_ip = '0.0.0.0'
 #    - localprocess: jupyterhub.spawner.LocalProcessSpawner
 #    - simple: jupyterhub.spawner.SimpleLocalProcessSpawner
 #c.JupyterHub.spawner_class = 'jupyterhub.spawner.LocalProcessSpawner'
-c.JupyterHub.spawner_class = 'nerscslurmspawner.NERSCExclusiveGPUSlurmSpawner'
+#c.JupyterHub.spawner_class = 'nerscslurmspawner.NERSCExclusiveGPUSlurmSpawner'
+c.JupyterHub.spawner_class = 'nerscspawner.NERSCSpawner'
 
 ## Path to SSL certificate file for the public facing interface of the proxy
 #  
@@ -1012,10 +1015,82 @@ c.SSHAPIAuthenticator.server = 'https://sshproxy.nersc.gov/create_pair/jupyter/'
 c.SSHAPIAuthenticator.skey = os.environ.get('SKEY')
 c.SSHAPIAuthenticator.cert_path = '/certs'
 
-c.NERSCExclusiveGPUSlurmSpawner.hub_api_url = "http://{}:8081/hub/api".format(ip)
-c.NERSCExclusiveGPUSlurmSpawner.path = "/global/common/cori/software/python/3.6-anaconda-5.2/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin"
-c.NERSCExclusiveGPUSlurmSpawner.cmd = ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh", 
-        "/global/common/cori/software/python/3.6-anaconda-5.2/bin/jupyter-labhub"]
-c.NERSCExclusiveGPUSlurmSpawner.path = "/global/common/cori/software/python/3.6-anaconda-5.2/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin"
-c.NERSCExclusiveGPUSlurmSpawner.req_remote_host = "cori19-224.nersc.gov"
-c.NERSCExclusiveGPUSlurmSpawner.startup_poll_interval = 30
+#------------------------------------------------------------------------------
+# NERSCSpawner(Spawner) configuration
+#------------------------------------------------------------------------------
+
+c.NERSCSpawner.profiles = [
+    { "name": "cori-shared-node-cpu"    },
+    { "name": "cori-exclusive-node-gpu" },
+]
+
+c.NERSCSpawner.setups = [
+    {
+        "name": "exclusive-node",
+        "architectures": [
+            {
+                "name": "gpu",
+                "description": "GPU Node",
+            } 
+        ],
+        "resources": "Your very own GPU all to yourself!",
+        "use_cases": "Deep learning for science!"
+    },
+    {
+        "name": "shared-node",
+        "architectures": [
+            {
+                "name": "cpu",
+                "description": "CPU Node",
+            }
+        ],
+        "resources": "CPU node you share with others.",
+        "use_cases": "Checking scripts, not doing deep learning."
+    },
+]
+
+c.NERSCSpawner.systems = [
+    { 
+        "name": "cori",
+    },
+]
+
+c.NERSCSpawner.spawners = {
+    "cori-shared-node-cpu": (
+        "sshspawner.sshspawner.SSHSpawner", {
+            "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh", 
+                "/global/common/cori/software/python/3.6-anaconda-5.2/bin/jupyter-labhub"],
+            "environment": {"OMP_NUM_THREADS" : "2"},
+            "remote_hosts": ["corijupyter.nersc.gov"],
+            "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
+            "hub_api_url": "http://{}:8081/hub/api".format(ip),
+            "path": "/global/common/cori/software/python/3.6-anaconda-5.2/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "ssh_keyfile": '/certs/{username}.key'
+        }
+    ),
+    "cori-exclusive-node-gpu": (
+        "nerscslurmspawner.NERSCExclusiveGPUSlurmSpawner", {
+            "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
+                "/global/common/cori/software/python/3.6-anaconda-5.2/bin/jupyter-labhub"],
+            "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",
+            "startup_poll_interval": 30.0,
+            "req_remote_host": "cori19-224.nersc.gov",
+            "req_homedir": "/tmp",
+            "req_runtime": "240",
+            "hub_api_url": "http://{}:8081/hub/api".format(ip),
+            "path": "/global/common/cori/software/python/3.6-anaconda-5.2/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+        }
+    ),
+}
+
+
+#c.NERSCExclusiveGPUSlurmSpawner.hub_api_url = "http://{}:8081/hub/api".format(ip)
+#c.NERSCExclusiveGPUSlurmSpawner.path = "/global/common/cori/software/python/3.6-anaconda-5.2/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin"
+#c.NERSCExclusiveGPUSlurmSpawner.cmd = ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh", 
+#        "/global/common/cori/software/python/3.6-anaconda-5.2/bin/jupyter-labhub"]
+#c.NERSCExclusiveGPUSlurmSpawner.path = "/global/common/cori/software/python/3.6-anaconda-5.2/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin"
+#c.NERSCExclusiveGPUSlurmSpawner.req_remote_host = "cori19-224.nersc.gov"
+#c.NERSCExclusiveGPUSlurmSpawner.startup_poll_interval = 30
+
+
+

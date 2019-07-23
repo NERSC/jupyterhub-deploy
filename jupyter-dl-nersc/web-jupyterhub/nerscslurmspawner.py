@@ -112,6 +112,8 @@ class NERSCExclusiveGPUSlurmSpawner(NERSCSlurmSpawner):
 #SBATCH --job-name=jupyter-dl
 #SBATCH --mem=30GB
 #SBATCH --nodes=1
+#SBATCH --output=.jupyter-dl.log
+#SBATCH --reservation=gpu_hackathon
 #SBATCH --time=240
 {{ env_text }}
 unset XDG_RUNTIME_DIR
