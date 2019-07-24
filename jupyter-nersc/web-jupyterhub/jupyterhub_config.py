@@ -1057,12 +1057,12 @@ c.NERSCSpawner.spawners = {
     "gerty-shared-node-cpu": (
         "sshspawner.sshspawner.SSHSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh", 
-                "/global/common/cori/software/python/3.6-anaconda-5.2/bin/jupyter-labhub"],
+                "/usr/common/software/python/3.7-anaconda-2019.03/bin/jupyter-labhub"],
             "environment": {"OMP_NUM_THREADS" : "2"},
-            "remote_hosts": ["gert01.nersc.gov"],
+            "remote_hosts": ["gerty.nersc.gov"],
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
             "hub_api_url": "http://{}:8081/hub/api".format(ip),
-            "path": "/global/common/cori/software/python/3.6-anaconda-5.2/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "path": "/usr/common/software/python/3.7-anaconda-2019.03/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "ssh_keyfile": '/certs/{username}.key'
         }
     ),
@@ -1177,43 +1177,3 @@ c.Spawner.auth_state_hook = auth_state_hook
 ### Prometheus
 
 c.JupyterHub.authenticate_prometheus = False
-
-
-## c.NERSCSpawner.spawners = [
-##         ("spin", "sshspawner.sshspawner.SSHSpawner", {
-##             "remote_hosts"          : ["jupyter"],
-##             "remote_port"           : "22",
-##             "hub_api_url"           : "http://{}:8081/hub/api".format(ip),
-##             "path"                  : "/opt/anaconda3/bin:/usr/bin:/usr/local/bin:/bin",
-##             "remote_port_command"   : "/opt/anaconda3/bin/get_port.py",
-##             "ssh_keyfile"           : "/tmp/{username}.key",
-##         }),
-##         ("cori-shared", "sshspawner.sshspawner.SSHSpawner", {
-##             "remote_hosts"          : ["cori19-224.nersc.gov"],
-##             "remote_port"           : "22",
-##             "hub_api_url"           : "http://{}:8081/hub/api".format(ip),
-##             "path"                  : bindir + ":/global/common/cori/das/jupyterhub/:/usr/common/usg/bin:/usr/bin:/bin",
-##             "remote_port_command"   : "/global/common/cori/das/jupyterhub/get_port.py",
-##             "ssh_keyfile"           : "/tmp/{username}.key",
-##         }),
-##         ("cori-exclusive-cpu", "nerscspawner.nerscspawner.NERSCSlurmSpawner", {
-##             "exec_prefix"           :
-##                 "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /tmp/{username}.key {remote_host}",
-##             "startup_poll_interval" : 10.0,
-##             "req_remote_host"       : "cori19-224.nersc.gov",
-##             "req_homedir"           : "/tmp",
-##             "req_runtime"           : "30",
-##             "hub_api_url"           : "http://{}:8081/hub/api".format(ip),
-##             "path"                  : bindir + ":/global/common/cori/das/jupyterhub/:/usr/common/usg/bin:/usr/bin:/bin",
-##         }),
-##         ("cori-config", "nerscspawner.nerscspawner.NERSCSlurmSpawner", {
-##             "exec_prefix"           :
-##                 "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /tmp/{username}.key {remote_host}",
-##             "startup_poll_interval" : 10.0,
-##             "req_remote_host"       : "cori19-224.nersc.gov",
-##             "req_homedir"           : "/tmp",
-##             "req_runtime"           : "30",
-##             "hub_api_url"           : "http://{}:8081/hub/api".format(ip),
-##             "path"                  : bindir + ":/global/common/cori/das/jupyterhub/:/usr/common/usg/bin:/usr/bin:/bin",
-##         }),
-## ]
