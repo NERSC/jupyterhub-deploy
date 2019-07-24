@@ -1130,7 +1130,6 @@ def space_error(home):
 async def setup(spawner):
     username = spawner.user.name
     remote_host = "corijupyter.nersc.gov"
-#   keyfile = spawner.ssh_keyfile.format(username=username)
     keyfile = "/certs/{username}.key".format(username=username) # NEED to have in NERSCSpawner now
     certfile = keyfile + "-cert.pub"
     k = asyncssh.read_private_key(keyfile)
@@ -1138,20 +1137,15 @@ async def setup(spawner):
     # print(username, remote_host, keyfile, certfile)
     async with asyncssh.connect(remote_host, username=username, 
             client_keys=[(k,c)], known_hosts=None) as conn:
-        home = "/global/homes/{}/{}".format(username[0], username)
-        result = await conn.run("myquota -c {}".format(home))
+        result = await conn.run("myquota -c $HOME")
         retcode = result.exit_status
-        # result = await conn.run(spawner.remote_port_command)
-        # remote_port = int(result.stdout)
     if retcode:
         e = web.HTTPError(507,reason="Insufficient Storage")
         em = space_error(spawner.hub.base_url)
         e.my_message = em
         raise e
-    # spawner.remote_host = remote_host
-    # spawner.port = remote_port
 
-# c.Spawner.pre_spawn_hook = setup
+c.Spawner.pre_spawn_hook = setup
 
 ###
 
