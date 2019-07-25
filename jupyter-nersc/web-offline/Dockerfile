@@ -45,4 +45,4 @@ ADD app.py /srv/
 ADD templates /srv/templates
 ADD static /srv/static
 
-CMD ["python", "app.py"]
+CMD ["python", "-m", "sanic", "app.app", "--host=0.0.0.0", "--workers=4"]
