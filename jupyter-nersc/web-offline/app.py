@@ -1,17 +1,25 @@
 import os
 
-from flask import Flask, render_template
+from sanic import Sanic
+from sanic.response import html
 
-app = Flask(__name__)
+from jinja2 import Environment, PackageLoader
 
-@app.route('/', defaults={'path': ''})
+env = Environment(loader=PackageLoader('app', 'templates'))
+
+app = Sanic(__name__)
+app.static("/static", "./static")
+
+@app.route('/')
 @app.route('/<path:path>')
-def catch_all(path):
+async def catch_all(request, path=""):
     default_message = "NERSC's Jupyter service is offline. It will return when maintenance is over. Please try again later."
     message = os.environ.get("MESSAGE", default_message).strip()
     if not message:
         message = default_message
-    return render_template("index.html", message=message), 503
+    template = env.get_template("index.html")
+    content = template.render(message=message, app=app)
+    return html(content, status=503)
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0")
