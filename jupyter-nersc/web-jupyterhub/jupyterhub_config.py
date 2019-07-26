@@ -505,6 +505,7 @@ c.JupyterHub.template_paths = ["templates"]
 #  environment variables here. Most, including the default, do not. Consult the
 #  documentation for your spawner to verify!
 #c.Spawner.args = []
+c.Spawner.args = ["--transport=ipc"]
 
 ## The command used for starting the single-user server.
 #  
