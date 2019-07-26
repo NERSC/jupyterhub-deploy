@@ -393,7 +393,7 @@ c.JupyterHub.services = [
     {
         'name': 'cull-idle',
         'admin': True,
-        'command': 'cull_idle_servers.py --timeout=86400'.split(),
+        'command': 'cull_idle_servers.py --timeout=57600'.split(),
     },
     {
         'name': 'announcement',
