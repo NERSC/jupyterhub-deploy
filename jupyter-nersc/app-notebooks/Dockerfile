@@ -74,11 +74,12 @@ RUN \
     pip install --no-cache-dir ipympl                               && \
     jupyter nbextension enable --sys-prefix --py widgetsnbextension && \
     jupyter labextension install            \
-        @jupyterlab/hub-extension           \
         @jupyter-widgets/jupyterlab-manager \
         jupyter-matplotlib                  \
         @jupyterlab/toc                     \
-        jupyterlab_bokeh
+        jupyterlab_bokeh                    \
+        jupyterlab-favorites                \
+        jupyterlab-recents
 
 RUN \
     /opt/anaconda2/bin/jupyter nbextension enable --sys-prefix --py widgetsnbextension
