@@ -1058,7 +1058,7 @@ c.NERSCSpawner.spawners = {
     "gerty-shared-node-cpu": (
         "sshspawner.sshspawner.SSHSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh", 
-                "/usr/common/software/python/3.7-anaconda-2019.03/bin/jupyter-labhub"],
+                "/usr/common/software/python/3.7-anaconda-2019.07/bin/jupyter-labhub"],
             "environment": {"OMP_NUM_THREADS" : "2"},
             "remote_hosts": ["gerty.nersc.gov"],
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
@@ -1070,7 +1070,7 @@ c.NERSCSpawner.spawners = {
     "cori-shared-node-cpu": (
         "sshspawner.sshspawner.SSHSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh", 
-                "/global/common/cori/software/python/3.6-anaconda-5.2/bin/jupyter-labhub"],
+                "/usr/common/software/python/3.7-anaconda-2019.07/bin/jupyter-labhub"],
             "environment": {"OMP_NUM_THREADS" : "2"},
             "remote_hosts": ["corijupyter.nersc.gov"],
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
@@ -1082,7 +1082,7 @@ c.NERSCSpawner.spawners = {
     "cori-exclusive-node-cpu": (
         "nerscslurmspawner.NERSCExclusiveSlurmSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
-                "/global/common/cori/software/python/3.6-anaconda-5.2/bin/jupyter-labhub"],
+                "/usr/common/software/python/3.7-anaconda-2019.07/bin/jupyter-labhub"],
             "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",
             "http_timeout": 300,
             "startup_poll_interval": 30.0,
@@ -1096,7 +1096,7 @@ c.NERSCSpawner.spawners = {
     "cori-exclusive-node-gpu": (
         "nerscslurmspawner.NERSCExclusiveGPUSlurmSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
-                "/global/common/cori/software/python/3.6-anaconda-5.2/bin/jupyter-labhub"],
+                "/usr/common/software/python/3.7-anaconda-2019.07/bin/jupyter-labhub"],
             "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",
             "startup_poll_interval": 30.0,
             "req_remote_host": "cori19-224.nersc.gov",
