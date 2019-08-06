@@ -616,7 +616,8 @@ c.Spawner.env_keep = ['PATH', 'CONDA_ROOT', 'CONDA_DEFAULT_ENV', 'VIRTUAL_ENV', 
 #  Once a server has successfully been spawned, this is the amount of time we
 #  wait before assuming that the server is unable to accept connections.
 #c.Spawner.http_timeout = 30
-c.Spawner.http_timeout = 300
+#c.Spawner.http_timeout = 300
+c.Spawner.http_timeout = 30 # TESTING
 
 ## The IP address (or hostname) the single-user server should listen on.
 #  
@@ -748,7 +749,8 @@ c.Spawner.poll_interval = 900
 #  takes longer than this. start should return when the server process is started
 #  and its location is known.
 #c.Spawner.start_timeout = 60
-c.Spawner.start_timeout = 900
+#c.Spawner.start_timeout = 900
+c.Spawner.start_timeout = 60 # TESTING
 
 #------------------------------------------------------------------------------
 # LocalProcessSpawner(Spawner) configuration
@@ -1063,7 +1065,7 @@ c.NERSCSpawner.spawners = {
             "remote_hosts": ["gerty.nersc.gov"],
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
             "hub_api_url": "http://{}:8081/hub/api".format(ip),
-            "path": "/usr/common/software/python/3.7-anaconda-2019.03/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "path": "/usr/common/software/python/3.7-anaconda-2019.07/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "ssh_keyfile": '/certs/{username}.key'
         }
     ),
@@ -1075,7 +1077,7 @@ c.NERSCSpawner.spawners = {
             "remote_hosts": ["corijupyter.nersc.gov"],
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
             "hub_api_url": "http://{}:8081/hub/api".format(ip),
-            "path": "/global/common/cori/software/python/3.6-anaconda-5.2/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "path": "/global/common/cori/software/python/3.7-anaconda-2019.07/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "ssh_keyfile": '/certs/{username}.key'
         }
     ),
@@ -1090,7 +1092,7 @@ c.NERSCSpawner.spawners = {
             "req_homedir": "/tmp",
             "req_runtime": "240",
             "hub_api_url": "http://{}:8081/hub/api".format(ip),
-            "path": "/global/common/cori/software/python/3.6-anaconda-5.2/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "path": "/global/common/cori/software/python/3.7-anaconda-2019.07/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
         }
     ),
     "cori-exclusive-node-gpu": (
@@ -1103,7 +1105,7 @@ c.NERSCSpawner.spawners = {
             "req_homedir": "/tmp",
             "req_runtime": "240",
             "hub_api_url": "http://{}:8081/hub/api".format(ip),
-            "path": "/global/common/cori/software/python/3.6-anaconda-5.2/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "path": "/global/common/cori/software/python/3.7-anaconda-2019.07/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
         }
     ),
     "spin-shared-node-cpu": (
