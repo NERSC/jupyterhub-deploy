@@ -14,6 +14,12 @@ RUN \
     pip install git+https://github.com/jupyterhub/wrapspawner.git           &&  \
     pip install git+https://github.com/nersc/sshspawner.git
 
+# NBViewer setup
+RUN \
+    pip install git+https://github.com/krinsman/nbviewer.git@step7          &&  \
+    pip install git+https://github.com/krinsman/clonenotebooks.git          &&  \
+    jupyter serverextension enable clonenotebooks.cloners --sys-prefix
+
 # Customized templates
 
 ADD templates templates
@@ -36,7 +42,7 @@ VOLUME /certs
 
 # Entrypoint and command
 
-ADD docker-entrypoint.sh jupyterhub_config.py /srv/
+ADD docker-entrypoint.sh jupyterhub_config.py nbviewer_config.py /srv/
 RUN chmod +x docker-entrypoint.sh
 ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD ["jupyterhub", "--debug"]
