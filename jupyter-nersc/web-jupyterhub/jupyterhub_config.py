@@ -616,8 +616,7 @@ c.Spawner.env_keep = ['PATH', 'CONDA_ROOT', 'CONDA_DEFAULT_ENV', 'VIRTUAL_ENV', 
 #  Once a server has successfully been spawned, this is the amount of time we
 #  wait before assuming that the server is unable to accept connections.
 #c.Spawner.http_timeout = 30
-#c.Spawner.http_timeout = 300
-c.Spawner.http_timeout = 30 # TESTING
+c.Spawner.http_timeout = 300
 
 ## The IP address (or hostname) the single-user server should listen on.
 #  
@@ -708,7 +707,7 @@ c.Spawner.notebook_dir = '/'
 #  JupyterHub modifies its own state accordingly and removes appropriate routes
 #  from the configurable proxy.
 #c.Spawner.poll_interval = 30
-c.Spawner.poll_interval = 900
+c.Spawner.poll_interval = 300
 
 ## The port for single-user servers to listen on.
 #  
@@ -749,8 +748,7 @@ c.Spawner.poll_interval = 900
 #  takes longer than this. start should return when the server process is started
 #  and its location is known.
 #c.Spawner.start_timeout = 60
-#c.Spawner.start_timeout = 900
-c.Spawner.start_timeout = 60 # TESTING
+c.Spawner.start_timeout = 120
 
 #------------------------------------------------------------------------------
 # LocalProcessSpawner(Spawner) configuration
@@ -1143,7 +1141,7 @@ async def setup(spawner):
                 "then come back and try again.<br>")
         raise e
 
-#c.Spawner.pre_spawn_hook = setup
+c.Spawner.pre_spawn_hook = setup
 
 ###
 
