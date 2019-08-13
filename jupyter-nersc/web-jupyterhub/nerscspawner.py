@@ -77,6 +77,11 @@ class NERSCSpawner(WrapSpawner):
                 continue
             yield allocation
 
+    def start(self):
+        if self.name not in self.spawners:
+            raise web.HTTPError(404)
+        return super().start()
+
     def select_profile(self, profile):
         self.log.debug("select_profile: " + profile)
         if profile == "":
