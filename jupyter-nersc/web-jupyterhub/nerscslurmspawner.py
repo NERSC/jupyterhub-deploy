@@ -173,7 +173,6 @@ class NERSCExclusiveGPUSlurmSpawner(NERSCSlurmSpawner):
 #SBATCH --constraint=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --job-name=jupyter
-#SBATCH --mem=30GB
 #SBATCH --nodes={{ nodes }}
 #SBATCH --time={{ runtime }}
 {{ env_text }}

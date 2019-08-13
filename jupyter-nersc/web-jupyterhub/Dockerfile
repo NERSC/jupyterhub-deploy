@@ -6,8 +6,6 @@ WORKDIR /srv
 
 # Authenticator and spawner
 
-#   pip install git+https://github.com/nersc/nerscspawner.git                       &&  \
-
 RUN \
     pip install git+https://github.com/nersc/sshapiauthenticator.git        &&  \
     pip install git+https://github.com/jupyterhub/batchspawner.git@4747946  &&  \

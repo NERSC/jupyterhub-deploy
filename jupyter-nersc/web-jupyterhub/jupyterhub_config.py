@@ -393,11 +393,11 @@ c.JupyterHub.services = [
     {
         'name': 'cull-idle',
         'admin': True,
-        'command': 'cull_idle_servers.py --timeout=86400'.split(),
+        'command': 'cull_idle_servers.py --timeout=57600'.split(),
     },
     {
         'name': 'announcement',
-        'url': 'http://127.0.0.1:8888',
+        'url': 'http://web-jupyterhub:8888',
         'command': ["python", "-m", "announcement"],
     },
     {
@@ -505,6 +505,7 @@ c.JupyterHub.template_paths = ["templates"]
 #  environment variables here. Most, including the default, do not. Consult the
 #  documentation for your spawner to verify!
 #c.Spawner.args = []
+c.Spawner.args = ["--transport=ipc"]
 
 ## The command used for starting the single-user server.
 #  
@@ -706,7 +707,7 @@ c.Spawner.notebook_dir = '/'
 #  JupyterHub modifies its own state accordingly and removes appropriate routes
 #  from the configurable proxy.
 #c.Spawner.poll_interval = 30
-c.Spawner.poll_interval = 900
+c.Spawner.poll_interval = 300
 
 ## The port for single-user servers to listen on.
 #  
@@ -747,7 +748,7 @@ c.Spawner.poll_interval = 900
 #  takes longer than this. start should return when the server process is started
 #  and its location is known.
 #c.Spawner.start_timeout = 60
-c.Spawner.start_timeout = 900
+c.Spawner.start_timeout = 120
 
 #------------------------------------------------------------------------------
 # LocalProcessSpawner(Spawner) configuration
@@ -1057,31 +1058,31 @@ c.NERSCSpawner.spawners = {
     "gerty-shared-node-cpu": (
         "sshspawner.sshspawner.SSHSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh", 
-                "/global/common/cori/software/python/3.6-anaconda-5.2/bin/jupyter-labhub"],
+                "/usr/common/software/python/3.7-anaconda-2019.07/bin/jupyter-labhub"],
             "environment": {"OMP_NUM_THREADS" : "2"},
-            "remote_hosts": ["gert01.nersc.gov"],
+            "remote_hosts": ["gerty.nersc.gov"],
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
             "hub_api_url": "http://{}:8081/hub/api".format(ip),
-            "path": "/global/common/cori/software/python/3.6-anaconda-5.2/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "path": "/usr/common/software/python/3.7-anaconda-2019.07/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "ssh_keyfile": '/certs/{username}.key'
         }
     ),
     "cori-shared-node-cpu": (
         "sshspawner.sshspawner.SSHSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh", 
-                "/global/common/cori/software/python/3.6-anaconda-5.2/bin/jupyter-labhub"],
+                "/usr/common/software/python/3.7-anaconda-2019.07/bin/jupyter-labhub"],
             "environment": {"OMP_NUM_THREADS" : "2"},
             "remote_hosts": ["corijupyter.nersc.gov"],
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
             "hub_api_url": "http://{}:8081/hub/api".format(ip),
-            "path": "/global/common/cori/software/python/3.6-anaconda-5.2/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "path": "/global/common/cori/software/python/3.7-anaconda-2019.07/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "ssh_keyfile": '/certs/{username}.key'
         }
     ),
     "cori-exclusive-node-cpu": (
         "nerscslurmspawner.NERSCExclusiveSlurmSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
-                "/global/common/cori/software/python/3.6-anaconda-5.2/bin/jupyter-labhub"],
+                "/usr/common/software/python/3.7-anaconda-2019.07/bin/jupyter-labhub"],
             "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",
             "http_timeout": 300,
             "startup_poll_interval": 30.0,
@@ -1089,20 +1090,20 @@ c.NERSCSpawner.spawners = {
             "req_homedir": "/tmp",
             "req_runtime": "240",
             "hub_api_url": "http://{}:8081/hub/api".format(ip),
-            "path": "/global/common/cori/software/python/3.6-anaconda-5.2/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "path": "/global/common/cori/software/python/3.7-anaconda-2019.07/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
         }
     ),
     "cori-exclusive-node-gpu": (
         "nerscslurmspawner.NERSCExclusiveGPUSlurmSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
-                "/global/common/cori/software/python/3.6-anaconda-5.2/bin/jupyter-labhub"],
+                "/usr/common/software/python/3.7-anaconda-2019.07/bin/jupyter-labhub"],
             "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",
             "startup_poll_interval": 30.0,
             "req_remote_host": "cori19-224.nersc.gov",
             "req_homedir": "/tmp",
             "req_runtime": "240",
             "hub_api_url": "http://{}:8081/hub/api".format(ip),
-            "path": "/global/common/cori/software/python/3.6-anaconda-5.2/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "path": "/global/common/cori/software/python/3.7-anaconda-2019.07/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
         }
     ),
     "spin-shared-node-cpu": (
@@ -1121,37 +1122,26 @@ c.NERSCSpawner.spawners = {
 
 # Pre-spawn myquota check
 
-def space_error(home):
-    """Extra message pointing users to try spawning again from /hub/home.  """
-    home = url_path_join(home, 'home')
-    return ("There is insufficient space in your home directory; please clear up some files and then " +
-            "<a href='{home}'>navigate to the hub home</a> and start your server.".format(home=home))
-
 async def setup(spawner):
     username = spawner.user.name
     remote_host = "corijupyter.nersc.gov"
-#   keyfile = spawner.ssh_keyfile.format(username=username)
     keyfile = "/certs/{username}.key".format(username=username) # NEED to have in NERSCSpawner now
     certfile = keyfile + "-cert.pub"
     k = asyncssh.read_private_key(keyfile)
     c = asyncssh.read_certificate(certfile)
-    # print(username, remote_host, keyfile, certfile)
     async with asyncssh.connect(remote_host, username=username, 
             client_keys=[(k,c)], known_hosts=None) as conn:
-        home = "/global/homes/{}/{}".format(username[0], username)
-        result = await conn.run("myquota -c {}".format(home))
+        result = await conn.run("myquota -c $HOME")
         retcode = result.exit_status
-        # result = await conn.run(spawner.remote_port_command)
-        # remote_port = int(result.stdout)
     if retcode:
-        e = web.HTTPError(507,reason="Insufficient Storage")
-        em = space_error(spawner.hub.base_url)
-        e.my_message = em
+        from jinja2 import Markup
+        e = web.HTTPError(507, reason="Insufficient Storage")
+        e.jupyterhub_message = Markup("<br>Your home directory is over quota! " +
+                "Try moving or archiving and deleting some files from there, " +
+                "then come back and try again.<br>")
         raise e
-    # spawner.remote_host = remote_host
-    # spawner.port = remote_port
 
-# c.Spawner.pre_spawn_hook = setup
+c.Spawner.pre_spawn_hook = setup
 
 ###
 
@@ -1177,43 +1167,3 @@ c.Spawner.auth_state_hook = auth_state_hook
 ### Prometheus
 
 c.JupyterHub.authenticate_prometheus = False
-
-
-## c.NERSCSpawner.spawners = [
-##         ("spin", "sshspawner.sshspawner.SSHSpawner", {
-##             "remote_hosts"          : ["jupyter"],
-##             "remote_port"           : "22",
-##             "hub_api_url"           : "http://{}:8081/hub/api".format(ip),
-##             "path"                  : "/opt/anaconda3/bin:/usr/bin:/usr/local/bin:/bin",
-##             "remote_port_command"   : "/opt/anaconda3/bin/get_port.py",
-##             "ssh_keyfile"           : "/tmp/{username}.key",
-##         }),
-##         ("cori-shared", "sshspawner.sshspawner.SSHSpawner", {
-##             "remote_hosts"          : ["cori19-224.nersc.gov"],
-##             "remote_port"           : "22",
-##             "hub_api_url"           : "http://{}:8081/hub/api".format(ip),
-##             "path"                  : bindir + ":/global/common/cori/das/jupyterhub/:/usr/common/usg/bin:/usr/bin:/bin",
-##             "remote_port_command"   : "/global/common/cori/das/jupyterhub/get_port.py",
-##             "ssh_keyfile"           : "/tmp/{username}.key",
-##         }),
-##         ("cori-exclusive-cpu", "nerscspawner.nerscspawner.NERSCSlurmSpawner", {
-##             "exec_prefix"           :
-##                 "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /tmp/{username}.key {remote_host}",
-##             "startup_poll_interval" : 10.0,
-##             "req_remote_host"       : "cori19-224.nersc.gov",
-##             "req_homedir"           : "/tmp",
-##             "req_runtime"           : "30",
-##             "hub_api_url"           : "http://{}:8081/hub/api".format(ip),
-##             "path"                  : bindir + ":/global/common/cori/das/jupyterhub/:/usr/common/usg/bin:/usr/bin:/bin",
-##         }),
-##         ("cori-config", "nerscspawner.nerscspawner.NERSCSlurmSpawner", {
-##             "exec_prefix"           :
-##                 "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /tmp/{username}.key {remote_host}",
-##             "startup_poll_interval" : 10.0,
-##             "req_remote_host"       : "cori19-224.nersc.gov",
-##             "req_homedir"           : "/tmp",
-##             "req_runtime"           : "30",
-##             "hub_api_url"           : "http://{}:8081/hub/api".format(ip),
-##             "path"                  : bindir + ":/global/common/cori/das/jupyterhub/:/usr/common/usg/bin:/usr/bin:/bin",
-##         }),
-## ]

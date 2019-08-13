@@ -34,7 +34,7 @@ RUN \
 ADD packages2.txt /tmp/packages2.txt
 RUN \
     wget -q -O /tmp/miniconda2.sh https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh  && \
-    bash /tmp/miniconda2.sh -f -b -p /opt/anaconda2             && \
+    bash /tmp/miniconda2.sh -b -p /opt/anaconda2                && \
     rm /tmp/miniconda2.sh                                       && \
     /opt/anaconda2/bin/conda update --yes conda                 && \
     /opt/anaconda2/bin/conda install --yes anaconda             && \
@@ -74,11 +74,12 @@ RUN \
     pip install --no-cache-dir ipympl                               && \
     jupyter nbextension enable --sys-prefix --py widgetsnbextension && \
     jupyter labextension install            \
-        @jupyterlab/hub-extension           \
         @jupyter-widgets/jupyterlab-manager \
         jupyter-matplotlib                  \
         @jupyterlab/toc                     \
-        jupyterlab_bokeh
+        jupyterlab_bokeh                    \
+        jupyterlab-favorites                \
+        jupyterlab-recents
 
 RUN \
     /opt/anaconda2/bin/jupyter nbextension enable --sys-prefix --py widgetsnbextension

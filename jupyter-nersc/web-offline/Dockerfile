@@ -22,20 +22,25 @@ RUN \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime  &&  \
     echo $TZ > /etc/timezone
 
-# Add flask and gunicorn
+# Miniconda
 
 RUN \
     curl -s -o /tmp/miniconda3.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh    &&  \
-    bash /tmp/miniconda3.sh -f -b -p /opt/anaconda3         &&  \
+    bash /tmp/miniconda3.sh -b -p /opt/anaconda3            &&  \
     rm -rf /tmp/miniconda3.sh                               &&  \
-    echo "python 3.7.*" >> /opt/anaconda3/conda-meta/pinned &&  \
+    echo "python 3.7.3" >> /opt/anaconda3/conda-meta/pinned &&  \
     /opt/anaconda3/bin/conda update --yes conda             &&  \
-    /opt/anaconda3/bin/conda install --yes                      \
-        flask           \
-        gunicorn                                            &&  \
     /opt/anaconda3/bin/conda clean --yes --all
 
 ENV PATH=/opt/anaconda3/bin:$PATH
+
+# Packages
+
+RUN \
+    conda install --yes         \
+        --channel=conda-forge   \
+        jinja2                  \
+        sanic
 
 # Application
 
@@ -44,4 +49,4 @@ ADD app.py /srv/
 ADD templates /srv/templates
 ADD static /srv/static
 
-CMD ["gunicorn", "app:app", "-b", ":8000", "--name", "app", "--workers=4", "--log-file=-"]
+CMD ["python", "-m", "sanic", "app.app", "--host=0.0.0.0", "--workers=4"]

@@ -1,7 +1,7 @@
 
 import os
 
-from jupyterhub.spawner import Spawner
+from jupyterhub.spawner import LocalProcessSpawner
 
 from tornado import httpclient, web
 from traitlets import List, Dict, Unicode, observe
@@ -77,10 +77,15 @@ class NERSCSpawner(WrapSpawner):
                 continue
             yield allocation
 
+    def start(self):
+        if self.name not in self.spawners:
+            raise web.HTTPError(404)
+        return super().start()
+
     def select_profile(self, profile):
         self.log.debug("select_profile: " + profile)
         if profile == "":
-            self.child_class, self.child_config = Spawner, {}
+            self.child_class, self.child_config = LocalProcessSpawner, {}
         else:
             try:
                 self.child_class, self.child_config = self.spawners[profile]
