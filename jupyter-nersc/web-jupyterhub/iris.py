@@ -41,7 +41,6 @@ class Iris:
         return escape.json_decode(response.body)
     
     def format_request(self, query):
-        return httpclient.HTTPRequest(self.iris_url,
-            method="POST",
-            headers={"Content-Type": "application/json"},
-            body=escape.json_encode({"query": query}))
+        return httpclient.HTTPRequest(self.iris_url, method="POST",
+                headers={"Content-Type": "application/json"},
+                body=escape.json_encode({"query": query}))
