@@ -1129,10 +1129,14 @@ async def setup(spawner):
     certfile = keyfile + "-cert.pub"
     k = asyncssh.read_private_key(keyfile)
     c = asyncssh.read_certificate(certfile)
-    async with asyncssh.connect(remote_host, username=username, 
-            client_keys=[(k,c)], known_hosts=None) as conn:
-        result = await conn.run("myquota -c $HOME")
-        retcode = result.exit_status
+    try:
+        async with asyncssh.connect(remote_host, username=username, 
+                client_keys=[(k,c)], known_hosts=None) as conn:
+            result = await conn.run("myquota -c $HOME")
+            retcode = result.exit_status
+    except asyncssh.misc.ConnectionLost:
+        spawner.log.warning(f"Problem connecting to {remote_host} to check quota oh well")
+        retcode = 0
     if retcode:
         from jinja2 import Markup
         e = web.HTTPError(507, reason="Insufficient Storage")
