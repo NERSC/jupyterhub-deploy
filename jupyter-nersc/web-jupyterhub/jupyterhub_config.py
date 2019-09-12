@@ -1071,11 +1071,11 @@ c.NERSCSpawner.spawners = {
         "sshspawner.sshspawner.SSHSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh", 
                 "/usr/common/software/python/3.7-anaconda-2019.07/bin/jupyter-labhub"],
-            "environment": {"OMP_NUM_THREADS" : "2"},
+            "environment": {"OMP_NUM_THREADS" : "2", "PYTHONFAULTHANDLER": "1"},
             "remote_hosts": ["corijupyter.nersc.gov"],
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
             "hub_api_url": "http://{}:8081/hub/api".format(ip),
-            "path": "/global/common/cori/software/python/3.7-anaconda-2019.07/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "path": "/usr/common/software/python/3.7-anaconda-2019.07/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "ssh_keyfile": '/certs/{username}.key'
         }
     ),
@@ -1090,7 +1090,7 @@ c.NERSCSpawner.spawners = {
             "req_homedir": "/tmp",
             "req_runtime": "240",
             "hub_api_url": "http://{}:8081/hub/api".format(ip),
-            "path": "/global/common/cori/software/python/3.7-anaconda-2019.07/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "path": "/usr/common/software/python/3.7-anaconda-2019.07/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
         }
     ),
     "cori-exclusive-node-gpu": (
@@ -1103,7 +1103,7 @@ c.NERSCSpawner.spawners = {
             "req_homedir": "/tmp",
             "req_runtime": "240",
             "hub_api_url": "http://{}:8081/hub/api".format(ip),
-            "path": "/global/common/cori/software/python/3.7-anaconda-2019.07/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "path": "/usr/common/software/python/3.7-anaconda-2019.07/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
         }
     ),
     "spin-shared-node-cpu": (
@@ -1129,10 +1129,14 @@ async def setup(spawner):
     certfile = keyfile + "-cert.pub"
     k = asyncssh.read_private_key(keyfile)
     c = asyncssh.read_certificate(certfile)
-    async with asyncssh.connect(remote_host, username=username, 
-            client_keys=[(k,c)], known_hosts=None) as conn:
-        result = await conn.run("myquota -c $HOME")
-        retcode = result.exit_status
+    try:
+        async with asyncssh.connect(remote_host, username=username, 
+                client_keys=[(k,c)], known_hosts=None) as conn:
+            result = await conn.run("myquota -c $HOME")
+            retcode = result.exit_status
+    except asyncssh.misc.ConnectionLost:
+        spawner.log.warning(f"Problem connecting to {remote_host} to check quota oh well")
+        retcode = 0
     if retcode:
         from jinja2 import Markup
         e = web.HTTPError(507, reason="Insufficient Storage")
