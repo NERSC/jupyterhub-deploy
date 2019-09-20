@@ -35,8 +35,7 @@ RUN \
     jupyter nbextension enable --sys-prefix --py widgetsnbextension
 
 RUN \
-    jupyter labextension install @jupyterlab/hub-extension  &&  \
-    conda install jupyterhub
+    jupyter labextension install @jupyterlab/hub-extension
 
 # Some dummy users
 
