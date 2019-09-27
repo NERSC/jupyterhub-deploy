@@ -397,8 +397,8 @@ c.JupyterHub.services = [
     },
     {
         'name': 'announcement',
-        'url': 'http://web-jupyterhub:8888',
-        'command': ["python", "-m", "announcement"],
+        'url': 'http://web-announcement:8888',
+        'api_token': os.environ["ANNOUNCEMENT_JUPYTERHUB_API_TOKEN"]
     },
     {
         'name': 'mods',
