@@ -404,7 +404,12 @@ c.JupyterHub.services = [
         'name': 'mods',
         'admin': True,
         'api_token': os.environ["MODS_JUPYTERHUB_API_TOKEN"]
-    }
+    },
+#   {
+#       'name': 'nbviewer',
+#       'url': 'http://web-nbviewer:5000',
+#       'api_token': os.environ["NBVIEWER_JUPYTERHUB_API_TOKEN"]
+#   }
 ]
 
 ## The class to use for spawning single-user servers.
@@ -505,7 +510,7 @@ c.JupyterHub.template_paths = ["templates"]
 #  environment variables here. Most, including the default, do not. Consult the
 #  documentation for your spawner to verify!
 #c.Spawner.args = []
-c.Spawner.args = ["--transport=ipc"]
+#c.Spawner.args = ["--transport=ipc"]
 
 ## The command used for starting the single-user server.
 #  
@@ -1059,6 +1064,7 @@ c.NERSCSpawner.spawners = {
         "sshspawner.sshspawner.SSHSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh", 
                 "/usr/common/software/python/3.7-anaconda-2019.07/bin/jupyter-labhub"],
+            "args": ["--transport=ipc"],
             "environment": {"OMP_NUM_THREADS" : "2"},
             "remote_hosts": ["gerty.nersc.gov"],
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
@@ -1071,6 +1077,7 @@ c.NERSCSpawner.spawners = {
         "sshspawner.sshspawner.SSHSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh", 
                 "/usr/common/software/python/3.7-anaconda-2019.07/bin/jupyter-labhub"],
+            "args": ["--transport=ipc"],
             "environment": {"OMP_NUM_THREADS" : "2", "PYTHONFAULTHANDLER": "1"},
             "remote_hosts": ["corijupyter.nersc.gov"],
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
@@ -1097,6 +1104,7 @@ c.NERSCSpawner.spawners = {
         "nerscslurmspawner.NERSCExclusiveGPUSlurmSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
                 "/usr/common/software/python/3.7-anaconda-2019.07/bin/jupyter-labhub"],
+            "args": ["--transport=ipc"],
             "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",
             "startup_poll_interval": 30.0,
             "req_remote_host": "cori19-224.nersc.gov",
@@ -1110,6 +1118,7 @@ c.NERSCSpawner.spawners = {
         "sshspawner.sshspawner.SSHSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
                 "/opt/anaconda3/bin/jupyter-labhub"],
+            "args": ["--transport=ipc"],
             "environment": {"OMP_NUM_THREADS" : "2"},
             "remote_hosts": ["app-notebooks"],
             "remote_port_command": "/opt/anaconda3/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
