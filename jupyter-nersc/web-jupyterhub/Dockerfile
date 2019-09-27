@@ -21,7 +21,6 @@ ADD templates templates
 ENV PYTHONPATH=/srv
 ADD nerscspawner.py .
 ADD nerscslurmspawner.py .
-ADD announcement.py .
 ADD iris.py .
 
 # Hub scripts
