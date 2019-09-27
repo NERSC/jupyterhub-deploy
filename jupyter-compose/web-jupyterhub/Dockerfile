@@ -21,6 +21,7 @@ RUN \
 WORKDIR /srv
 ADD docker-entrypoint.sh .
 ADD jupyterhub_config.py .
+ADD templates templates
 RUN chmod +x docker-entrypoint.sh
 RUN echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
 

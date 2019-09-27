@@ -491,6 +491,7 @@ c.JupyterHub.spawner_class = 'sshspawner.sshspawner.SSHSpawner'
 
 ## Paths to search for jinja templates, before using the default templates.
 #c.JupyterHub.template_paths = []
+c.JupyterHub.template_paths = ["./templates"]
 
 ## Extra variables to be passed into jinja templates
 #c.JupyterHub.template_vars = {}
