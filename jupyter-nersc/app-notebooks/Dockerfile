@@ -72,8 +72,13 @@ RUN \
 
 RUN \
     pip install --no-cache-dir ipympl                               && \
-    jupyter nbextension enable --sys-prefix --py widgetsnbextension && \
-    jupyter labextension install            \
+    jupyter nbextension enable --sys-prefix --py widgetsnbextension
+
+RUN \
+    conda install --yes -c conda-forge nodejs
+
+RUN \
+    jupyter labextension install --debug    \
         @jupyter-widgets/jupyterlab-manager \
         jupyter-matplotlib                  \
         @jupyterlab/toc                     \
