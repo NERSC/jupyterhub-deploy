@@ -4,12 +4,20 @@ services:
     image: web-jupyterhub:latest
     environment:
       - CONFIGPROXY_AUTH_TOKEN=the-sign-pointed-this-way
+      - ANNOUNCEMENT_JUPYTERHUB_API_TOKEN=the-hands-of-fate-have-doomed-this-man
     volumes:
       - ./config:/config
+    ports:
+      - 8081:8081
   app:
     image: app-notebooks:latest
     volumes:
       - ./config:/config
+  announcement:
+    image: web-announcement:latest
+    environment:
+      - JUPYTERHUB_API_TOKEN=the-hands-of-fate-have-doomed-this-man
+      - JUPYTERHUB_API_URL=http://web:8081/hub/api
   proxy:
     image: jupyterhub/configurable-http-proxy:latest
     environment:

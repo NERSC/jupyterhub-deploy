@@ -427,6 +427,14 @@ c.JupyterHub.hub_ip = '0.0.0.0'
 #          }
 #      ]
 #c.JupyterHub.services = []
+import os
+c.JupyterHub.services = [
+    {
+        'name': 'announcement',
+        'url': 'http://announcement:8888',
+        'api_token': os.environ["ANNOUNCEMENT_JUPYTERHUB_API_TOKEN"]
+    }
+]
 
 ## Shuts down all user servers on logout
 #c.JupyterHub.shutdown_on_logout = False
