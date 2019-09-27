@@ -31,7 +31,11 @@ RUN \
     adduser -q --gecos "" --disabled-password master    && \
     echo master:you-have-failed-us-torgo | chpasswd
 
+RUN \
+    pip install --no-cache-dir git+https://github.com/rcthomas/jupyterhub-announcement.git@persist-announcements
+
 WORKDIR /srv
+ADD announcement_config.py .
 RUN chmod +x docker-entrypoint.sh
 CMD ["jupyterhub", "--debug"]
 ENTRYPOINT ["./docker-entrypoint.sh"]
