@@ -269,6 +269,15 @@
 #          }
 #      ]
 #c.JupyterHub.services = []
+import os
+c.JupyterHub.services = [
+    {
+        'name': 'announcement',
+        'url': 'http://127.0.0.1:8888',
+        'command': ["python", "-m", "jupyterhub_announcement"]
+#       'api_token': os.environ["ANNOUNCEMENT_JUPYTERHUB_API_TOKEN"]
+    }
+]
 
 ## The class to use for spawning single-user servers.
 #  

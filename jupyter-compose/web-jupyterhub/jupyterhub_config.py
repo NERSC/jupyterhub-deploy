@@ -427,6 +427,14 @@ c.JupyterHub.hub_ip = '0.0.0.0'
 #          }
 #      ]
 #c.JupyterHub.services = []
+import os
+c.JupyterHub.services = [
+    {
+        'name': 'announcement',
+        'url': 'http://announcement:8888',
+        'api_token': os.environ["ANNOUNCEMENT_JUPYTERHUB_API_TOKEN"]
+    }
+]
 
 ## Shuts down all user servers on logout
 #c.JupyterHub.shutdown_on_logout = False
@@ -483,6 +491,7 @@ c.JupyterHub.spawner_class = 'sshspawner.sshspawner.SSHSpawner'
 
 ## Paths to search for jinja templates, before using the default templates.
 #c.JupyterHub.template_paths = []
+c.JupyterHub.template_paths = ["./templates"]
 
 ## Extra variables to be passed into jinja templates
 #c.JupyterHub.template_vars = {}
