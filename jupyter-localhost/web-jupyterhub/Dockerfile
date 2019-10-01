@@ -32,7 +32,7 @@ RUN \
     echo master:you-have-failed-us-torgo | chpasswd
 
 RUN \
-    pip install --no-cache-dir git+https://github.com/rcthomas/jupyterhub-announcement.git@persist-announcements
+    pip install --no-cache-dir git+https://github.com/rcthomas/jupyterhub-announcement.git
 
 WORKDIR /srv
 ADD announcement_config.py .

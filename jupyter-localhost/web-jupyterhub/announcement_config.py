@@ -50,6 +50,8 @@ c.AnnouncementService.log_level = 0
 # AnnouncementQueue(LoggingConfigurable) configuration
 #------------------------------------------------------------------------------
 
+c.AnnouncementQueue.lifetime_days = 0.00416666666
+
 ## File path where announcements persist as JSON.
 #  
 #  For a persistent announcement queue, this parameter must be set to a non-empty
@@ -68,5 +70,5 @@ c.AnnouncementService.log_level = 0
 #  just empty at initialization and the queue is ephemeral; announcements will
 #  not be persisted on updates to the queue.
 #c.AnnouncementQueue.persist_path = ''
-c.AnnouncementQueue.persist_path = 'announcements.json'
+c.AnnouncementQueue.persist_path = '/tmp/announcements.json'
 
