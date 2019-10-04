@@ -405,11 +405,11 @@ c.JupyterHub.services = [
         'admin': True,
         'api_token': os.environ["MODS_JUPYTERHUB_API_TOKEN"]
     },
-#   {
-#       'name': 'nbviewer',
-#       'url': 'http://web-nbviewer:5000',
-#       'api_token': os.environ["NBVIEWER_JUPYTERHUB_API_TOKEN"]
-#   }
+    {
+        'name': 'nbviewer',
+        'url': 'http://web-nbviewer:5000',
+        'api_token': os.environ["NBVIEWER_JUPYTERHUB_API_TOKEN"]
+    }
 ]
 
 ## The class to use for spawning single-user servers.
@@ -1117,13 +1117,16 @@ c.NERSCSpawner.spawners = {
     "spin-shared-node-cpu": (
         "sshspawner.sshspawner.SSHSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
-                "/opt/anaconda3/bin/jupyter-labhub"],
+                "/global/common/cori_cle7/software/jupyter/19-09/bin/jupyter-labhub"],
+#               "/opt/anaconda3/bin/jupyter-labhub"],
             "args": ["--transport=ipc"],
             "environment": {"OMP_NUM_THREADS" : "2"},
             "remote_hosts": ["app-notebooks"],
-            "remote_port_command": "/opt/anaconda3/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
+            "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
+#           "remote_port_command": "/opt/anaconda3/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
             "hub_api_url": "http://{}:8081/hub/api".format(ip),
-            "path": "/opt/anaconda3/bin:/usr/bin:/usr/local/bin:/bin",
+            "path": "/global/common/cori_cle7/software/jupyter/19-09/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+#           "path": "/opt/anaconda3/bin:/usr/bin:/usr/local/bin:/bin",
             "ssh_keyfile": '/certs/{username}.key'
         }
     )
