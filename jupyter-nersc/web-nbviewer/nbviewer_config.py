@@ -9,3 +9,7 @@ c.NBViewer.user_gists_handler  = "clonenotebooks.renderers.UserGistsRenderingHan
 
 c.NBViewer.localfiles = "/repos/nbviewer/notebook-5.7.8/tools/tests"
 c.NBViewer.template_path = "/repos/clonenotebooks/templates"
+
+c.NBViewer.static_path = "/repos/clonenotebooks/static"
+c.NBViewer.index_handler = "clonenotebooks.renderers.IndexRenderingHandler"
+
