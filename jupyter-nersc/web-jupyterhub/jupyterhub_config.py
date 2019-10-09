@@ -1005,11 +1005,12 @@ c.ConfigurableHTTPProxy.api_url = 'http://web-proxy:8001'
 #------------------------------------------------------------------------------
 
 c.NERSCSpawner.profiles = [
-    { "name": "gerty-shared-node-cpu"   },
-    { "name": "cori-shared-node-cpu"    },
-    { "name": "cori-exclusive-node-cpu" },
-    { "name": "cori-exclusive-node-gpu" },
-    { "name": "spin-shared-node-cpu"    },
+    { "name": "gerty-shared-node-cpu"       },
+    { "name": "gerty-exclusive-node-cpu"    },
+    { "name": "cori-shared-node-cpu"        },
+    { "name": "cori-exclusive-node-cpu"     },
+    { "name": "cori-exclusive-node-gpu"     },
+    { "name": "spin-shared-node-cpu"        },
 ]
 
 c.NERSCSpawner.setups = [
@@ -1071,6 +1072,21 @@ c.NERSCSpawner.spawners = {
             "hub_api_url": "http://{}:8081/hub/api".format(ip),
             "path": "/global/common/cori_cle7/software/jupyter/19-09/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "ssh_keyfile": '/certs/{username}.key'
+        }
+    ),
+    "gerty-exclusive-node-cpu": (
+        "nerscslurmspawner.NERSCExclusiveSlurmSpawner", {
+            "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
+                "/usr/common/software/jupyter/19-09/bin/jupyter-labhub"],
+            "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",
+            "http_timeout": 300,
+            "startup_poll_interval": 30.0,
+            "req_remote_host": "gerty.nersc.gov",
+            "req_homedir": "/tmp",
+            "req_runtime": "240",
+            "req_qos": "regular",
+            "hub_api_url": "http://{}:8081/hub/api".format(ip),
+            "path": "/usr/common/software/jupyter/19-09/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
         }
     ),
     "cori-shared-node-cpu": (
