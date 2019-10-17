@@ -28,9 +28,9 @@ RUN \
     curl -s -o /tmp/miniconda3.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh    &&  \
     bash /tmp/miniconda3.sh -f -b -p /opt/anaconda3         &&  \
     rm -rf /tmp/miniconda3.sh                               &&  \
-    /opt/anaconda3/bin/conda update --yes conda             &&  \
+#   /opt/anaconda3/bin/conda update --yes conda             &&  \
     /opt/anaconda3/bin/pip install --no-cache-dir               \
-        pika==0.13.1
+        pika
 
 ENV PATH=/opt/anaconda3/bin:$PATH
 
