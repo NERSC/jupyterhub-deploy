@@ -1181,7 +1181,10 @@ from iris import Iris
 
 async def post_auth_hook(authenticator, handler, authentication):
     iris = Iris()
-    userdata = await iris.query_user(authentication["name"])
+    try:
+        userdata = await iris.query_user(authentication["name"])
+    except:
+        userdata = {}
     if authentication["auth_state"] is None:
         authentication["auth_state"] = {}
     authentication["auth_state"]["userdata"] = userdata
