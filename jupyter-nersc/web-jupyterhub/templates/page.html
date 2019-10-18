@@ -10,14 +10,11 @@
 $.get("/services/announcement/latest", function(data) {
     var announcement = data["announcement"];
     if(announcement) {
-        $(".announcement").html(`<div class="panel panel-warning">
-            <div class="panel-heading">
-                <h3 class="panel-title">Announcement</h3>
-            </div>
-            <div class="panel-body text-center announcement">
+        $(".announcement").html(
+            `<div class="container text-center announcement alert alert-warning">
                 ${announcement}
-            </div>
-        </div>`);
+            </div>`
+        );
     }
 });
 </script>
