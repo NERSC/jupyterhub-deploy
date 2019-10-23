@@ -299,14 +299,15 @@ c.JupyterHub.hub_ip = '0.0.0.0'
 ## The location to store certificates automatically created by JupyterHub.
 #  
 #  Use with internal_ssl
-#c.JupyterHub.internal_certs_location = 'internal-ssl'
+import os
+c.JupyterHub.internal_certs_location = os.environ['INTERNAL_SSL_PATH']
 
 ## Enable SSL for all internal communication
 #  
 #  This enables end-to-end encryption between all JupyterHub components.
 #  JupyterHub will automatically create the necessary certificate authority and
 #  sign notebook certificates as they're created.
-#c.JupyterHub.internal_ssl = False
+c.JupyterHub.internal_ssl = True
 
 ## The public facing ip of the whole JupyterHub application (specifically
 #  referred to as the proxy).
@@ -427,14 +428,6 @@ c.JupyterHub.hub_ip = '0.0.0.0'
 #          }
 #      ]
 #c.JupyterHub.services = []
-import os
-c.JupyterHub.services = [
-    {
-        'name': 'announcement',
-        'url': 'http://announcement:8888',
-        'api_token': os.environ["ANNOUNCEMENT_JUPYTERHUB_API_TOKEN"]
-    }
-]
 
 ## Shuts down all user servers on logout
 #c.JupyterHub.shutdown_on_logout = False
@@ -451,18 +444,18 @@ c.JupyterHub.services = [
 #    - default: jupyterhub.spawner.LocalProcessSpawner
 #    - localprocess: jupyterhub.spawner.LocalProcessSpawner
 #    - simple: jupyterhub.spawner.SimpleLocalProcessSpawner
-#c.JupyterHub.spawner_class = 'jupyterhub.spawner.LocalProcessSpawner'
+# c.JupyterHub.spawner_class = 'jupyterhub.spawner.LocalProcessSpawner'
 c.JupyterHub.spawner_class = 'sshspawner.sshspawner.SSHSpawner'
 
 ## Path to SSL certificate file for the public facing interface of the proxy
 #  
 #  When setting this, you should also set ssl_key
-#c.JupyterHub.ssl_cert = ''
+# c.JupyterHub.ssl_cert = os.environ['INTERNAL_SSL_PATH'] + '/hub-ca/hub-ca.crt'
 
 ## Path to SSL key file for the public facing interface of the proxy
 #  
 #  When setting this, you should also set ssl_cert
-#c.JupyterHub.ssl_key = ''
+# c.JupyterHub.ssl_key = os.environ['INTERNAL_SSL_PATH'] + '/hub-ca/hub-ca.key'
 
 ## Host to send statsd metrics to. An empty string (the default) disables sending
 #  metrics.
@@ -491,7 +484,6 @@ c.JupyterHub.spawner_class = 'sshspawner.sshspawner.SSHSpawner'
 
 ## Paths to search for jinja templates, before using the default templates.
 #c.JupyterHub.template_paths = []
-c.JupyterHub.template_paths = ["./templates"]
 
 ## Extra variables to be passed into jinja templates
 #c.JupyterHub.template_vars = {}
@@ -526,7 +518,15 @@ c.JupyterHub.template_paths = ["./templates"]
 #  different hosts.
 #  
 #  Use with internal_ssl
-#c.JupyterHub.trusted_alt_names = []
+c.JupyterHub.trusted_alt_names = ['DNS:proxy', 'DNS:app', 'DNS:web',
+                                  'IP:172.17.0.1', 'IP:172.17.0.2', 'IP:172.17.0.3', 'IP:172.17.0.4',
+                                  'IP:172.18.0.1', 'IP:172.18.0.2', 'IP:172.18.0.3', 'IP:172.18.0.4',
+                                  'IP:172.19.0.1', 'IP:172.19.0.2', 'IP:172.19.0.3', 'IP:172.19.0.4',
+                                  'IP:172.20.0.1', 'IP:172.20.0.2', 'IP:172.20.0.3', 'IP:172.20.0.4',
+                                  'IP:172.21.0.1', 'IP:172.21.0.2', 'IP:172.21.0.3', 'IP:172.21.0.4',
+                                  'IP:172.22.0.1', 'IP:172.22.0.2', 'IP:172.22.0.3', 'IP:172.22.0.4',
+                                  'IP:172.23.0.1', 'IP:172.23.0.2', 'IP:172.23.0.3', 'IP:172.23.0.4',
+                                  'IP:172.24.0.1', 'IP:172.24.0.2', 'IP:172.24.0.3', 'IP:172.24.0.4',]
 
 ## Downstream proxy IP addresses to trust.
 #  
@@ -630,7 +630,7 @@ c.Spawner.cmd = ['jupyter-labhub']
 #c.Spawner.cpu_limit = None
 
 ## Enable debug-logging of the single-user server
-#c.Spawner.debug = False
+c.Spawner.debug = True
 
 ## The URL the single-user server should start in.
 #  
@@ -686,7 +686,7 @@ c.Spawner.cmd = ['jupyter-labhub']
 #  Once a server has successfully been spawned, this is the amount of time we
 #  wait before assuming that the server is unable to accept connections.
 #c.Spawner.http_timeout = 30
-c.Spawner.http_timeout = 120
+c.Spawner.http_timeout = 60
 
 ## The IP address (or hostname) the single-user server should listen on.
 #  
@@ -775,7 +775,7 @@ c.Spawner.ip = '0.0.0.0'
 #  if the single-user server is still running. If it isn't running, then
 #  JupyterHub modifies its own state accordingly and removes appropriate routes
 #  from the configurable proxy.
-#c.Spawner.poll_interval = 30
+c.Spawner.poll_interval = 300
 
 ## The port for single-user servers to listen on.
 #  
@@ -818,7 +818,7 @@ c.Spawner.ip = '0.0.0.0'
 #c.Spawner.ssl_alt_names = []
 
 ## Whether to include DNS:localhost, IP:127.0.0.1 in alt names
-#c.Spawner.ssl_alt_names_include_local = True
+# c.Spawner.ssl_alt_names_include_local = True
 
 ## Timeout (in seconds) before giving up on starting of single-user server.
 #  
@@ -981,8 +981,8 @@ c.Authenticator.admin_users = set(["master"])
 #------------------------------------------------------------------------------
 
 c.ConfigurableHTTPProxy.should_start = False
-
-c.ConfigurableHTTPProxy.api_url = 'http://proxy:8001'
+c.ConfigurableHTTPProxy.debug = True
+c.ConfigurableHTTPProxy.api_url = 'https://proxy:8001'
 
 #------------------------------------------------------------------------------
 # SSHSpawner configuration
@@ -1000,7 +1000,4 @@ c.SSHSpawner.remote_port_command = '/opt/anaconda3/bin/get_port.py'
 
 c.SSHSpawner.ssh_keyfile = '/tmp/{username}.key'
 
-c.SSHSpawner.private_key_path = '/tmp/{username}.key'
-c.SSHSpawner.certificate_path = '/tmp/{username}.key-cert.pub'
-
-c.SSHSpawner.hub_api_url = 'http://web:8081/hub/api'
+c.SSHSpawner.hub_api_url = 'https://web:8081/hub/api'
