@@ -1,4 +1,4 @@
-c.NBViewer.handler_settings    = {'clone_notebooks' : True}
+c.NBViewer.handler_settings    = {'clone_notebooks' : True, 'clone_to_directory' : '/global/homes/{username[0]}/{username}'}
 
 c.NBViewer.local_handler       = "clonenotebooks.renderers.LocalRenderingHandler"
 c.NBViewer.url_handler         = "clonenotebooks.renderers.URLRenderingHandler"
