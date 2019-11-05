@@ -1,0 +1,67 @@
+version: "3"
+services:
+  web:
+    container_name: web
+    depends_on:
+      - proxy
+    image: web-jupyterhub:latest
+    environment:
+      - CONFIGPROXY_AUTH_TOKEN=the-sign-pointed-this-way
+      - ANNOUNCEMENT_JUPYTERHUB_API_TOKEN=the-hands-of-fate-have-doomed-this-man
+      - INTERNAL_SSL_PATH=${SSL_VOLUME_CONTAINER}
+    volumes:
+      - ./config:/config
+      - "ssl:${SSL_VOLUME_CONTAINER}:rw"
+    ports:
+      - 8081:8081
+    restart: unless-stopped
+    user: root
+  app:
+    container_name: app
+    image: app-notebooks:latest
+    volumes:
+      - ./config:/config
+#     - "ssl:${SSL_VOLUME_CONTAINER}:ro"
+  announcement:
+    container_name: announcement
+    image: web-announcement:latest
+    environment:
+      - JUPYTERHUB_API_TOKEN=the-hands-of-fate-have-doomed-this-man
+      - JUPYTERHUB_API_URL=https://web:8081/hub/api
+      - JUPYTERHUB_SSL_KEYFILE=/jupyterhub-ssl/hub-internal/hub-internal.key
+      - JUPYTERHUB_SSL_CERTFILE=/jupyterhub-ssl/hub-internal/hub-internal.crt
+      - JUPYTERHUB_SSL_CLIENT_CA=/jupyterhub-ssl/hub-ca_trust.crt
+    restart: always
+    volumes:
+      - "ssl:${SSL_VOLUME_CONTAINER}:ro"
+  proxy:
+    command: >
+      configurable-http-proxy
+        --port 8000
+        --api-ip 0.0.0.0
+        --api-port 8001
+        --error-target https://web:8081/hub/error
+        --api-ssl-key ${SSL_VOLUME_CONTAINER}/proxy-api/proxy-api.key
+        --api-ssl-cert ${SSL_VOLUME_CONTAINER}/proxy-api/proxy-api.crt
+        --api-ssl-ca ${SSL_VOLUME_CONTAINER}/proxy-api-ca_trust.crt
+        --api-ssl-request-cert
+        --api-ssl-reject-unauthorized
+        --client-ssl-key ${SSL_VOLUME_CONTAINER}/proxy-client/proxy-client.key
+        --client-ssl-cert ${SSL_VOLUME_CONTAINER}/proxy-client/proxy-client.crt
+        --client-ssl-ca ${SSL_VOLUME_CONTAINER}/proxy-client-ca_trust.crt
+        --client-ssl-request-cert
+        --client-ssl-reject-unauthorized
+    container_name: proxy
+    image: jupyterhub/configurable-http-proxy:latest
+    environment:
+      - CONFIGPROXY_AUTH_TOKEN=the-sign-pointed-this-way
+    ports:
+      - 8000:8000
+    restart: always
+    user: root
+    volumes:
+      - "ssl:${SSL_VOLUME_CONTAINER}:ro"
+volumes:
+  ssl:
+    external:
+      name: ${SSL_VOLUME_HOST}
