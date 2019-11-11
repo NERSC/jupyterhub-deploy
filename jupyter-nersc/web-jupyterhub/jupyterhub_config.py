@@ -1200,4 +1200,4 @@ c.Spawner.auth_state_hook = auth_state_hook
 
 c.JupyterHub.authenticate_prometheus = False
 
-c.JupyterHub.default_server_name = 'cori-shared-node-cpu'
+#c.JupyterHub.default_server_name = 'cori-shared-node-cpu'
