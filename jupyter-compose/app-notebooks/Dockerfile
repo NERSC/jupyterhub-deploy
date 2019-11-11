@@ -37,20 +37,28 @@ RUN \
 RUN \
     jupyter labextension install @jupyterlab/hub-extension
 
-# Jupyter server proxy; install but don't enable
+# Jupyter server proxy
 
 RUN \
     pip install --no-cache-dir \
-        jupyter-server-proxy
-
-ADD jupyter-server-mapper /tmp/jupyter-server-mapper
-RUN \
-    cd /tmp/jupyter-server-mapper   &&  \
-    python setup.py install         &&  \
-    cd -                            &&  \
-    jupyter serverextension enable --py jupyter_server_mapper --sys-prefix
+        git+https://github.com/rcthomas/jupyter-server-proxy.git@allow-remote-proxy
 
 ADD jupyter_notebook_config.py /opt/anaconda3/etc/jupyter/.
+
+#### # Jupyter server proxy; install but don't enable
+#### 
+#### RUN \
+####     pip install --no-cache-dir \
+####         jupyter-server-proxy
+#### 
+#### ADD jupyter-server-mapper /tmp/jupyter-server-mapper
+#### RUN \
+####     cd /tmp/jupyter-server-mapper   &&  \
+####     python setup.py install         &&  \
+####     cd -                            &&  \
+####     jupyter serverextension enable --py jupyter_server_mapper --sys-prefix
+#### 
+#### ADD jupyter_notebook_config.py /opt/anaconda3/etc/jupyter/.
 
 # Some dummy users
 
