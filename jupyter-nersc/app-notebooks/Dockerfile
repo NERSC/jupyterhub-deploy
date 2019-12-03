@@ -1,46 +1,40 @@
-ARG branch=unknown
-
-FROM registry.spin.nersc.gov/das/jupyter-base-${branch}:latest
+FROM ubuntu:16.04
 LABEL maintainer="Rollin Thomas <rcthomas@lbl.gov>"
-WORKDIR /srv
 
-# Additional Ubuntu packages
+# Base Ubuntu packages
+
+ENV DEBIAN_FRONTEND noninteractive
+ENV LANG C.UTF-8
 
 RUN \
-    apt-get --yes install   \
-        csh                 \
-        dvipng              \
-        ksh                 \
-        ldap-utils          \
-        libnss-ldapd        \
-        libpam-ldap         \
-        nscd                \
-        openssh-server      \
-        supervisor          \
-        tcsh                \
-        texlive-xetex       \
+    apt-get update          &&  \
+    apt-get --yes upgrade   &&  \
+    apt-get --yes install       \
+        bzip2                   \
+        curl                    \
+        git                     \
+        libffi-dev              \
+        lsb-release             \
+        tzdata                  \
+        vim                     \
+        wget                    \
+        csh                     \
+        ksh                     \
+        ldap-utils              \
+        libnss-ldapd            \
+        libpam-ldap             \
+        nscd                    \
+        openssh-server          \
+        supervisor              \
+        tcsh                    \
         zsh
 
-ADD packages3.txt /tmp/packages3.txt
-RUN \
-    /opt/anaconda3/bin/conda update --yes conda                 && \
-    /opt/anaconda3/bin/conda install --yes anaconda             && \
-    /opt/anaconda3/bin/conda install --file /tmp/packages3.txt  && \
-    /opt/anaconda3/bin/ipython kernel install                   && \
-    /opt/anaconda3/bin/conda clean --yes --all
+# Timezone to Berkeley
 
-# Python 2 Anaconda and additional packages
-
-ADD packages2.txt /tmp/packages2.txt
+ENV TZ=America/Los_Angeles
 RUN \
-    wget -q -O /tmp/miniconda2.sh https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh  && \
-    bash /tmp/miniconda2.sh -b -p /opt/anaconda2                && \
-    rm /tmp/miniconda2.sh                                       && \
-    /opt/anaconda2/bin/conda update --yes conda                 && \
-    /opt/anaconda2/bin/conda install --yes anaconda             && \
-    /opt/anaconda2/bin/conda install --file /tmp/packages2.txt  && \
-    /opt/anaconda2/bin/ipython kernel install                   && \
-    /opt/anaconda2/bin/conda clean --yes --all
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime  &&  \
+    echo $TZ > /etc/timezone
 
 # For ssh auth API
 
@@ -59,39 +53,14 @@ RUN \
 
 COPY etc/ /etc/
 
-# GPFS
+# NGF
 
 RUN \
     mkdir /global                               && \
     ln -sf /global/u1 /global/homes             && \
     ln -sf /global/project /project             && \
-    ln -s /global/common/datatran /usr/common   && \
+    ln -s /global/common/cori_cle7 /usr/common  && \
     echo "datatran" > /etc/clustername
-
-# JupyterHub/lab features
-
-RUN \
-    pip install --no-cache-dir ipympl                               && \
-    jupyter nbextension enable --sys-prefix --py widgetsnbextension
-
-RUN \
-    conda install --yes -c conda-forge nodejs
-
-RUN \
-    jupyter labextension install --debug    \
-        @jupyter-widgets/jupyterlab-manager \
-        jupyter-matplotlib                  \
-        @jupyterlab/toc                     \
-        jupyterlab_bokeh                    \
-        jupyterlab-favorites                \
-        jupyterlab-recents
-
-RUN \
-    /opt/anaconda2/bin/jupyter nbextension enable --sys-prefix --py widgetsnbextension
-
-# Get port script
-
-ADD get_port.py /opt/anaconda3/bin/
 
 # Supervisord to launch sshd and nslcd
 

@@ -1,3 +1,4 @@
 jupyterhub.sqlite
 jupyterhub_cookie_secret
 /jupyter-compose/config
+/jupyter-compose-ssl/config

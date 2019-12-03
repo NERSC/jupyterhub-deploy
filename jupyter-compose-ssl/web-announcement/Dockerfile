@@ -4,7 +4,7 @@ FROM registry.spin.nersc.gov/das/jupyter-base-${branch}:latest
 LABEL maintainer="Rollin Thomas <rcthomas@lbl.gov>"
 
 RUN \
-    pip install git+https://github.com/rcthomas/jupyterhub-announcement.git@0.3.1
+    pip install git+https://github.com/rcthomas/jupyterhub-announcement.git@0.4.1
 
 WORKDIR /srv
 

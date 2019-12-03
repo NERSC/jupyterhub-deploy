@@ -16,6 +16,7 @@ RUN \
         markdown                \
         nbconvert               \
         nbformat                \
+        notebook                \
         pycurl              &&  \
     pip install --no-cache-dir  \
         statsd

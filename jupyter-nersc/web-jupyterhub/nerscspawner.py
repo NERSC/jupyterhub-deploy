@@ -72,7 +72,7 @@ class NERSCSpawner(WrapSpawner):
         return None
 
     def user_allocations(self, repos=[]):
-        for allocation in self.userdata["userAllocations"]:
+        for allocation in self.userdata.get("userAllocations", []):
             if repos and allocation["computeAllocation"]["repoName"] not in repos:
                 continue
             yield allocation

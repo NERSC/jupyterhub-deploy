@@ -24,3 +24,17 @@ services:
       - CONFIGPROXY_AUTH_TOKEN=the-sign-pointed-this-way
     ports:
       - 8000:8000
+  service1:
+    command: ["python", "-m", "http.server", "--directory", "/content/"]
+    image: continuumio/miniconda3:latest
+    ports:
+      - 9000:8000
+    volumes:
+     - ./app-service1:/content
+  service2:
+    command: ["python", "-m", "http.server", "--directory", "/content/"]
+    image: continuumio/miniconda3:latest
+    ports:
+      - 9001:8000
+    volumes:
+     - ./app-service2:/content
