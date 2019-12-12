@@ -60,7 +60,8 @@ WORKDIR /tmp
 RUN \
     npm install -g configurable-http-proxy                                  &&  \
 #   git clone https://github.com/jupyterhub/jupyterhub.git                  &&  \
-    git clone https://github.com/rcthomas/jupyterhub.git                    &&  \
+#   git clone https://github.com/rcthomas/jupyterhub.git                    &&  \
+    git clone https://github.com/krinsman/jupyterhub.git                    &&  \
     cd jupyterhub                                                           &&  \
 #   git checkout tags/1.0.0                                                 &&  \
     git checkout auth-state-to-spawner                                      &&  \
