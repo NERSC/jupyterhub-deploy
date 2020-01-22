@@ -35,23 +35,31 @@ RUN \
     echo "python 3.7.3" >> /opt/anaconda3/conda-meta/pinned &&  \
     /opt/anaconda3/bin/conda update --yes conda             &&  \
     /opt/anaconda3/bin/conda install --yes                      \
-        alembic         \
-        cryptography    \
-        decorator       \
-        entrypoints     \
-        jinja2          \
-        mako            \
-        markupsafe      \
-        nodejs          \
-        oauthlib        \
-        pamela          \
-        psycopg2        \
-        pyopenssl       \
-        python-dateutil \
-        python-editor   \
-        sqlalchemy      \
-        tornado         \
-        traitlets
+        alembic             \
+        attrs               \
+        certipy             \
+        cryptography        \
+        decorator           \
+        entrypoints         \
+        jinja2              \
+        jsonschema          \
+        mako                \
+        markupsafe          \
+        more-itertools      \
+        nodejs              \
+        oauthlib            \
+        pamela              \
+        psycopg2            \
+        pyopenssl           \
+        pyrsistent          \
+        python-dateutil     \
+        python-editor       \
+        ruamel.yaml         \
+        ruamel.yaml.clib    \
+        sqlalchemy          \
+        tornado             \
+        traitlets           \
+        zipp
 
 # Install JupyterHub
 
