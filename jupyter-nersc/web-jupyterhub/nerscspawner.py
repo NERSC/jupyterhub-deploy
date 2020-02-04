@@ -28,23 +28,21 @@ class NERSCSpawner(WrapSpawner):
 
     child_profile = Unicode()
 
-    userdata = Dict()
-
-    def check_roles(self, roles):
+    def check_roles(self, auth_state, roles):
         """User has one or more of these roles"""
         if roles:
             for role in roles:
-                if self.check_role(role):
+                if self.check_role(auth_state, role):
                     return True
             return False
         else:
             return True
 
-    def check_role(self, role):
+    def check_role(self, auth_state, role):
         if role == "gpu":
-            return self.check_role_gpu()
+            return self.check_role_gpu(auth_state)
         if role == "staff":
-            return self.check_role_staff()
+            return self.check_role_staff(auth_state)
         if role == "cori-exclusive-node-cpu":
             return self.check_role_cori_exclusive_node_cpu()
         return False
@@ -56,23 +54,23 @@ class NERSCSpawner(WrapSpawner):
         else:
             return True
 
-    def check_role_gpu(self):
-        return self.default_gpu_repo() is not None
+    def check_role_gpu(self, auth_state):
+        return self.default_gpu_repo(auth_state) is not None
 
-    def check_role_staff(self):
-        for allocation in self.user_allocations(["nstaff"]):
+    def check_role_staff(self, auth_state):
+        for allocation in self.user_allocations(auth_state, ["nstaff"]):
             return True
         return False
 
-    def default_gpu_repo(self):
-        for allocation in self.user_allocations(["nstaff", "m1759", "dasrepo"]):
+    def default_gpu_repo(self, auth_state):
+        for allocation in self.user_allocations(auth_state, ["nstaff", "m1759", "dasrepo"]):
             for qos in allocation["userAllocationQos"]:
                 if qos["qos"]["qos"] == "gpu":
                     return allocation["computeAllocation"]["repoName"]
         return None
 
-    def user_allocations(self, repos=[]):
-        for allocation in self.userdata.get("userAllocations", []):
+    def user_allocations(self, auth_state, repos=[]):
+        for allocation in auth_state["userdata"].get("userAllocations", []):
             if repos and allocation["computeAllocation"]["repoName"] not in repos:
                 continue
             yield allocation

@@ -19,7 +19,7 @@
 <thead><tr>
     <th></th>
     {% for setup in user.spawner.setups -%}
-        {% for arch in setup.architectures if user.spawner.check_roles(arch.roles) %}
+        {% for arch in setup.architectures if user.spawner.check_roles(auth_state, arch.roles) %}
             <th class="text-center">{{ arch.description }}</th>
         {% endfor %}
     {%- endfor %}
@@ -28,7 +28,7 @@
 
 {% macro spawner_table_body() -%}
 <tbody>
-    {% for system in user.spawner.systems if user.spawner.check_roles(system.roles) -%}
+    {% for system in user.spawner.systems if user.spawner.check_roles(auth_state, system.roles) -%}
         {{ spawner_table_body_row(system) }}
     {%- endfor %}
 </tbody>
@@ -44,7 +44,7 @@
 {%- endmacro %}
 
 {% macro spawner_table_body_row_data(system, setup) -%}
-{% for arch in setup.architectures if user.spawner.check_roles(arch.roles) %}
+{% for arch in setup.architectures if user.spawner.check_roles(auth_state, arch.roles) %}
     {% set profile_key = [system.name, setup.name, arch.name] | join("-") %}
     <td class="text-center home-server-row" data-server-name="{{ profile_key }}">
         {% set profile = user.spawner.profiles | selectattr("name", "equalto", profile_key) | first %}
@@ -71,7 +71,7 @@
     <td><i>Resources</i></td>
     {% for setup in user.spawner.setups %}
         {% set counter = [] %}
-        {% for arch in setup.architectures if user.spawner.check_roles(arch.roles) %}
+        {% for arch in setup.architectures if user.spawner.check_roles(auth_state, arch.roles) %}
             {% if counter.append('1') %}{% endif %}
         {% endfor %}
         {% if counter | length %}
@@ -82,7 +82,7 @@
     <td><i>Use Cases</i></td>
     {% for setup in user.spawner.setups %}
         {% set counter = [] %}
-        {% for arch in setup.architectures if user.spawner.check_roles(arch.roles) %}
+        {% for arch in setup.architectures if user.spawner.check_roles(auth_state, arch.roles) %}
             {% if counter.append('1') %}{% endif %}
         {% endfor %}
         {% if counter | length %}
