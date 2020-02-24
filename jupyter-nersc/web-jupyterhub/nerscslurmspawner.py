@@ -201,6 +201,100 @@ unset XDG_RUNTIME_DIR
             yield allocation
 
 
+class NERSCConfigurableGPUSlurmSpawner(NERSCSlurmSpawner):
+
+    batch_submit_cmd = Unicode("/bin/bash -l /global/common/cori/das/jupyterhub/esslurm-wrapper.sh sbatch").tag(config=True)
+    batch_query_cmd = Unicode("/bin/bash -l /global/common/cori/das/jupyterhub/esslurm-wrapper.sh squeue -h -j {job_id} -o '%T\ %B-144.nersc.gov'").tag(config=True)
+    batch_cancel_cmd = Unicode("/bin/bash -l /global/common/cori/das/jupyterhub/esslurm-wrapper.sh scancel {job_id}").tag(config=True)
+
+    batch_script = Unicode("""#!/bin/bash
+#SBATCH --account={{ account }}
+#SBATCH --constraint=gpu
+#SBATCH --gres=gpu:{{ ngpus }}
+#SBATCH --job-name=jupyter
+#SBATCH --nodes={{ nodes }}
+#SBATCH --time={{ runtime }}
+{{ env_text }}
+unset XDG_RUNTIME_DIR
+{{ cmd }}""").tag(config=True)
+
+    async def options_form(self, spawner):
+        form = ""
+
+        # Account
+
+        form += dedent("""
+        <label for="account">Account:</label>
+        <select class="form-control" name="account" required autofocus>
+        """)
+
+        gpu_accounts = ["nstaff", "m1759", "dasrepo"]
+        for allocation in spawner.userdata["userAllocations"]:
+            account = allocation["computeAllocation"]["repoName"]
+            if account not in gpu_accounts:
+                continue
+            for qos in allocation["userAllocationQos"]:
+                if qos["qos"]["qos"] == "gpu":
+                    form += """<option value="{}">{}</option>""".format(account, account)
+
+        form += dedent("""
+        </select>
+        """)
+
+        # GPUs per node, should come from model
+
+        form += dedent("""
+        <label for="nodes">GPUs per Node:</label>
+        <input class="form-control" type="number" name="ngpus" min="1" max="8" value="1" required autofocus>
+        """)
+
+        # Nodes, should come from model
+
+        form += dedent("""
+        <label for="nodes">Nodes:</label>
+        <input class="form-control" type="number" name="nodes" min="1" max="5" value="1" required autofocus>
+        """)
+
+        # Time, should come from model
+
+        form += dedent("""
+        <label for="time">Time Limit (Minutes):</label>
+        <input class="form-control" type="number" name="time" min="10" max="240" value="240" step="10" required autofocus>
+        """)
+
+        return form
+
+    def options_from_form(self, formdata):
+        options = dict()
+        options["account"] = formdata["account"][0]
+        options["ngpus"] = formdata["ngpus"][0]
+        options["nodes"] = formdata["nodes"][0]
+        options["time"] = formdata["time"][0]
+        return options
+
+#     # Have to override this to call get_auth_state() I think
+#     async def _get_batch_script(self, **subvars):
+#         """Format batch script from vars"""
+#         auth_state = await self.user.get_auth_state()
+#         self.userdata = auth_state["userdata"]
+# #       subvars["account"] = self.default_gpu_repo()
+#         return format_template(self.batch_script, **subvars)
+
+#   def default_gpu_repo(self):
+#       for allocation in self.user_allocations(["nstaff", "m1759", "dasrepo"]):
+#           for qos in allocation["userAllocationQos"]:
+#               if qos["qos"]["qos"] == "gpu":
+#                   return allocation["computeAllocation"]["repoName"]
+#       return None
+
+#   def user_allocations(self, repos=[]):
+#       for allocation in self.userdata["userAllocations"]:
+#           if repos and allocation["computeAllocation"]["repoName"] not in repos:
+#               continue
+#           yield allocation
+
+
+
 class NERSCConfigurableSlurmSpawner(NERSCSlurmSpawner):
 
     req_image = Unicode("",

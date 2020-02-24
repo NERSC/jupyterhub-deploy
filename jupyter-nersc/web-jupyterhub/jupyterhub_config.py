@@ -1010,6 +1010,7 @@ c.NERSCSpawner.profiles = [
     { "name": "cori-shared-node-cpu"        },
     { "name": "cori-exclusive-node-cpu"     },
     { "name": "cori-exclusive-node-gpu"     },
+    { "name": "cori-configurable-gpu"       },
     { "name": "spin-shared-node-cpu"        },
 ]
 
@@ -1042,6 +1043,18 @@ c.NERSCSpawner.setups = [
         ],
         "resources": "Use your own node within a job allocation using defaults.",
         "use_cases": "Visualization, analytics, machine learning that is compute or memory intensive but can be done on a single node."
+    },
+    {
+        "name": "configurable",
+        "architectures": [
+            {
+                "name": "gpu",
+                "description": "Configurable GPU",
+                "roles": ["gpu"],
+            } 
+        ],
+        "resources": "Use multiple compute nodes with specialized settings.",
+        "use_cases": "Multi-node analytics jobs, jobs in reservations, custom project charging, and more."
     },
 ]
 
@@ -1125,6 +1138,21 @@ c.NERSCSpawner.spawners = {
             "startup_poll_interval": 30.0,
             "req_remote_host": "cori19-224.nersc.gov",
             "req_homedir": "/tmp",
+            "req_runtime": "240",
+            "hub_api_url": "http://{}:8081/hub/api".format(ip),
+            "path": "/usr/common/software/jupyter/19-11/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+        }
+    ),
+    "cori-configurable-gpu": (
+        "nerscslurmspawner.NERSCConfigurableGPUSlurmSpawner", {
+            "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
+                "/usr/common/software/jupyter/19-11/bin/jupyter-labhub"],
+            "args": ["--transport=ipc"],
+            "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",
+            "startup_poll_interval": 30.0,
+            "req_remote_host": "cori19-224.nersc.gov",
+            "req_homedir": "/tmp",
+            "req_ngpus": "1",
             "req_runtime": "240",
             "hub_api_url": "http://{}:8081/hub/api".format(ip),
             "path": "/usr/common/software/jupyter/19-11/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
