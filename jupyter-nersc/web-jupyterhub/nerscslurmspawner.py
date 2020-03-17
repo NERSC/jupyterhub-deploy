@@ -207,12 +207,16 @@ class NERSCConfigurableGPUSlurmSpawner(NERSCSlurmSpawner):
     batch_query_cmd = Unicode("/bin/bash -l /global/common/cori/das/jupyterhub/esslurm-wrapper.sh squeue -h -j {job_id} -o '%T\ %B-144.nersc.gov'").tag(config=True)
     batch_cancel_cmd = Unicode("/bin/bash -l /global/common/cori/das/jupyterhub/esslurm-wrapper.sh scancel {job_id}").tag(config=True)
 
+#SBATCH --gres=gpu:{{ ngpus }}
+
     batch_script = Unicode("""#!/bin/bash
 #SBATCH --account={{ account }}
 #SBATCH --constraint=gpu
-#SBATCH --gres=gpu:{{ ngpus }}
 #SBATCH --job-name=jupyter
 #SBATCH --nodes={{ nodes }}
+#SBATCH --ntasks-per-node={{ ntasks_per_node }}
+#SBATCH --cpus-per-task={{ cpus_per_task }}
+#SBATCH --gpus-per-task={{ gpus_per_task }}
 #SBATCH --time={{ runtime }}
 {{ env_text }}
 unset XDG_RUNTIME_DIR
@@ -241,24 +245,45 @@ unset XDG_RUNTIME_DIR
         </select>
         """)
 
-        # GPUs per node, should come from model
+#       # GPUs per node, should come from model
 
-        form += dedent("""
-        <label for="nodes">GPUs per Node:</label>
-        <input class="form-control" type="number" name="ngpus" min="1" max="8" value="1" required autofocus>
-        """)
+#       form += dedent("""
+#       <label for="nodes">GPUs per Node:</label>
+#       <input class="form-control" type="number" name="ngpus" min="1" max="8" value="1" required autofocus>
+#       """)
 
         # Nodes, should come from model
 
         form += dedent("""
-        <label for="nodes">Nodes:</label>
+        <label for="nodes">nodes:</label>
         <input class="form-control" type="number" name="nodes" min="1" max="5" value="1" required autofocus>
+        """)
+
+        # Number of tasks per node, should come from model
+
+        form += dedent("""
+        <label for="ntasks-per-node">ntasks-per-node (up to 8 tasks):</label>
+        <input class="form-control" type="number" name="ntasks-per-node" min="1" max="8" value="1" required autofocus>
+        """)
+
+        # Number of CPUs per task, should come from model
+
+        form += dedent("""
+        <label for="cpus-per-task">cpus-per-task (node has 80 cores):</label>
+        <input class="form-control" type="number" name="cpus-per-task" min="1" max="80" value="10" required autofocus>
+        """)
+
+        # Number of GPUs per task, should come from model
+
+        form += dedent("""
+        <label for="gpus-per-task">gpus-per-task (node has 8 GPUs):</label>
+        <input class="form-control" type="number" name="gpus-per-task" min="1" max="8" value="1" required autofocus>
         """)
 
         # Time, should come from model
 
         form += dedent("""
-        <label for="time">Time Limit (Minutes):</label>
+        <label for="time">time (time limit in minutes):</label>
         <input class="form-control" type="number" name="time" min="10" max="240" value="240" step="10" required autofocus>
         """)
 
@@ -267,8 +292,10 @@ unset XDG_RUNTIME_DIR
     def options_from_form(self, formdata):
         options = dict()
         options["account"] = formdata["account"][0]
-        options["ngpus"] = formdata["ngpus"][0]
-        options["nodes"] = formdata["nodes"][0]
+#       options["ngpus"] = formdata["ngpus"][0]
+        options["ntasks_per_node"] = formdata["ntasks-per-node"][0]
+        options["cpus_per_task"] = formdata["cpus-per-task"][0]
+        options["gpus_per_task"] = formdata["gpus-per-task"][0]
         options["time"] = formdata["time"][0]
         return options
 
