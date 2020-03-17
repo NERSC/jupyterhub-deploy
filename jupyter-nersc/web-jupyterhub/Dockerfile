@@ -22,6 +22,7 @@ ENV PYTHONPATH=/srv
 ADD nerscspawner.py .
 ADD nerscslurmspawner.py .
 ADD iris.py .
+ADD spinproxy.py .
 
 # Hub scripts
 
