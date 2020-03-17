@@ -233,6 +233,7 @@ c.JupyterHub.default_url = '/hub/home'
 #  
 #  .. versionadded:: 0.9
 #c.JupyterHub.hub_bind_url = ''
+c.JupyterHub.hub_bind_url = 'http://web-jupyterhub:8081'
 
 ## The ip or hostname for proxies and spawners to use for connecting to the Hub.
 #  
@@ -248,7 +249,6 @@ c.JupyterHub.default_url = '/hub/home'
 #  
 #  .. versionadded:: 0.8
 #c.JupyterHub.hub_connect_ip = ''
-c.JupyterHub.hub_connect_ip = ip
 
 ## DEPRECATED
 #  
@@ -272,6 +272,7 @@ c.JupyterHub.hub_connect_ip = ip
 #  
 #  .. versionadded:: 0.9
 #c.JupyterHub.hub_connect_url = ''
+c.JupyterHub.hub_connect_url = "https://jupyter-stage.nersc.gov/hub"
 
 ## The ip address for the Hub process to *bind* to.
 #  
@@ -996,6 +997,9 @@ c.SSHAPIAuthenticator.cert_path = '/certs'
 # Additional ConfigurableHTTPProxy configuration
 #------------------------------------------------------------------------------
 
+from spinproxy import ConfigurableHTTPProxySpin
+c.JupyterHub.proxy_class = ConfigurableHTTPProxySpin
+
 c.ConfigurableHTTPProxy.should_start = False
 
 c.ConfigurableHTTPProxy.api_url = 'http://web-proxy:8001'
@@ -1110,7 +1114,8 @@ c.NERSCSpawner.spawners = {
             "environment": {"OMP_NUM_THREADS" : "2", "PYTHONFAULTHANDLER": "1"},
             "remote_hosts": ["corijupyter.nersc.gov"],
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
-            "hub_api_url": "http://{}:8081/hub/api".format(ip),
+#           "hub_api_url": "http://{}:8081/hub/api".format(ip),
+            "hub_api_url": "https://jupyter-stage.nersc.gov/hub/api",
             "path": "/usr/common/software/jupyter/19-11/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "ssh_keyfile": '/certs/{username}.key'
         }
@@ -1154,7 +1159,8 @@ c.NERSCSpawner.spawners = {
             "req_homedir": "/tmp",
             "req_ngpus": "1",
             "req_runtime": "240",
-            "hub_api_url": "http://{}:8081/hub/api".format(ip),
+            #"hub_api_url": "http://{}:8081/hub/api".format(ip),
+            "hub_api_url": "https://jupyter-stage.nersc.gov/hub/api",
             "path": "/usr/common/software/jupyter/19-11/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
         }
     ),
@@ -1187,7 +1193,7 @@ async def setup(spawner):
                 client_keys=[(k,c)], known_hosts=None) as conn:
             result = await conn.run("myquota -c $HOME")
             retcode = result.exit_status
-    except asyncssh.misc.ConnectionLost:
+    except:
         spawner.log.warning(f"Problem connecting to {remote_host} to check quota oh well")
         retcode = 0
     if retcode:
