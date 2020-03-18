@@ -1086,7 +1086,7 @@ c.NERSCSpawner.spawners = {
             "environment": {"OMP_NUM_THREADS" : "2"},
             "remote_hosts": ["gerty.nersc.gov"],
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
-            "hub_api_url": "http://{}:8081/hub/api".format(ip),
+            "hub_api_url": "https://jupyter-stage.nersc.gov/hub/api",
             "path": "/global/common/cori_cle7/software/jupyter/19-11/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "ssh_keyfile": '/certs/{username}.key'
         }
@@ -1102,7 +1102,7 @@ c.NERSCSpawner.spawners = {
             "req_homedir": "/tmp",
             "req_runtime": "240",
             "req_qos": "regular",
-            "hub_api_url": "http://{}:8081/hub/api".format(ip),
+            "hub_api_url": "https://jupyter-stage.nersc.gov/hub/api",
             "path": "/usr/common/software/jupyter/19-11/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
         }
     ),
@@ -1114,7 +1114,6 @@ c.NERSCSpawner.spawners = {
             "environment": {"OMP_NUM_THREADS" : "2", "PYTHONFAULTHANDLER": "1"},
             "remote_hosts": ["corijupyter.nersc.gov"],
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
-#           "hub_api_url": "http://{}:8081/hub/api".format(ip),
             "hub_api_url": "https://jupyter-stage.nersc.gov/hub/api",
             "path": "/usr/common/software/jupyter/19-11/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "ssh_keyfile": '/certs/{username}.key'
@@ -1130,7 +1129,7 @@ c.NERSCSpawner.spawners = {
             "req_remote_host": "cori19-224.nersc.gov",
             "req_homedir": "/tmp",
             "req_runtime": "240",
-            "hub_api_url": "http://{}:8081/hub/api".format(ip),
+            "hub_api_url": "https://jupyter-stage.nersc.gov/hub/api",
             "path": "/usr/common/software/jupyter/19-11/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
         }
     ),
@@ -1144,7 +1143,7 @@ c.NERSCSpawner.spawners = {
             "req_remote_host": "cori19-224.nersc.gov",
             "req_homedir": "/tmp",
             "req_runtime": "240",
-            "hub_api_url": "http://{}:8081/hub/api".format(ip),
+            "hub_api_url": "https://jupyter-stage.nersc.gov/hub/api",
             "path": "/usr/common/software/jupyter/19-11/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
         }
     ),
@@ -1159,7 +1158,6 @@ c.NERSCSpawner.spawners = {
             "req_homedir": "/tmp",
             "req_ngpus": "1",
             "req_runtime": "240",
-            #"hub_api_url": "http://{}:8081/hub/api".format(ip),
             "hub_api_url": "https://jupyter-stage.nersc.gov/hub/api",
             "path": "/usr/common/software/jupyter/19-11/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
         }
@@ -1172,7 +1170,7 @@ c.NERSCSpawner.spawners = {
             "environment": {"OMP_NUM_THREADS" : "2"},
             "remote_hosts": ["app-notebooks"],
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
-            "hub_api_url": "http://{}:8081/hub/api".format(ip),
+            "hub_api_url": "https://jupyter-stage.nersc.gov/hub/api",
             "path": "/global/common/cori_cle7/software/jupyter/19-11/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "ssh_keyfile": '/certs/{username}.key'
         }
