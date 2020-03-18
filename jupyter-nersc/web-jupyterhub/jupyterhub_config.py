@@ -4,7 +4,6 @@ import os
 import sys
 
 import asyncssh
-import requests
 from tornado import web
 from jupyterhub.utils import url_path_join
 
@@ -19,8 +18,6 @@ def comma_split(string):
         return [s.strip() for s in stripped.split(",")]
     else:
         return list()
-
-ip = requests.get('https://v4.ifconfig.co/json').json()['ip']
 
 #------------------------------------------------------------------------------
 # Application(SingletonConfigurable) configuration
