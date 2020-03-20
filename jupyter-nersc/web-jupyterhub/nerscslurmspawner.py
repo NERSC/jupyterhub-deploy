@@ -1,5 +1,6 @@
 
 from textwrap import dedent
+import time
 
 import asyncssh
 from traitlets import default, Unicode
@@ -149,6 +150,7 @@ class NERSCSlurmSpawner(BatchSpawnerRegexStates):
 class NERSCExclusiveSlurmSpawner(NERSCSlurmSpawner):
 
     batch_script = Unicode("""#!/bin/bash
+#SBATCH --comment={{ cookie }}
 {%- if constraint %}
 #SBATCH --constraint={{ constraint }}
 {%- endif %}
@@ -160,6 +162,15 @@ class NERSCExclusiveSlurmSpawner(NERSCSlurmSpawner):
 {{ env_text }}
 unset XDG_RUNTIME_DIR
 {{ cmd }}""").tag(config=True)
+
+    # Have to override this to call get_auth_state() I think
+    async def _get_batch_script(self, **subvars):
+        """Format batch script from vars"""
+        auth_state = await self.user.get_auth_state()
+        self.userdata = auth_state["userdata"]
+        uid = self.userdata["uid"]
+        subvars["cookie"] = int(time.time()) ^ (uid ** 2)
+        return format_template(self.batch_script, **subvars)
 
 
 class NERSCExclusiveGPUSlurmSpawner(NERSCSlurmSpawner):
