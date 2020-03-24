@@ -24,7 +24,7 @@ RUN \
 WORKDIR /repos
 
 RUN \
-    git clone --single-branch --branch develop https://github.com/krinsman/nbviewer.git   &&  \
+    git clone https://github.com/jupyter/nbviewer.git   &&  \
     cd nbviewer  &&  \
 # --no-dependencies flag because we don't actually need pylibmc or elasticsearch to run this (without
 # elasticsearch or memcached) and everything else in requirements.txt is already installed
@@ -37,7 +37,6 @@ RUN \
 RUN \
     git clone https://github.com/krinsman/clonenotebooks.git    &&  \
     cd clonenotebooks               &&  \
-#    git checkout NERSC              &&  \
     pip install -e . --no-cache-dir &&  \
     cd ..
 
