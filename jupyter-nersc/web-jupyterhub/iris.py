@@ -12,8 +12,8 @@ class Iris:
         query = dedent("""
 		query {{
 		  systemInfo {{
-            uid
 		    users(name: "{}") {{
+              uid
 		      baseRepos {{
 		        computeAllocation {{
 		          repoName
