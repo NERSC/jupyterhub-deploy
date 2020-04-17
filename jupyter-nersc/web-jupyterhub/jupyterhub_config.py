@@ -1011,6 +1011,7 @@ c.NERSCSpawner.profiles = [
     { "name": "cori-shared-node-cpu"        },
     { "name": "cori-exclusive-node-cpu"     },
     { "name": "cori-shared-node-gpu"        },
+    { "name": "cori-configurable-gpu"       },
     { "name": "spin-shared-node-cpu"        },
 ]
 
@@ -1022,6 +1023,11 @@ c.NERSCSpawner.setups = [
                 "name": "cpu",
                 "description": "Shared CPU Node",
                 "roles": [],
+            },
+            {
+                "name": "gpu",
+                "description": "Shared GPU Node",
+                "roles": ["gpu"],
             }
         ],
         "resources": "Use a node shared with other users' notebooks but outside the batch queues.",
@@ -1034,12 +1040,7 @@ c.NERSCSpawner.setups = [
                 "name": "cpu",
                 "description": "Exclusive CPU Node",
                 "roles": ["cori-exclusive-node-cpu"],
-            },
-            {
-                "name": "gpu",
-                "description": "Exclusive GPU Node",
-                "roles": ["gpu"],
-            } 
+            }
         ],
         "resources": "Use your own node within a job allocation using defaults.",
         "use_cases": "Visualization, analytics, machine learning that is compute or memory intensive but can be done on a single node."
