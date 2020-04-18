@@ -1009,8 +1009,8 @@ c.NERSCSpawner.profiles = [
     { "name": "gerty-shared-node-cpu"       },
     { "name": "gerty-exclusive-node-cpu"    },
     { "name": "cori-shared-node-cpu"        },
-    { "name": "cori-exclusive-node-cpu"     },
     { "name": "cori-shared-node-gpu"        },
+    { "name": "cori-exclusive-node-cpu"     },
     { "name": "cori-configurable-gpu"       },
     { "name": "spin-shared-node-cpu"        },
 ]
@@ -1116,12 +1116,12 @@ c.NERSCSpawner.spawners = {
             "ssh_keyfile": '/certs/{username}.key'
         }
     ),
-    "cori-exclusive-node-cpu": (
-        "nerscslurmspawner.NERSCExclusiveSlurmSpawner", {
+    "cori-shared-node-gpu": (
+        "nerscslurmspawner.NERSCExclusiveGPUSlurmSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
                 "/usr/common/software/jupyter/19-11/bin/jupyter-labhub"],
+            "args": ["--transport=ipc"],
             "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",
-            "http_timeout": 300,
             "startup_poll_interval": 30.0,
             "req_remote_host": "cori19-224.nersc.gov",
             "req_homedir": "/tmp",
@@ -1130,12 +1130,12 @@ c.NERSCSpawner.spawners = {
             "path": "/usr/common/software/jupyter/19-11/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
         }
     ),
-    "cori-exclusive-node-gpu": (
-        "nerscslurmspawner.NERSCExclusiveGPUSlurmSpawner", {
+    "cori-exclusive-node-cpu": (
+        "nerscslurmspawner.NERSCExclusiveSlurmSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
                 "/usr/common/software/jupyter/19-11/bin/jupyter-labhub"],
-            "args": ["--transport=ipc"],
             "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",
+            "http_timeout": 300,
             "startup_poll_interval": 30.0,
             "req_remote_host": "cori19-224.nersc.gov",
             "req_homedir": "/tmp",
