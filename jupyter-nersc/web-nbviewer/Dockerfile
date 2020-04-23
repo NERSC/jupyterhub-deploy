@@ -34,9 +34,11 @@ RUN \
     invoke less     &&  \
     cd ..
 
+RUN echo 1
 RUN \
-    git clone https://github.com/krinsman/clonenotebooks.git    &&  \
+    git clone https://github.com/NERSC/clonenotebooks.git   &&  \
     cd clonenotebooks               &&  \
+    git checkout stale_username_cache_test &&   \
     pip install -e . --no-cache-dir &&  \
     cd ..
 
