@@ -7,6 +7,7 @@ import asyncssh
 from tornado import web
 from jupyterhub.utils import url_path_join
 
+nersc_jupyterhub_subdomain = os.environ.get("NERSC_JUPYTERHUB_SUBDOMAIN", "jupyter")
 
 def comma_split(string):
     """Handle env variables that may be None, empty string, or have spaces"""
@@ -269,7 +270,7 @@ c.JupyterHub.hub_bind_url = 'http://web-jupyterhub:8081'
 #  
 #  .. versionadded:: 0.9
 #c.JupyterHub.hub_connect_url = ''
-c.JupyterHub.hub_connect_url = "https://jupyter-stage.nersc.gov/hub"
+c.JupyterHub.hub_connect_url = f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub"
 
 ## The ip address for the Hub process to *bind* to.
 #  
@@ -1083,7 +1084,7 @@ c.NERSCSpawner.spawners = {
             "environment": {"OMP_NUM_THREADS" : "2"},
             "remote_hosts": ["gerty.nersc.gov"],
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
-            "hub_api_url": "https://jupyter-stage.nersc.gov/hub/api",
+            "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
             "path": "/global/common/cori_cle7/software/jupyter/19-11/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "ssh_keyfile": '/certs/{username}.key'
         }
@@ -1099,7 +1100,7 @@ c.NERSCSpawner.spawners = {
             "req_homedir": "/tmp",
             "req_runtime": "240",
             "req_qos": "regular",
-            "hub_api_url": "https://jupyter-stage.nersc.gov/hub/api",
+            "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
             "path": "/usr/common/software/jupyter/19-11/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
         }
     ),
@@ -1111,7 +1112,7 @@ c.NERSCSpawner.spawners = {
             "environment": {"OMP_NUM_THREADS" : "2", "PYTHONFAULTHANDLER": "1"},
             "remote_hosts": ["corijupyter.nersc.gov"],
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
-            "hub_api_url": "https://jupyter-stage.nersc.gov/hub/api",
+            "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
             "path": "/usr/common/software/jupyter/19-11/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "ssh_keyfile": '/certs/{username}.key'
         }
@@ -1126,7 +1127,7 @@ c.NERSCSpawner.spawners = {
             "req_remote_host": "cori19-224.nersc.gov",
             "req_homedir": "/tmp",
             "req_runtime": "240",
-            "hub_api_url": "https://jupyter-stage.nersc.gov/hub/api",
+            "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
             "path": "/usr/common/software/jupyter/19-11/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
         }
     ),
@@ -1140,7 +1141,7 @@ c.NERSCSpawner.spawners = {
             "req_remote_host": "cori19-224.nersc.gov",
             "req_homedir": "/tmp",
             "req_runtime": "240",
-            "hub_api_url": "https://jupyter-stage.nersc.gov/hub/api",
+            "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
             "path": "/usr/common/software/jupyter/19-11/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
         }
     ),
@@ -1155,7 +1156,7 @@ c.NERSCSpawner.spawners = {
             "req_homedir": "/tmp",
             "req_ngpus": "1",
             "req_runtime": "240",
-            "hub_api_url": "https://jupyter-stage.nersc.gov/hub/api",
+            "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
             "path": "/usr/common/software/jupyter/19-11/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
         }
     ),
@@ -1167,7 +1168,7 @@ c.NERSCSpawner.spawners = {
             "environment": {"OMP_NUM_THREADS" : "2"},
             "remote_hosts": ["app-notebooks"],
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
-            "hub_api_url": "https://jupyter-stage.nersc.gov/hub/api",
+            "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
             "path": "/global/common/cori_cle7/software/jupyter/19-11/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "ssh_keyfile": '/certs/{username}.key'
         }
