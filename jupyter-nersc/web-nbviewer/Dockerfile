@@ -38,11 +38,12 @@ RUN echo 1
 RUN \
     git clone https://github.com/NERSC/clonenotebooks.git   &&  \
     cd clonenotebooks               &&  \
-    git checkout stale_username_cache_test &&   \
     pip install -e . --no-cache-dir &&  \
     cd ..
 
 WORKDIR /srv
+
+ADD frontpage.json ./
 
 ADD docker-entrypoint.sh nbviewer_config.py ./
 RUN chmod +x docker-entrypoint.sh
