@@ -26,7 +26,7 @@ RUN \
 # Miniconda
 
 RUN \
-    curl -s -o /tmp/miniconda3.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh    &&  \
+    curl -s -o /tmp/miniconda3.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh &&  \
     bash /tmp/miniconda3.sh -b -p /opt/anaconda3            &&  \
     rm -rf /tmp/miniconda3.sh                               &&  \
     echo "python 3.7.3" >> /opt/anaconda3/conda-meta/pinned &&  \
