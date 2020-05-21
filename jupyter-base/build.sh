@@ -17,5 +17,5 @@ fi
 branch=$(git symbolic-ref --short HEAD)
 
 $imcmd build    \
-    "$@"
+    "$@"        \
     --tag registry.spin.nersc.gov/das/jupyter-base-$branch:latest .
