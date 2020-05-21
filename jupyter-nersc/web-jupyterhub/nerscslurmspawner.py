@@ -1,5 +1,4 @@
 
-import datetime
 from textwrap import dedent
 import time
 
@@ -191,32 +190,12 @@ class NERSCExclusiveGPUSlurmSpawner(NERSCSlurmSpawner):
 unset XDG_RUNTIME_DIR
 {{ cmd }}""").tag(config=True)
 
-    # For Cori GPU
-    def default_deadline(self):
-        return datetime.datetime.today().replace(hour=8, minute=0, second=0,
-                microsecond=0)
-
-    def minutes_from_deadline(self, now, deadline=None):
-        deadline = deadline or self.default_deadline()
-        return int((deadline - now).total_seconds() / 60.0)
-
-    def validate_runtime(self, runtime, now=None, deadline=None, slop=2):
-        now = now or datetime.datetime.now()
-        if now.weekday() > 4:
-            return runtime
-        window = self.minutes_from_deadline(now, deadline)
-        if 0 <= window <= int(runtime):
-            return str(max(window - slop, 0))
-        else:
-            return runtime
-
     # Have to override this to call get_auth_state() I think
     async def _get_batch_script(self, **subvars):
         """Format batch script from vars"""
         auth_state = await self.user.get_auth_state()
         self.userdata = auth_state["userdata"]
         subvars["account"] = self.default_gpu_repo()
-        subvars["runtime"] = self.validate_runtime(subvars["runtime"])
         return format_template(self.batch_script, **subvars)
 
     def default_gpu_repo(self):
