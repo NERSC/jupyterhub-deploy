@@ -222,7 +222,7 @@ unset XDG_RUNTIME_DIR
         for allocation in self.user_allocations(["m1759"]):
             for qos in allocation["userAllocationQos"]:
                 if qos["qos"]["qos"] == "gpu_special_m1759":
-                    return "gpu_special_m1759"
+                    return "special"
         return "regular"
 
     def user_allocations(self, repos=[]):
