@@ -185,6 +185,7 @@ class NERSCExclusiveGPUSlurmSpawner(NERSCSlurmSpawner):
 #SBATCH --gres=gpu:1
 #SBATCH --job-name=jupyter
 #SBATCH --nodes={{ nodes }}
+#SBATCH --qos={{ qos }}
 #SBATCH --time={{ runtime }}
 {{ env_text }}
 unset XDG_RUNTIME_DIR
@@ -196,10 +197,16 @@ unset XDG_RUNTIME_DIR
         auth_state = await self.user.get_auth_state()
         self.userdata = auth_state["userdata"]
         subvars["account"] = self.default_gpu_repo()
+        subvars["qos"] = self.gpu_qos()
         return format_template(self.batch_script, **subvars)
 
     def default_gpu_repo(self):
-        # Search for training account first
+        # special m1759 people
+        for allocation in self.user_allocations(["m1759"]):
+            for qos in allocation["userAllocationQos"]:
+                if qos["qos"]["qos"] == "gpu_special_m1759":
+                    return allocation["computeAllocation"]["repoName"]
+        # training
         for allocation in self.user_allocations(["m3502"]):
             for qos in allocation["userAllocationQos"]:
                 if qos["qos"]["qos"] == "gpu":
@@ -209,6 +216,14 @@ unset XDG_RUNTIME_DIR
                 if qos["qos"]["qos"] == "gpu":
                     return allocation["computeAllocation"]["repoName"]
         return None
+
+    def gpu_qos(self):
+        # special m1759 people, only special people there
+        for allocation in self.user_allocations(["m1759"]):
+            for qos in allocation["userAllocationQos"]:
+                if qos["qos"]["qos"] == "gpu_special_m1759":
+                    return "gpu_special_m1759"
+        return "regular"
 
     def user_allocations(self, repos=[]):
         for allocation in self.userdata["userAllocations"]:
