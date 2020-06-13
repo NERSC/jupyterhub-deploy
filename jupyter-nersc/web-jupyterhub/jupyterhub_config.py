@@ -614,6 +614,9 @@ c.Spawner.env_keep = ['PATH', 'CONDA_ROOT', 'CONDA_DEFAULT_ENV', 'VIRTUAL_ENV', 
 #  across upgrades, so if you are using the callable take care to verify it
 #  continues to work after upgrades!
 #c.Spawner.environment = {}
+c.Spawner.environment = {
+    "JUPYTER_RUNTIME_DIR" = lambda spawner: f"/tmp/jupyter-runtime-{spawner.user.name}"
+}
 
 ## Timeout (in seconds) before giving up on a spawned HTTP server
 #  
