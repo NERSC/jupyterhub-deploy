@@ -1015,7 +1015,7 @@ c.NERSCSpawner.profiles = [
     { "name": "cori-shared-node-cpu"        },
     { "name": "cori-shared-node-gpu"        },
     { "name": "cori-exclusive-node-cpu"     },
-#   { "name": "cori-configurable-gpu"       },
+    { "name": "cori-configurable-gpu"       },
     { "name": "spin-shared-node-cpu"        },
 ]
 
@@ -1049,18 +1049,18 @@ c.NERSCSpawner.setups = [
         "resources": "Use your own node within a job allocation using defaults.",
         "use_cases": "Visualization, analytics, machine learning that is compute or memory intensive but can be done on a single node."
     },
-    {
-        "name": "configurable",
-        "architectures": [
-            {
-                "name": "gpu",
-                "description": "Configurable GPU",
-                "roles": ["gpu"],
-            } 
-        ],
-        "resources": "Use multiple compute nodes with specialized settings.",
-        "use_cases": "Multi-node analytics jobs, jobs in reservations, custom project charging, and more."
-    },
+#   {
+#       "name": "configurable",
+#       "architectures": [
+#           {
+#               "name": "gpu",
+#               "description": "Configurable GPU",
+#               "roles": ["gpu"],
+#           } 
+#       ],
+#       "resources": "Use multiple compute nodes with specialized settings.",
+#       "use_cases": "Multi-node analytics jobs, jobs in reservations, custom project charging, and more."
+#   },
 ]
 
 c.NERSCSpawner.systems = [
