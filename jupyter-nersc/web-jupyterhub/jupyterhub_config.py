@@ -1015,7 +1015,7 @@ c.NERSCSpawner.profiles = [
     { "name": "cori-shared-node-cpu"        },
     { "name": "cori-shared-node-gpu"        },
     { "name": "cori-exclusive-node-cpu"     },
-    { "name": "cori-configurable-gpu"       },
+#   { "name": "cori-configurable-gpu"       },
     { "name": "spin-shared-node-cpu"        },
 ]
 
