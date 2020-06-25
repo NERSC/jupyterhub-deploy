@@ -1013,6 +1013,7 @@ c.NERSCSpawner.profiles = [
     { "name": "gerty-shared-node-cpu"       },
     { "name": "gerty-exclusive-node-cpu"    },
     { "name": "cori-shared-node-cpu"        },
+    { "name": "cori2-shared-node-cpu"       },
     { "name": "cori-shared-node-gpu"        },
     { "name": "cori-exclusive-node-cpu"     },
     { "name": "cori-configurable-gpu"       },
@@ -1073,6 +1074,10 @@ c.NERSCSpawner.systems = [
         "roles": []
     },
     { 
+        "name": "cori2",
+        "roles": []
+    },
+    { 
         "name": "spin",
         "roles": []
     }
@@ -1120,6 +1125,19 @@ c.NERSCSpawner.spawners = {
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
             "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
             "path": "/usr/common/software/jupyter/19-11/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "ssh_keyfile": '/certs/{username}.key'
+        }
+    ),
+    "cori2-shared-node-cpu": (
+        "sshspawner.sshspawner.SSHSpawner", {
+            "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh", 
+                "/global/common/cori_cle7/software/jupyter/20-06/bin/jupyterhub-singleuser"],
+            "args": ["--transport=ipc"],
+            "environment": {"OMP_NUM_THREADS" : "2", "PYTHONFAULTHANDLER": "1"},
+            "remote_hosts": ["corijupyter.nersc.gov"],
+            "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
+            "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
+            "path": "/global/common/cori_cle7/software/jupyter/20-06/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "ssh_keyfile": '/certs/{username}.key'
         }
     ),
