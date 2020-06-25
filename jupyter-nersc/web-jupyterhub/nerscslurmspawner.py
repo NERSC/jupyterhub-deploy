@@ -201,6 +201,11 @@ unset XDG_RUNTIME_DIR
         return format_template(self.batch_script, **subvars)
 
     def default_gpu_repo(self):
+        # training
+        for allocation in self.user_allocations(["gpu4sci"]):
+            for qos in allocation["userAllocationQos"]:
+                if qos["qos"]["qos"] == "gpu":
+                    return allocation["computeAllocation"]["repoName"]
         # special m1759 people
         for allocation in self.user_allocations(["m1759"]):
             for qos in allocation["userAllocationQos"]:
@@ -218,6 +223,11 @@ unset XDG_RUNTIME_DIR
         return None
 
     def gpu_qos(self):
+        # training
+        for allocation in self.user_allocations(["gpu4sci"]):
+            for qos in allocation["userAllocationQos"]:
+                if qos["qos"]["qos"] == "gpu":
+                    return "regular"
         # special m1759 people, only special people there
         for allocation in self.user_allocations(["m1759"]):
             for qos in allocation["userAllocationQos"]:
