@@ -63,7 +63,7 @@ class NERSCSpawner(WrapSpawner):
         return False
 
     def default_gpu_repo(self, auth_state):
-        for allocation in self.user_allocations(auth_state, ["nstaff", "m1759", "dasrepo"]):
+        for allocation in self.user_allocations(auth_state, ["nstaff", "m1759", "dasrepo", "gpu4sci"]):
             for qos in allocation["userAllocationQos"]:
                 if qos["qos"]["qos"] == "gpu":
                     return allocation["computeAllocation"]["repoName"]
