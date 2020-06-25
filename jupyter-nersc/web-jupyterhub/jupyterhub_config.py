@@ -2,6 +2,7 @@
 
 import os
 import sys
+from uuid import uuid4
 
 import asyncssh
 from tornado import web
@@ -615,7 +616,7 @@ c.Spawner.env_keep = ['PATH', 'CONDA_ROOT', 'CONDA_DEFAULT_ENV', 'VIRTUAL_ENV', 
 #  continues to work after upgrades!
 #c.Spawner.environment = {}
 c.Spawner.environment = {
-    "JUPYTER_RUNTIME_DIR": lambda spawner: f"/tmp/jupyter-runtime-{spawner.user.name}"
+    "JUPYTER_RUNTIME_DIR": lambda spawner: f"/tmp/jupyter-runtime-{uuid4()}"
 }
 
 ## Timeout (in seconds) before giving up on a spawned HTTP server
