@@ -1162,8 +1162,8 @@ c.NERSCSpawner.spawners = {
     "cori-exclusive-node-cpu": (
         "nerscslurmspawner.NERSCExclusiveSlurmSpawner", {
             "cmd": ["/global/common/cori_cle7/software/jupyter/20-06/bin/jupyterhub-singleuser"],
+            "args": ["--transport=ipc"],
             "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",
-            "http_timeout": 300,
             "startup_poll_interval": 30.0,
             "req_remote_host": "cori19-224.nersc.gov",
             "req_homedir": "/tmp",
