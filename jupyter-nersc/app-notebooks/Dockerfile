@@ -23,6 +23,7 @@ RUN \
         ldap-utils              \
         libnss-ldapd            \
         libpam-ldap             \
+        libxrender-dev          \
         nscd                    \
         openssh-server          \
         supervisor              \

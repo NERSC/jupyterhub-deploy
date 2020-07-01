@@ -1,0 +1,7 @@
+{
+    "title": "NERSC NBViewer",
+    "subtitle": "A simple way to share Jupyter Notebooks",
+    "text": "This is an experimental service! Documentation coming soon.<br />Enter the location of a Jupyter Notebook to have it rendered here:",
+    "show_input": true,
+    "sections":[]
+}

@@ -50,6 +50,12 @@ c.Application.log_level = 0
 # AnnouncementQueue(LoggingConfigurable) configuration
 #------------------------------------------------------------------------------
 
+## Number of days to retain announcements.
+#  
+#  Announcements that have been in the queue for this many days are purged from
+#  the queue.
+#c.AnnouncementQueue.lifetime_days = 7.0
+
 ## File path where announcements persist as JSON.
 #  
 #  For a persistent announcement queue, this parameter must be set to a non-empty
@@ -70,3 +76,15 @@ c.Application.log_level = 0
 #c.AnnouncementQueue.persist_path = ''
 c.AnnouncementQueue.persist_path = 'announcements.json'
 
+#------------------------------------------------------------------------------
+# SSLContext(Configurable) configuration
+#------------------------------------------------------------------------------
+
+## SSL CA, use with keyfile and certfile
+#c.SSLContext.cafile = ''
+
+## SSL cert, use with keyfile
+#c.SSLContext.certfile = ''
+
+## SSL key, use with certfile
+#c.SSLContext.keyfile = ''

@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 LABEL maintainer="Rollin Thomas <rcthomas@lbl.gov>"
 
 # Base Ubuntu packages
@@ -12,6 +12,7 @@ RUN \
     apt-get --yes install       \
         bzip2                   \
         curl                    \
+        git                     \
         tzdata                  \
         vim
 
@@ -25,7 +26,7 @@ RUN \
 # Miniconda
 
 RUN \
-    curl -s -o /tmp/miniconda3.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh    &&  \
+    curl -s -o /tmp/miniconda3.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh &&  \
     bash /tmp/miniconda3.sh -b -p /opt/anaconda3            &&  \
     rm -rf /tmp/miniconda3.sh                               &&  \
     echo "python 3.7.3" >> /opt/anaconda3/conda-meta/pinned &&  \
@@ -36,11 +37,35 @@ ENV PATH=/opt/anaconda3/bin:$PATH
 
 # Packages
 
+# RUN \
+#     conda install --yes         \
+#         --channel=conda-forge   \
+#         jinja2                  \
+#         sanic
+
+# Temporary off master, sanic bug: https://github.com/huge-success/sanic/issues/1773
+
 RUN \
-    conda install --yes         \
-        --channel=conda-forge   \
-        jinja2                  \
-        sanic
+    conda install --yes             \
+        --channel=conda-forge       \
+        aiofiles                    \
+        brotlipy                    \
+        h11=0.8.1                   \
+        h2                          \
+        hpack                       \
+        hstspreload                 \
+        httptools                   \
+        httpx=0.9.3                 \
+        hyperframe                  \
+        jinja2                      \
+        markupsafe                  \
+        multidict                   \
+        rfc3986                     \
+        sniffio                     \
+        ujson                       \
+        uvloop                      \
+        websockets              &&  \
+    pip install --no-cache-dir git+https://github.com/huge-success/sanic        
 
 # Application
 

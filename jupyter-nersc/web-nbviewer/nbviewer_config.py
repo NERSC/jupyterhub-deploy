@@ -13,3 +13,4 @@ c.NBViewer.template_path = "/repos/clonenotebooks/templates"
 c.NBViewer.static_path = "/repos/clonenotebooks/static"
 c.NBViewer.index_handler = "clonenotebooks.renderers.IndexRenderingHandler"
 
+c.NBViewer.frontpage = "/srv/frontpage.json"

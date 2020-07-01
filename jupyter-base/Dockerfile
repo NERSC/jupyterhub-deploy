@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 LABEL maintainer="Rollin Thomas <rcthomas@lbl.gov>"
 
 # Base Ubuntu packages
@@ -29,29 +29,37 @@ RUN \
 # Python 3 Miniconda and dependencies for JupyterHub we can get via conda
 
 RUN \
-    curl -s -o /tmp/miniconda3.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh    &&  \
+    curl -s -o /tmp/miniconda3.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh &&  \
     bash /tmp/miniconda3.sh -b -p /opt/anaconda3            &&  \
     rm -rf /tmp/miniconda3.sh                               &&  \
     echo "python 3.7.3" >> /opt/anaconda3/conda-meta/pinned &&  \
     /opt/anaconda3/bin/conda update --yes conda             &&  \
     /opt/anaconda3/bin/conda install --yes                      \
-        alembic         \
-        cryptography    \
-        decorator       \
-        entrypoints     \
-        jinja2          \
-        mako            \
-        markupsafe      \
-        nodejs          \
-        oauthlib        \
-        pamela          \
-        psycopg2        \
-        pyopenssl       \
-        python-dateutil \
-        python-editor   \
-        sqlalchemy      \
-        tornado         \
-        traitlets
+        alembic             \
+        attrs               \
+        certipy             \
+        cryptography        \
+        decorator           \
+        entrypoints         \
+        jinja2              \
+        jsonschema          \
+        mako                \
+        markupsafe          \
+        more-itertools      \
+        nodejs              \
+        oauthlib            \
+        pamela              \
+        psycopg2            \
+        pyopenssl           \
+        pyrsistent          \
+        python-dateutil     \
+        python-editor       \
+        ruamel.yaml         \
+        ruamel.yaml.clib    \
+        sqlalchemy          \
+        tornado             \
+        traitlets           \
+        zipp
 
 # Install JupyterHub
 
@@ -59,11 +67,9 @@ ENV PATH=/opt/anaconda3/bin:$PATH
 WORKDIR /tmp
 RUN \
     npm install -g configurable-http-proxy                                  &&  \
-#   git clone https://github.com/jupyterhub/jupyterhub.git                  &&  \
-    git clone https://github.com/rcthomas/jupyterhub.git                    &&  \
+    git clone https://github.com/jupyterhub/jupyterhub.git                  &&  \
     cd jupyterhub                                                           &&  \
-#   git checkout tags/1.0.0                                                 &&  \
-    git checkout auth-state-to-spawner                                      &&  \
+    git checkout tags/1.1.0                                                 &&  \
     /opt/anaconda3/bin/python setup.py js                                   &&  \
     /opt/anaconda3/bin/pip --no-cache-dir install .                         &&  \
     cp examples/cull-idle/cull_idle_servers.py /opt/anaconda3/bin/.         &&  \

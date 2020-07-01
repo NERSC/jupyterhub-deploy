@@ -13,6 +13,7 @@ class Iris:
 		query {{
 		  systemInfo {{
 		    users(name: "{}") {{
+              uid
 		      baseRepos {{
 		        computeAllocation {{
 		          repoName
