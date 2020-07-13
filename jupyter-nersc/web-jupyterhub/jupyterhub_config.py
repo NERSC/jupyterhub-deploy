@@ -860,6 +860,7 @@ c.Authenticator.admin_users = set(comma_split(os.environ.get("ADMINS")))
 #  
 #  .. versionadded: 0.9
 #c.Authenticator.blacklist = set()
+c.Authenticator.blacklist = set(comma_split(os.environ.get("BLACKLIST")))
 
 ## Enable persisting auth_state (if available).
 #  
