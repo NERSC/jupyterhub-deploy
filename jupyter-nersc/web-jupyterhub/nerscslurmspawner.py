@@ -302,11 +302,8 @@ unset XDG_RUNTIME_DIR
         <select class="form-control" name="account" required autofocus>
         """)
 
-        gpu_accounts = ["nstaff", "m1759", "dasrepo"]
         for allocation in spawner.userdata["userAllocations"]:
             account = allocation["computeAllocation"]["repoName"]
-            if account not in gpu_accounts:
-                continue
             for qos in allocation["userAllocationQos"]:
                 if qos["qos"]["qos"] == "gpu":
                     form += """<option value="{}">{}</option>""".format(account, account)
