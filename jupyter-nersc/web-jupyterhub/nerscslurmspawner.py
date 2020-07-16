@@ -177,7 +177,6 @@ class NERSCBigmemSlurmSpawner(NERSCSlurmSpawner):
     batch_script = Unicode("""#!/bin/bash
 #SBATCH --clusters=escori
 #SBATCH --comment={{ cookie }}
-#SBATCH --exclusive
 #SBATCH --job-name=jupyter
 #SBATCH --nodes={{ nodes }}
 #SBATCH --qos=bigmem
@@ -281,6 +280,7 @@ class NERSCConfigurableGPUSlurmSpawner(NERSCSlurmSpawner):
 
     batch_script = Unicode("""#!/bin/bash
 #SBATCH --account={{ account }}
+#SBATCH --qos={{ qos }}
 #SBATCH --constraint=gpu
 #SBATCH --job-name=jupyter
 #SBATCH --nodes={{ nodes }}
@@ -305,10 +305,20 @@ unset XDG_RUNTIME_DIR
         for allocation in spawner.userdata["userAllocations"]:
             account = allocation["computeAllocation"]["repoName"]
             for qos in allocation["userAllocationQos"]:
-                if qos["qos"]["qos"] == "gpu":
+                if qos["qos"]["qos"] in ["gpu", "gpu_special_m1759"]:
                     form += """<option value="{}">{}</option>""".format(account, account)
 
         form += dedent("""
+        </select>
+        """)
+
+        # QOS, would be nice to constrain from qos
+
+        form += dedent("""
+        <label for="qos">QOS:</label>
+        <select class="form-control" name="qos" required autofocus>
+        <option value="gpu">gpu</option>
+        <option value="special">special (m1759 only)</option>
         </select>
         """)
 
@@ -359,6 +369,7 @@ unset XDG_RUNTIME_DIR
     def options_from_form(self, formdata):
         options = dict()
         options["account"] = formdata["account"][0]
+        options["qos"] = formdata["qos"][0]
 #       options["ngpus"] = formdata["ngpus"][0]
         options["ntasks_per_node"] = formdata["ntasks-per-node"][0]
         options["cpus_per_task"] = formdata["cpus-per-task"][0]
