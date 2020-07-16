@@ -1015,7 +1015,6 @@ c.NERSCSpawner.profiles = [
     { "name": "gerty-shared-node-cpu"       },
     { "name": "gerty-exclusive-node-cpu"    },
     { "name": "cori-shared-node-cpu"        },
-    { "name": "cori2-shared-node-cpu"       },
     { "name": "cori-shared-node-gpu"        },
     { "name": "cori-exclusive-node-cpu"     },
     { "name": "cori-bigmem-node-cpu"        },
@@ -1086,10 +1085,6 @@ c.NERSCSpawner.systems = [
     },
     { 
         "name": "cori",
-        "roles": []
-    },
-    { 
-        "name": "cori2",
         "roles": []
     },
     { 
