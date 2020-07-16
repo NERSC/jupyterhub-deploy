@@ -1,6 +1,4 @@
 
-import os
-
 from jupyterhub.spawner import LocalProcessSpawner
 
 from tornado import httpclient, web
@@ -44,15 +42,18 @@ class NERSCSpawner(WrapSpawner):
         if role == "staff":
             return self.check_role_staff(auth_state)
         if role == "cori-exclusive-node-cpu":
-            return self.check_role_cori_exclusive_node_cpu()
+            return self.check_role_cori_exclusive_node_cpu(auth_state)
         return False
 
-    def check_role_cori_exclusive_node_cpu(self):
-        users = os.environ.get("CORI_EXCLUSIVE_NODE_CPU_USERS")
-        if users:
-            return self.user.name in users.split(",")
-        else:
-            return True
+    def check_role_cori_exclusive_node_cpu(self, auth_state):
+        return self.default_jupyter_repo(auth_state) is not None
+
+    def default_jupyter_repo(self, auth_state):
+        for allocation in self.user_allocations(auth_state):
+            for qos in allocation["userAllocationQos"]:
+                if qos["qos"]["qos"] in ["jupyter"]:
+                    return allocation["computeAllocation"]["repoName"]
+        return None
 
     def check_role_gpu(self, auth_state):
         return self.default_gpu_repo(auth_state) is not None
@@ -63,7 +64,6 @@ class NERSCSpawner(WrapSpawner):
         return False
 
     def default_gpu_repo(self, auth_state):
-#       for allocation in self.user_allocations(auth_state, ["nstaff", "m1759", "dasrepo", "gpu4sci"]):
         for allocation in self.user_allocations(auth_state):
             for qos in allocation["userAllocationQos"]:
                 if qos["qos"]["qos"] in ["gpu", "gpu_special_m1759"]:
