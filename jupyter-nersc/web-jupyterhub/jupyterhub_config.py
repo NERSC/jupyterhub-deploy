@@ -1064,18 +1064,18 @@ c.NERSCSpawner.setups = [
         "resources": "Use your own node within a job allocation using defaults.",
         "use_cases": "Big memory stuff"
     },
-#   {
-#       "name": "configurable",
-#       "architectures": [
-#           {
-#               "name": "gpu",
-#               "description": "Configurable GPU",
-#               "roles": ["gpu"],
-#           } 
-#       ],
-#       "resources": "Use multiple compute nodes with specialized settings.",
-#       "use_cases": "Multi-node analytics jobs, jobs in reservations, custom project charging, and more."
-#   },
+    {
+        "name": "configurable",
+        "architectures": [
+            {
+                "name": "gpu",
+                "description": "Configurable GPU",
+                "roles": ["gpu"],
+            } 
+        ],
+        "resources": "Use multiple compute nodes with specialized settings.",
+        "use_cases": "Multi-node analytics jobs, jobs in reservations, custom project charging, and more."
+    },
 ]
 
 c.NERSCSpawner.systems = [
@@ -1132,26 +1132,13 @@ c.NERSCSpawner.spawners = {
     "cori-shared-node-cpu": (
         "sshspawner.sshspawner.SSHSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh", 
-                "/usr/common/software/jupyter/19-11/bin/jupyter-labhub"],
+                "/usr/common/software/jupyter/20-06/bin/jupyter-labhub"],
             "args": ["--transport=ipc"],
             "environment": {"OMP_NUM_THREADS" : "2", "PYTHONFAULTHANDLER": "1"},
             "remote_hosts": ["corijupyter.nersc.gov"],
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
             "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
-            "path": "/usr/common/software/jupyter/19-11/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
-            "ssh_keyfile": '/certs/{username}.key'
-        }
-    ),
-    "cori2-shared-node-cpu": (
-        "sshspawner.sshspawner.SSHSpawner", {
-            "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh", 
-                "/global/common/cori_cle7/software/jupyter/20-06/bin/jupyterhub-singleuser"],
-            "args": ["--transport=ipc"],
-            "environment": {"OMP_NUM_THREADS" : "2", "PYTHONFAULTHANDLER": "1"},
-            "remote_hosts": ["corijupyter.nersc.gov"],
-            "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
-            "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
-            "path": "/global/common/cori_cle7/software/jupyter/20-06/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "path": "/usr/common/software/jupyter/20-06/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "ssh_keyfile": '/certs/{username}.key'
         }
     ),
