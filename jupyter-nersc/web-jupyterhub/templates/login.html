@@ -19,7 +19,7 @@
   </a>
 </div>
 {% else %}
-<form action="{{login_url}}?next={{next}}" method="post" role="form">
+<form action="{{login_url}}?next={{next}}" method="post" role="form" style="width: 355px">
   <div class="auth-form-header">
     Sign in
   </div>
@@ -73,6 +73,11 @@
       value='Sign In'
       tabindex="4"
     />
+    <p class="small" style="margin: 12px 0px 0px">
+    <a href="https://iris.nersc.gov/lost-password">Forgot password?</a> |
+    <a href="https://iris.nersc.gov/lost-username">Forgot username?</a> |
+    <a href="https://iris.nersc.gov/lost-mfa">MFA not working?</a>
+    </p>
   </div>
 </form>
 {% endif %}
