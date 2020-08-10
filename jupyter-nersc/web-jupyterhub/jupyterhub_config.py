@@ -1128,7 +1128,7 @@ c.NERSCSpawner.spawners = {
     "cori-shared-node-cpu": (
         "sshspawner.sshspawner.SSHSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh", 
-                "/usr/common/software/jupyter/20-06/bin/jupyter-labhub"],
+                "/usr/common/software/jupyter/20-06/bin/jupyterhub-singleuser"],
             "args": ["--transport=ipc"],
             "environment": {"OMP_NUM_THREADS" : "2", "PYTHONFAULTHANDLER": "1"},
             "remote_hosts": ["corijupyter.nersc.gov"],
