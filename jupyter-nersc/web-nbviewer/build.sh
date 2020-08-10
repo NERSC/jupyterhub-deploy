@@ -14,9 +14,15 @@ else
     exit 1
 fi
 
+format=""
+if [ "$imcmd" == "podman" ]; then
+    format="--format docker"
+fi
+
 branch=$(git symbolic-ref --short HEAD)
 
 $imcmd build                    \
     --build-arg branch=$branch  \
+    $format                     \
     "$@"                        \
     --tag registry.spin.nersc.gov/das/web-nbviewer.jupyter-nersc-$branch:latest .
