@@ -360,8 +360,8 @@ unset XDG_RUNTIME_DIR
         # Time, should come from model
 
         form += dedent("""
-        <label for="time">time (time limit in minutes):</label>
-        <input class="form-control" type="number" name="time" min="10" max="240" value="240" step="10" required autofocus>
+        <label for="runtime">time (time limit in minutes):</label>
+        <input class="form-control" type="number" name="runtime" min="10" max="240" value="240" step="10" required autofocus>
         """)
 
         return form
@@ -374,7 +374,7 @@ unset XDG_RUNTIME_DIR
         options["ntasks_per_node"] = formdata["ntasks-per-node"][0]
         options["cpus_per_task"] = formdata["cpus-per-task"][0]
         options["gpus_per_task"] = formdata["gpus-per-task"][0]
-        options["time"] = formdata["time"][0]
+        options["runtime"] = formdata["runtime"][0]
         return options
 
 #     # Have to override this to call get_auth_state() I think
