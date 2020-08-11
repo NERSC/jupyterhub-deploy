@@ -17,6 +17,7 @@ RUN \
         nbconvert               \
         nbformat                \
         notebook                \
+        pylibmc                 \
         pycurl              &&  \
     pip install --no-cache-dir  \
         statsd
