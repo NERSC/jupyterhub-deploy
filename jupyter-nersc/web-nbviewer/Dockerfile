@@ -11,7 +11,7 @@ LABEL maintainer="Rollin Thomas <rcthomas@lbl.gov>"
 #    libevent-dev
 
 RUN \
-    conda install --yes --all   \
+    conda install -c conda-forge --yes --all   \
         invoke                  \
         markdown                \
         nbconvert               \
