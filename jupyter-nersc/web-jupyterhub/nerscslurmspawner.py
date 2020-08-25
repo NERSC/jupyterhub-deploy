@@ -172,11 +172,11 @@ unset XDG_RUNTIME_DIR
         subvars["cookie"] = int(time.time()) ^ (uid ** 2)
         return format_template(self.batch_script, **subvars)
 
-class NERSCBigmemSlurmSpawner(NERSCSlurmSpawner):
+class NERSCExclusiveLargeMemSlurmSpawner(NERSCSlurmSpawner):
 
     batch_script = Unicode("""#!/bin/bash
-#SBATCH --clusters=escori
-#SBATCH --comment={{ cookie }}
+#SBATCH --account={{ account }}
+#SBATCH --constraint=amd
 #SBATCH --job-name=jupyter
 #SBATCH --nodes={{ nodes }}
 #SBATCH --qos=bigmem
@@ -185,6 +185,7 @@ class NERSCBigmemSlurmSpawner(NERSCSlurmSpawner):
 unset XDG_RUNTIME_DIR
 {{ cmd }}""").tag(config=True)
 
+    batch_submit_cmd = Unicode("/bin/bash -l /global/common/cori/das/jupyterhub/esslurm-wrapper.sh sbatch").tag(config=True)
     batch_query_cmd = Unicode("/bin/bash -l /global/common/cori/das/jupyterhub/esslurm-wrapper.sh squeue -h -j {job_id} -o '%T\ %B-224.nersc.gov'").tag(config=True)
     batch_cancel_cmd = Unicode("/bin/bash -l /global/common/cori/das/jupyterhub/esslurm-wrapper.sh scancel {job_id}").tag(config=True)
 
@@ -193,13 +194,25 @@ unset XDG_RUNTIME_DIR
         """Format batch script from vars"""
         auth_state = await self.user.get_auth_state()
         self.userdata = auth_state["userdata"]
-        uid = self.userdata["uid"]
-        subvars["cookie"] = int(time.time()) ^ (uid ** 2)
+        subvars["account"] = self.default_cmem_repo()
         return format_template(self.batch_script, **subvars)
 
-    def parse_job_id(self, output):
-        output = output.replace(" on cluster escori", "")
-        return super().parse_job_id(output)
+    def default_cmem_repo(self):
+        for allocation in self.user_allocations():
+            for qos in allocation["userAllocationQos"]:
+                if qos["qos"]["qos"] in ["cmem"]:
+                    return allocation["computeAllocation"]["repoName"]
+        return None
+
+    def user_allocations(self, repos=[]):
+        for allocation in self.userdata["userAllocations"]:
+            if repos and allocation["computeAllocation"]["repoName"] not in repos:
+                continue
+            yield allocation
+
+#   def parse_job_id(self, output):
+#       output = output.replace(" on cluster escori", "")
+#       return super().parse_job_id(output)
 
 class NERSCExclusiveGPUSlurmSpawner(NERSCSlurmSpawner):
 
