@@ -11,8 +11,21 @@ if [ ! -f $cert ]; then
     echo " ... SKIPPED no cert for $username"
     continue
 fi
-for i in 1 2 3
-do
+
+if [ "$#" -lt 3 ]; then
+    for i in 1 2 3
+    do
+        /usr/bin/ssh                                \
+            -i $cert                                \
+            -l $username                            \
+            -o PreferredAuthentications=publickey   \
+            -o StrictHostKeyChecking=no             \
+            -p 22                                   \
+            $hostname                               \
+            killall -u $username
+        sleep 1
+    done
+elif [ "$#" -ge 3 ]; then
     /usr/bin/ssh                                \
         -i $cert                                \
         -l $username                            \
@@ -20,6 +33,5 @@ do
         -o StrictHostKeyChecking=no             \
         -p 22                                   \
         $hostname                               \
-        killall -u $username
-    sleep 1
-done
+        kill -9 "${@:3}"
+fi

@@ -172,6 +172,47 @@ unset XDG_RUNTIME_DIR
         subvars["cookie"] = int(time.time()) ^ (uid ** 2)
         return format_template(self.batch_script, **subvars)
 
+class NERSCExclusiveLargeMemSlurmSpawner(NERSCSlurmSpawner):
+
+    batch_script = Unicode("""#!/bin/bash
+#SBATCH --account={{ account }}
+#SBATCH --constraint=amd
+#SBATCH --job-name=jupyter
+#SBATCH --nodes={{ nodes }}
+#SBATCH --qos=bigmem
+#SBATCH --time={{ runtime }}
+{{ env_text }}
+unset XDG_RUNTIME_DIR
+{{ cmd }}""").tag(config=True)
+
+    batch_submit_cmd = Unicode("/bin/bash -l /global/common/cori/das/jupyterhub/esslurm-wrapper.sh sbatch").tag(config=True)
+    batch_query_cmd = Unicode("/bin/bash -l /global/common/cori/das/jupyterhub/esslurm-wrapper.sh squeue -h -j {job_id} -o '%T\ %B-224.nersc.gov'").tag(config=True)
+    batch_cancel_cmd = Unicode("/bin/bash -l /global/common/cori/das/jupyterhub/esslurm-wrapper.sh scancel {job_id}").tag(config=True)
+
+    # Have to override this to call get_auth_state() I think
+    async def _get_batch_script(self, **subvars):
+        """Format batch script from vars"""
+        auth_state = await self.user.get_auth_state()
+        self.userdata = auth_state["userdata"]
+        subvars["account"] = self.default_cmem_repo()
+        return format_template(self.batch_script, **subvars)
+
+    def default_cmem_repo(self):
+        for allocation in self.user_allocations():
+            for qos in allocation["userAllocationQos"]:
+                if qos["qos"]["qos"] in ["cmem"]:
+                    return allocation["computeAllocation"]["repoName"]
+        return None
+
+    def user_allocations(self, repos=[]):
+        for allocation in self.userdata["userAllocations"]:
+            if repos and allocation["computeAllocation"]["repoName"] not in repos:
+                continue
+            yield allocation
+
+#   def parse_job_id(self, output):
+#       output = output.replace(" on cluster escori", "")
+#       return super().parse_job_id(output)
 
 class NERSCExclusiveGPUSlurmSpawner(NERSCSlurmSpawner):
 
@@ -252,6 +293,7 @@ class NERSCConfigurableGPUSlurmSpawner(NERSCSlurmSpawner):
 
     batch_script = Unicode("""#!/bin/bash
 #SBATCH --account={{ account }}
+#SBATCH --qos={{ qos }}
 #SBATCH --constraint=gpu
 #SBATCH --job-name=jupyter
 #SBATCH --nodes={{ nodes }}
@@ -273,16 +315,23 @@ unset XDG_RUNTIME_DIR
         <select class="form-control" name="account" required autofocus>
         """)
 
-        gpu_accounts = ["nstaff", "m1759", "dasrepo"]
         for allocation in spawner.userdata["userAllocations"]:
             account = allocation["computeAllocation"]["repoName"]
-            if account not in gpu_accounts:
-                continue
             for qos in allocation["userAllocationQos"]:
-                if qos["qos"]["qos"] == "gpu":
+                if qos["qos"]["qos"] in ["gpu", "gpu_special_m1759"]:
                     form += """<option value="{}">{}</option>""".format(account, account)
 
         form += dedent("""
+        </select>
+        """)
+
+        # QOS, would be nice to constrain from qos
+
+        form += dedent("""
+        <label for="qos">QOS:</label>
+        <select class="form-control" name="qos" required autofocus>
+        <option value="gpu">gpu</option>
+        <option value="special">special (m1759 only)</option>
         </select>
         """)
 
@@ -324,8 +373,8 @@ unset XDG_RUNTIME_DIR
         # Time, should come from model
 
         form += dedent("""
-        <label for="time">time (time limit in minutes):</label>
-        <input class="form-control" type="number" name="time" min="10" max="240" value="240" step="10" required autofocus>
+        <label for="runtime">time (time limit in minutes):</label>
+        <input class="form-control" type="number" name="runtime" min="10" max="240" value="240" step="10" required autofocus>
         """)
 
         return form
@@ -333,11 +382,12 @@ unset XDG_RUNTIME_DIR
     def options_from_form(self, formdata):
         options = dict()
         options["account"] = formdata["account"][0]
+        options["qos"] = formdata["qos"][0]
 #       options["ngpus"] = formdata["ngpus"][0]
         options["ntasks_per_node"] = formdata["ntasks-per-node"][0]
         options["cpus_per_task"] = formdata["cpus-per-task"][0]
         options["gpus_per_task"] = formdata["gpus-per-task"][0]
-        options["time"] = formdata["time"][0]
+        options["runtime"] = formdata["runtime"][0]
         return options
 
 #     # Have to override this to call get_auth_state() I think

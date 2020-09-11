@@ -41,7 +41,7 @@ RUN \
 
 RUN \
     pip install --no-cache-dir \
-        git+https://github.com/rcthomas/jupyter-server-proxy.git@allow-remote-proxy
+        git+https://github.com/jupyterhub/jupyter-server-proxy.git
 
 ADD jupyter_notebook_config.py /opt/anaconda3/etc/jupyter/.
 

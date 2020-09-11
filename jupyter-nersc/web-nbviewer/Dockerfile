@@ -11,12 +11,13 @@ LABEL maintainer="Rollin Thomas <rcthomas@lbl.gov>"
 #    libevent-dev
 
 RUN \
-    conda install --yes --all   \
+    conda install -c conda-forge --yes --all   \
         invoke                  \
         markdown                \
         nbconvert               \
         nbformat                \
         notebook                \
+        pylibmc                 \
         pycurl              &&  \
     pip install --no-cache-dir  \
         statsd
@@ -26,15 +27,15 @@ WORKDIR /repos
 RUN \
     git clone https://github.com/jupyter/nbviewer.git   &&  \
     cd nbviewer  &&  \
-# --no-dependencies flag because we don't actually need pylibmc or elasticsearch to run this (without
-# elasticsearch or memcached) and everything else in requirements.txt is already installed
+    # --no-dependencies flag because we don't actually need pylibmc or elasticsearch to run this (without
+    # elasticsearch or memcached) and everything else in requirements.txt is already installed
     pip install -e . --no-cache-dir --no-dependencies   &&  \
     npm install     &&  \
     invoke bower    &&  \
     invoke less     &&  \
     cd ..
 
-RUN echo 1
+RUN echo "Building clonenotebooks"
 RUN \
     git clone https://github.com/NERSC/clonenotebooks.git   &&  \
     cd clonenotebooks               &&  \
@@ -48,4 +49,4 @@ ADD frontpage.json ./
 ADD docker-entrypoint.sh nbviewer_config.py ./
 RUN chmod +x docker-entrypoint.sh
 ENTRYPOINT ["./docker-entrypoint.sh"]
-CMD ["python", "-m", "nbviewer"]
+CMD ["python", "-m", "nbviewer", "--no-cache"]

@@ -1012,13 +1012,14 @@ c.ConfigurableHTTPProxy.api_url = 'http://web-proxy:8001'
 #------------------------------------------------------------------------------
 
 c.NERSCSpawner.profiles = [
-    { "name": "gerty-shared-node-cpu"       },
-    { "name": "gerty-exclusive-node-cpu"    },
-    { "name": "cori-shared-node-cpu"        },
-    { "name": "cori-shared-node-gpu"        },
-    { "name": "cori-exclusive-node-cpu"     },
-    { "name": "cori-configurable-gpu"       },
-    { "name": "spin-shared-node-cpu"        },
+    { "name": "gerty-shared-node-cpu"        },
+    { "name": "gerty-exclusive-node-cpu"     },
+    { "name": "cori-shared-node-cpu"         },
+    { "name": "cori-shared-node-gpu"         },
+    { "name": "cori-exclusive-node-cpu"      },
+    { "name": "cori-exclusive-node-largemem" },
+    { "name": "cori-configurable-gpu"        },
+    { "name": "spin-shared-node-cpu"         },
 ]
 
 c.NERSCSpawner.setups = [
@@ -1046,23 +1047,28 @@ c.NERSCSpawner.setups = [
                 "name": "cpu",
                 "description": "Exclusive CPU Node",
                 "roles": ["cori-exclusive-node-cpu"],
+            },
+            {
+                "name": "largemem",
+                "description": "Exclusive Large Memory Node",
+                "roles": ["cmem"],
             }
         ],
         "resources": "Use your own node within a job allocation using defaults.",
         "use_cases": "Visualization, analytics, machine learning that is compute or memory intensive but can be done on a single node."
     },
-#   {
-#       "name": "configurable",
-#       "architectures": [
-#           {
-#               "name": "gpu",
-#               "description": "Configurable GPU",
-#               "roles": ["gpu"],
-#           } 
-#       ],
-#       "resources": "Use multiple compute nodes with specialized settings.",
-#       "use_cases": "Multi-node analytics jobs, jobs in reservations, custom project charging, and more."
-#   },
+    {
+        "name": "configurable",
+        "architectures": [
+            {
+                "name": "gpu",
+                "description": "Configurable GPU",
+                "roles": ["gpu"],
+            } 
+        ],
+        "resources": "Use multiple compute nodes with specialized settings.",
+        "use_cases": "Multi-node analytics jobs, jobs in reservations, custom project charging, and more."
+    },
 ]
 
 c.NERSCSpawner.systems = [
@@ -1121,7 +1127,7 @@ c.NERSCSpawner.spawners = {
             "remote_hosts": ["corijupyter.nersc.gov"],
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
             "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
-            "path": "/global/common/cori_cle7/software/jupyter/20-06/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "path": "/usr/common/software/jupyter/20-06/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "ssh_keyfile": '/certs/{username}.key'
         }
     ),
@@ -1151,6 +1157,23 @@ c.NERSCSpawner.spawners = {
             "req_remote_host": "cori19-224.nersc.gov",
             "req_homedir": "/tmp",
             "req_runtime": "240",
+            "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
+            "path": "/usr/common/software/jupyter/20-06/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "batchspawner_singleuser_cmd" : " ".join([
+                "/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
+                "/global/common/cori_cle7/software/jupyter/20-06/bin/batchspawner-singleuser",
+            ])
+        }
+    ),
+    "cori-exclusive-node-largemem": (
+        "nerscslurmspawner.NERSCExclusiveLargeMemSlurmSpawner", {
+            "cmd": ["/global/common/cori_cle7/software/jupyter/20-06/bin/jupyterhub-singleuser"],
+            "args": ["--transport=ipc"],
+            "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",
+            "startup_poll_interval": 30.0,
+            "req_remote_host": "cori19-224.nersc.gov",
+            "req_homedir": "/tmp",
+            "req_runtime": "480",
             "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
             "path": "/usr/common/software/jupyter/20-06/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "batchspawner_singleuser_cmd" : " ".join([
