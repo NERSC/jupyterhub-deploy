@@ -393,7 +393,7 @@ c.JupyterHub.services = [
     {
         'name': 'cull-idle',
         'admin': True,
-        'command': 'cull_idle_servers.py --timeout=57600'.split(),
+        'api_token': os.environ["IDLE_CULLER_JUPYTERHUB_API_TOKEN"]
     },
     {
         'name': 'announcement',
@@ -860,7 +860,7 @@ c.Authenticator.admin_users = set(comma_split(os.environ.get("ADMINS")))
 #  
 #  .. versionadded: 0.9
 #c.Authenticator.blacklist = set()
-c.Authenticator.blacklist = set(comma_split(os.environ.get("BLACKLIST")))
+c.Authenticator.blocked_users = set(comma_split(os.environ.get("BLOCKED_USERS")))
 
 ## Enable persisting auth_state (if available).
 #  
@@ -901,7 +901,7 @@ c.Authenticator.enable_auth_state = True
 #  
 #  If empty, does not perform any additional restriction.
 #c.Authenticator.whitelist = set()
-c.Authenticator.whitelist = set(comma_split(os.environ.get("WHITELIST")))
+c.Authenticator.allowed_users = set(comma_split(os.environ.get("ALLOWED_USERS")))
 
 #------------------------------------------------------------------------------
 # LocalAuthenticator(Authenticator) configuration
