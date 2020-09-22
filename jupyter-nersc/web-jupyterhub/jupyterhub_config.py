@@ -1162,7 +1162,7 @@ c.NERSCSpawner.spawners = {
             "startup_poll_interval": 30.0,
             "req_remote_host": "cori19-224.nersc.gov",
             "req_homedir": "/tmp",
-            "req_runtime": "240",
+            "req_runtime": "480",
             "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
             "path": "/global/common/cori_cle7/software/jupyter/cori/20-09/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "batchspawner_singleuser_cmd" : " ".join([
