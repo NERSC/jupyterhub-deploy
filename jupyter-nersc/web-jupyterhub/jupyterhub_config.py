@@ -1019,6 +1019,7 @@ c.NERSCSpawner.profiles = [
     { "name": "cori-exclusive-node-cpu"      },
     { "name": "cori-exclusive-node-largemem" },
     { "name": "cori-configurable-gpu"        },
+    { "name": "cori-configurable-dgx"        },
     { "name": "spin-shared-node-cpu"         },
 ]
 
@@ -1064,6 +1065,11 @@ c.NERSCSpawner.setups = [
                 "name": "gpu",
                 "description": "Configurable GPU",
                 "roles": ["gpu"],
+            },
+            {
+                "name": "dgx",
+                "description": "Configurable DGX",
+                "roles": ["dgx"],
             } 
         ],
         "resources": "Use multiple compute nodes with specialized settings.",
@@ -1184,6 +1190,24 @@ c.NERSCSpawner.spawners = {
     ),
     "cori-configurable-gpu": (
         "nerscslurmspawner.NERSCConfigurableGPUSlurmSpawner", {
+            "cmd": ["/global/common/cori_cle7/software/jupyter/cgpu/20-09/bin/jupyterhub-singleuser"],
+            "args": ["--transport=ipc"],
+            "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",
+            "startup_poll_interval": 30.0,
+            "req_remote_host": "cori19-224.nersc.gov",
+            "req_homedir": "/tmp",
+            "req_ngpus": "1",
+            "req_runtime": "240",
+            "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
+            "path": "/global/common/cori_cle7/software/jupyter/cgpu/20-09/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "batchspawner_singleuser_cmd" : " ".join([
+                "/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
+                "/global/common/cori_cle7/software/jupyter/cgpu/20-09/bin/batchspawner-singleuser",
+            ])
+        }
+    ),
+    "cori-configurable-dgx": (
+        "nerscslurmspawner.NERSCConfigurableDGXSlurmSpawner", {
             "cmd": ["/global/common/cori_cle7/software/jupyter/cgpu/20-09/bin/jupyterhub-singleuser"],
             "args": ["--transport=ipc"],
             "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",

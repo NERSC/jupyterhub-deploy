@@ -45,6 +45,8 @@ class NERSCSpawner(WrapSpawner):
             return self.check_role_cori_exclusive_node_cpu(auth_state)
         if role == "cmem":
             return self.check_role_cmem(auth_state)
+        if role == "dgx":
+            return self.check_role_dgx(auth_state)
         return False
 
     def check_role_cori_exclusive_node_cpu(self, auth_state):
@@ -79,6 +81,16 @@ class NERSCSpawner(WrapSpawner):
         for allocation in self.user_allocations(auth_state):
             for qos in allocation["userAllocationQos"]:
                 if qos["qos"]["qos"] in ["gpu", "gpu_special_m1759"]:
+                    return allocation["computeAllocation"]["repoName"]
+        return None
+
+    def check_role_dgx(self, auth_state):
+        return self.default_dgx_repo(auth_state) is not None
+
+    def default_dgx_repo(self, auth_state):
+        for allocation in self.user_allocations(auth_state):
+            for qos in allocation["userAllocationQos"]:
+                if qos["qos"]["qos"] in ["dgx"]:
                     return allocation["computeAllocation"]["repoName"]
         return None
 
