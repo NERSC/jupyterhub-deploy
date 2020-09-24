@@ -23,13 +23,6 @@ file_env() {
     unset "$fileVar"
 }
 
-file_env 'POSTGRES_PASSWORD'
-file_env 'SKEY'
-file_env 'MODS_JUPYTERHUB_API_TOKEN'
-file_env 'CONFIGPROXY_AUTH_TOKEN'
-file_env 'JUPYTERHUB_CRYPT_KEY'
-file_env 'ANNOUNCEMENT_JUPYTERHUB_API_TOKEN'
-file_env 'NBVIEWER_JUPYTERHUB_API_TOKEN'
-file_env 'IDLE_CULLER_JUPYTERHUB_API_TOKEN'
+file_env 'JUPYTERHUB_API_TOKEN'
 
 exec "$@"
