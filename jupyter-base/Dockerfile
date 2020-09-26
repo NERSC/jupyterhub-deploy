@@ -8,8 +8,8 @@ ENV LANG C.UTF-8
 
 RUN \
     apt-get update          &&  \
-    apt-get --yes upgrade   &&  \
-    apt-get --yes install       \
+    apt-get upgrade --yes   &&  \
+    apt-get install --yes       \
         bzip2                   \
         curl                    \
         git                     \
