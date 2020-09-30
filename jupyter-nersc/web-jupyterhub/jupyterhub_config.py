@@ -1096,19 +1096,19 @@ c.NERSCSpawner.spawners = {
     "gerty-shared-node-cpu": (
         "sshspawner.sshspawner.SSHSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh", 
-                "/global/common/cori_cle7/software/jupyter/cori/20-09/bin/jupyterhub-singleuser"],
+                "/global/common/cori_cle7/software/jupyter/cori/20-10/bin/jupyterhub-singleuser"],
             "args": ["--transport=ipc"],
             "environment": {"OMP_NUM_THREADS" : "2"},
             "remote_hosts": ["gerty.nersc.gov"],
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
             "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
-            "path": "/global/common/cori_cle7/software/jupyter/cori/20-09/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "path": "/global/common/cori_cle7/software/jupyter/cori/20-10/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "ssh_keyfile": '/certs/{username}.key'
         }
     ),
     "gerty-exclusive-node-cpu": (
         "nerscslurmspawner.NERSCExclusiveSlurmSpawner", {
-            "cmd": ["/global/common/cori_cle7/software/jupyter/cori/20-09/bin/jupyterhub-singleuser"],
+            "cmd": ["/global/common/cori_cle7/software/jupyter/cori/20-10/bin/jupyterhub-singleuser"],
             "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",
             "http_timeout": 300,
             "startup_poll_interval": 30.0,
@@ -1117,29 +1117,29 @@ c.NERSCSpawner.spawners = {
             "req_runtime": "240",
             "req_qos": "jupyter",
             "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
-            "path": "/global/common/cori_cle7/software/jupyter/cori/20-09/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "path": "/global/common/cori_cle7/software/jupyter/cori/20-10/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "batchspawner_singleuser_cmd" : " ".join([
                 "/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
-                "/global/common/cori_cle7/software/jupyter/cori/20-09/bin/batchspawner-singleuser",
+                "/global/common/cori_cle7/software/jupyter/cori/20-10/bin/batchspawner-singleuser",
             ])
         }
     ),
     "cori-shared-node-cpu": (
         "sshspawner.sshspawner.SSHSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh", 
-                "/global/common/cori_cle7/software/jupyter/cori/20-09/bin/jupyterhub-singleuser"],
+                "/global/common/cori_cle7/software/jupyter/cori/20-10/bin/jupyterhub-singleuser"],
             "args": ["--transport=ipc"],
             "environment": {"OMP_NUM_THREADS" : "2", "PYTHONFAULTHANDLER": "1"},
             "remote_hosts": ["corijupyter.nersc.gov"],
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
             "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
-            "path": "/global/common/cori_cle7/software/jupyter/cori/20-09/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "path": "/global/common/cori_cle7/software/jupyter/cori/20-10/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "ssh_keyfile": '/certs/{username}.key'
         }
     ),
     "cori-shared-node-gpu": (
         "nerscslurmspawner.NERSCExclusiveGPUSlurmSpawner", {
-            "cmd": ["/global/common/cori_cle7/software/jupyter/cgpu/20-09/bin/jupyterhub-singleuser"],
+            "cmd": ["/global/common/cori_cle7/software/jupyter/cgpu/20-10/bin/jupyterhub-singleuser"],
             "args": ["--transport=ipc"],
             "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",
             "startup_poll_interval": 30.0,
@@ -1147,16 +1147,16 @@ c.NERSCSpawner.spawners = {
             "req_homedir": "/tmp",
             "req_runtime": "240",
             "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
-            "path": "/global/common/cori_cle7/software/jupyter/cgpu/20-09/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "path": "/global/common/cori_cle7/software/jupyter/cgpu/20-10/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "batchspawner_singleuser_cmd" : " ".join([
                 "/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
-                "/global/common/cori_cle7/software/jupyter/cgpu/20-09/bin/batchspawner-singleuser",
+                "/global/common/cori_cle7/software/jupyter/cgpu/20-10/bin/batchspawner-singleuser",
             ])
         }
     ),
     "cori-exclusive-node-cpu": (
         "nerscslurmspawner.NERSCExclusiveSlurmSpawner", {
-            "cmd": ["/global/common/cori_cle7/software/jupyter/cori/20-09/bin/jupyterhub-singleuser"],
+            "cmd": ["/global/common/cori_cle7/software/jupyter/cori/20-10/bin/jupyterhub-singleuser"],
             "args": ["--transport=ipc"],
             "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",
             "startup_poll_interval": 30.0,
@@ -1164,16 +1164,16 @@ c.NERSCSpawner.spawners = {
             "req_homedir": "/tmp",
             "req_runtime": "480",
             "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
-            "path": "/global/common/cori_cle7/software/jupyter/cori/20-09/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "path": "/global/common/cori_cle7/software/jupyter/cori/20-10/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "batchspawner_singleuser_cmd" : " ".join([
                 "/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
-                "/global/common/cori_cle7/software/jupyter/cori/20-09/bin/batchspawner-singleuser",
+                "/global/common/cori_cle7/software/jupyter/cori/20-10/bin/batchspawner-singleuser",
             ])
         }
     ),
     "cori-exclusive-node-largemem": (
         "nerscslurmspawner.NERSCExclusiveLargeMemSlurmSpawner", {
-            "cmd": ["/global/common/cori_cle7/software/jupyter/cori/20-09/bin/jupyterhub-singleuser"],
+            "cmd": ["/global/common/cori_cle7/software/jupyter/cori/20-10/bin/jupyterhub-singleuser"],
             "args": ["--transport=ipc"],
             "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",
             "startup_poll_interval": 30.0,
@@ -1181,16 +1181,16 @@ c.NERSCSpawner.spawners = {
             "req_homedir": "/tmp",
             "req_runtime": "480",
             "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
-            "path": "/global/common/cori_cle7/software/jupyter/cori/20-09/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "path": "/global/common/cori_cle7/software/jupyter/cori/20-10/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "batchspawner_singleuser_cmd" : " ".join([
                 "/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
-                "/global/common/cori_cle7/software/jupyter/cori/20-09/bin/batchspawner-singleuser",
+                "/global/common/cori_cle7/software/jupyter/cori/20-10/bin/batchspawner-singleuser",
             ])
         }
     ),
     "cori-configurable-gpu": (
         "nerscslurmspawner.NERSCConfigurableGPUSlurmSpawner", {
-            "cmd": ["/global/common/cori_cle7/software/jupyter/cgpu/20-09/bin/jupyterhub-singleuser"],
+            "cmd": ["/global/common/cori_cle7/software/jupyter/cgpu/20-10/bin/jupyterhub-singleuser"],
             "args": ["--transport=ipc"],
             "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",
             "startup_poll_interval": 30.0,
@@ -1199,16 +1199,16 @@ c.NERSCSpawner.spawners = {
             "req_ngpus": "1",
             "req_runtime": "240",
             "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
-            "path": "/global/common/cori_cle7/software/jupyter/cgpu/20-09/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "path": "/global/common/cori_cle7/software/jupyter/cgpu/20-10/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "batchspawner_singleuser_cmd" : " ".join([
                 "/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
-                "/global/common/cori_cle7/software/jupyter/cgpu/20-09/bin/batchspawner-singleuser",
+                "/global/common/cori_cle7/software/jupyter/cgpu/20-10/bin/batchspawner-singleuser",
             ])
         }
     ),
     "cori-configurable-dgx": (
         "nerscslurmspawner.NERSCConfigurableDGXSlurmSpawner", {
-            "cmd": ["/global/common/cori_cle7/software/jupyter/cgpu/20-09/bin/jupyterhub-singleuser"],
+            "cmd": ["/global/common/cori_cle7/software/jupyter/cgpu/20-10/bin/jupyterhub-singleuser"],
             "args": ["--transport=ipc"],
             "exec_prefix": "/usr/bin/ssh -q -o StrictHostKeyChecking=no -o preferredauthentications=publickey -l {username} -i /certs/{username}.key {remote_host}",
             "startup_poll_interval": 30.0,
@@ -1217,23 +1217,23 @@ c.NERSCSpawner.spawners = {
             "req_ngpus": "1",
             "req_runtime": "240",
             "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
-            "path": "/global/common/cori_cle7/software/jupyter/cgpu/20-09/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "path": "/global/common/cori_cle7/software/jupyter/cgpu/20-10/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "batchspawner_singleuser_cmd" : " ".join([
                 "/global/common/cori/das/jupyterhub/jupyter-launcher.sh",
-                "/global/common/cori_cle7/software/jupyter/cgpu/20-09/bin/batchspawner-singleuser",
+                "/global/common/cori_cle7/software/jupyter/cgpu/20-10/bin/batchspawner-singleuser",
             ])
         }
     ),
     "spin-shared-node-cpu": (
         "sshspawner.sshspawner.SSHSpawner", {
             "cmd": ["/global/common/cori/das/jupyterhub/jupyter-launcher.sh", 
-                "/global/common/cori_cle7/software/jupyter/cori/20-09/bin/jupyterhub-singleuser"],
+                "/global/common/cori_cle7/software/jupyter/cori/20-10/bin/jupyterhub-singleuser"],
             "args": ["--transport=ipc"],
             "environment": {"OMP_NUM_THREADS" : "2"},
             "remote_hosts": ["app-notebooks"],
             "remote_port_command": "/usr/bin/python /global/common/cori/das/jupyterhub/new-get-port.py --ip",
             "hub_api_url": f"https://{nersc_jupyterhub_subdomain}.nersc.gov/hub/api",
-            "path": "/global/common/cori_cle7/software/jupyter/cori/20-09/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
+            "path": "/global/common/cori_cle7/software/jupyter/cori/20-10/bin:/global/common/cori/das/jupyterhub:/usr/common/usg/bin:/usr/bin:/bin",
             "ssh_keyfile": '/certs/{username}.key'
         }
     )
