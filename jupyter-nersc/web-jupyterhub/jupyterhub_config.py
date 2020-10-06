@@ -409,6 +409,12 @@ c.JupyterHub.services = [
         'name': 'nbviewer',
         'url': 'http://web-nbviewer:5000',
         'api_token': os.environ["NBVIEWER_JUPYTERHUB_API_TOKEN"]
+    },
+    {
+        'name': 'images',
+        'url': 'http://api-images:8888',
+        'api_token': os.environ["IMAGES_JUPYTERHUB_API_TOKEN"],
+        'display': False
     }
 ]
 
