@@ -1,44 +1,32 @@
-FROM ubuntu:18.04
+FROM ubuntu:focal
 LABEL maintainer="Rollin Thomas <rcthomas@lbl.gov>"
-
-# Base Ubuntu packages
+WORKDIR /srv
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV LANG C.UTF-8
 
 RUN \
     apt-get update          &&  \
-    apt-get --yes upgrade   &&  \
-    apt-get --yes install       \
-        bzip2                   \
-        curl                    \
-        tzdata                  \
-        vim
-
-# Timezone to Berkeley
+    apt-get upgrade --yes   &&  \
+    apt-get install             \
+        --no-install-recommends \
+        --yes                   \
+        python3-pip             \
+        tzdata
 
 ENV TZ=America/Los_Angeles
 RUN \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime  &&  \
     echo $TZ > /etc/timezone
 
-# Python 3 Miniconda
-
 RUN \
-    curl -s -o /tmp/miniconda3.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh &&  \
-    bash /tmp/miniconda3.sh -f -b -p /opt/anaconda3         &&  \
-    rm -rf /tmp/miniconda3.sh                               &&  \
-    /opt/anaconda3/bin/conda update --yes conda             &&  \
-    /opt/anaconda3/bin/pip install --no-cache-dir               \
-        pika
-
-ENV PATH=/opt/anaconda3/bin:$PATH
-
-WORKDIR /srv
+    pip3 install --no-cache-dir \
+        pika                    \
+        requests
 
 ADD monitor.py .
 ADD docker-entrypoint.sh .
 
 RUN chmod +x docker-entrypoint.sh
 ENTRYPOINT ["./docker-entrypoint.sh"]
-CMD ["python", "monitor.py"]
+CMD ["python3", "monitor.py"]

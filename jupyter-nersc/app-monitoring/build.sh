@@ -21,7 +21,10 @@ fi
 
 branch=$(git symbolic-ref --short HEAD)
 
+# tag=registry.spin.nersc.gov/das/app-monitoring.jupyter-nersc-$branch:latest .
+tag=registry.nersc.gov/m3384/app-monitoring.jupyter-nersc-$branch:latest
+
 $imcmd build    \
     $format     \
     "$@"        \
-    --tag registry.spin.nersc.gov/das/app-monitoring.jupyter-nersc-$branch:latest .
+    --tag $tag .
